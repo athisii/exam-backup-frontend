@@ -1,6 +1,8 @@
-// throws error if response status code is not 200 and response status if false.
+import "server-only"
+
 import {ApiResponse} from "@/types/types";
 
+// throws error if response status code is not 200 and response status if false.
 export async function sendGetRequest(url: string, token: string): Promise<ApiResponse> {
     const response = await fetch(url, {
         headers: {
@@ -16,7 +18,7 @@ export async function sendGetRequest(url: string, token: string): Promise<ApiRes
 
     const apiRes = await response.json();
     if (!apiRes.status) {
-        throw new Error(`Not able to retrieve data from ${url}`);
+        throw new Error(`API-${url} response status: false`)
     }
 
     return apiRes;

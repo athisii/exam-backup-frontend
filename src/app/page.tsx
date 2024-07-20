@@ -2,7 +2,7 @@ import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import React from "react";
 import Header from "@/components/header";
-import {sendGetRequest, sendPostRequest} from "@/utils/api";
+import {sendGetRequest} from "@/utils/api";
 import MainSection from "@/components/main-section";
 
 
@@ -29,7 +29,7 @@ export default async function Page() {
     const token = idContext.token as string;
 
     // fetch exam centre details
-    let examCentreUrl = `${API_URL}/exam-centres/search/code`;
+    let examCentreUrl = `${API_URL}/exam-centres/search`;
     // fetch exam slot list
     const examSlotsUrl = `${API_URL}/exam-slots`;
     // fetch exam file type list
@@ -37,16 +37,19 @@ export default async function Page() {
 
     // Fetch concurrently
     const [examCentreApiRes, slotsApiRes, fileTypesApiRes] = await Promise.all([
-        sendPostRequest(examCentreUrl, token, {code: examCentreCode}),
+        sendGetRequest(`${examCentreUrl}?code=${examCentreCode}`, token),
         sendGetRequest(examSlotsUrl, token),
         sendGetRequest(fileTypesUrl, token),
     ]);
-    // handle errors
+
+    if (examCentreApiRes.data.length === 0) {
+        throw new Error("Exam centre not found");
+    }
     return (
         <main className="flex justify-center font-[sans-serif]">
-            <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[60vw]">
-                <Header examCentre={examCentreApiRes.data}/>
-                <MainSection examSlots={slotsApiRes.data} examFileTypes={fileTypesApiRes.data}/>
+            <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
+                <Header examCentre={examCentreApiRes.data[0]}/>
+                <MainSection examSlots={slotsApiRes.data} fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>
     );

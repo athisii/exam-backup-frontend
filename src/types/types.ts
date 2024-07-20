@@ -41,8 +41,23 @@ export interface ExamSlot {
     name: string,
     code: string,
 }
+
 export interface FileType {
     id: number,
     name: string,
     code: string,
 }
+
+export interface Region {
+    id: number,
+    name: string,
+    code: string,
+}
+
+export interface IExamCentre {
+    id: number,
+    name: string,
+    code: string,
+}
+
+export type SortOrder = "ASC" | "DESC"

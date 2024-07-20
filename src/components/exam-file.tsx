@@ -1,29 +1,55 @@
 "use client"
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useFormState} from "react-dom";
 import {uploadFile} from "@/app/actions";
 
-const ExamFile = ({examSlotId, fileTypeId, fileTypeName, uploaded, examDate, userUploadedFilename}: {
+interface ExamFileProps {
     examSlotId: number,
     fileTypeId: number,
     fileTypeName: string,
     uploaded: boolean,
     examDate: string,
-    userUploadedFilename: string | null,
-}) => {
+    userUploadedFilename: string | null
+}
+
+const ExamFile: React.FC<ExamFileProps> = ({
+                                               examSlotId,
+                                               fileTypeId,
+                                               fileTypeName,
+                                               uploaded,
+                                               examDate,
+                                               userUploadedFilename
+                                           }) => {
+
+    // state becomes true after uploaded successfully.
     const [state, action] = useFormState(uploadFile, false);
     const [filename, setFilename] = useState('');
     const [disabledBtn, setDisabledBtn] = useState(true);
+    const inputFileRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files) {
-            setFilename(files[0].name);
-            setDisabledBtn(false)
+            // enable/disable button based on file selection/de-selection
+            if (files[0]) {
+                setFilename(files[0].name);
+                setDisabledBtn(false)
+            } else {
+                setDisabledBtn(true)
+            }
         }
     }
 
+    useEffect(() => {
+        // after successful upload disable button and de-select the file
+        setDisabledBtn(true)
+        if (inputFileRef.current) {
+            inputFileRef.current.value = '';
+        }
+    }, [state]);
+
+    // console.log(`examDate: ${examDate}, examSlotId: ${examSlotId}, fileTypeId: ${fileTypeId}`)
     return (
         <div className="w-full rounded-md bg-gray-300">
             <form action={action} className="grid w-full grid-cols-3 gap-1 p-1 sm:grid-cols-12">
@@ -31,7 +57,7 @@ const ExamFile = ({examSlotId, fileTypeId, fileTypeName, uploaded, examDate, use
                     <label>{fileTypeName}</label>
                 </div>
                 <div className="col-span-2 flex items-center justify-center sm:col-span-3">
-                    <input name="file" type="file" onChange={handleFileChange}
+                    <input name="file" type="file" onChange={handleFileChange} ref={inputFileRef}
                            className="w-full cursor-pointer rounded bg-gray-100 text-gray-500 file:mr-4 file:cursor-pointer file:border-0 file:bg-gray-800 file:py-1 file:text-white file:hover:bg-gray-700"/>
                 </div>
                 <div className="col-span-1 flex items-center justify-center sm:col-span-2">
@@ -40,16 +66,12 @@ const ExamFile = ({examSlotId, fileTypeId, fileTypeName, uploaded, examDate, use
                     </button>
                 </div>
                 <div className="col-span-2 flex items-center justify-center sm:col-span-3">
-                    <p className="w-full cursor-pointer rounded bg-gray-100 text-gray-500 file:mr-4 file:cursor-pointer file:border-0 file:bg-gray-800 file:py-1 file:text-white file:hover:bg-gray-700">
+                    <p className="w-full rounded bg-gray-100 text-gray-500">
                         {
                             state ? filename : userUploadedFilename
                         }
                     </p>
                 </div>
-
-                <input type="hidden" name="examSlotId" value={examSlotId} readOnly/>
-                <input type="hidden" name="fileTypeId" value={fileTypeId} readOnly/>
-                <input type="hidden" name="examDate" value={examDate} readOnly/>
                 <div
                     className="col-span-2 flex items-center justify-center sm:col-span-1">
                     {
@@ -62,6 +84,9 @@ const ExamFile = ({examSlotId, fileTypeId, fileTypeName, uploaded, examDate, use
                             : ""
                     }
                 </div>
+                <input type="hidden" name="examSlotId" value={examSlotId} readOnly/>
+                <input type="hidden" name="fileTypeId" value={fileTypeId} readOnly/>
+                <input type="hidden" name="examDate" value={examDate} readOnly/>
             </form>
         </div>
     );

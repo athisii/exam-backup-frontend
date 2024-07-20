@@ -2,7 +2,6 @@
 
 import {redirect} from "next/navigation";
 import identityContext from "@/utils/session";
-import {revalidatePath} from "next/cache";
 import {sendPostRequest} from "@/utils/api";
 import {ApiResponse, IExamFile} from "@/types/types";
 
@@ -46,11 +45,8 @@ export async function uploadFile(state: boolean, formData: FormData) {
         return false;
     }
     const apiResponse: ApiResponse = await response.json();
-    if (!apiResponse.status) {
-        return false;
-    }
-    revalidatePath(url)
-    return true;
+    return apiResponse.status;
+
 }
 
 export async function fetchExamFile(selectedSlotId: number, examDate: string): Promise<IExamFile[]> {

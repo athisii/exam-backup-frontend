@@ -1,11 +1,28 @@
 import React from 'react';
+import identityContext from "@/utils/session";
+import {redirect} from "next/navigation";
+import {sendGetRequest} from "@/utils/api";
+import {ApiResponse} from "@/types/types";
+import Admin from "@/components/admin/admin";
 
-const AdminPage = () => {
+const API_URL = process.env.API_URL;
+if (!API_URL) {
+    throw new Error('API_URL environment variable is not set');
+}
+
+const Page = async () => {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login")
+    }
+
+    const token = idContext.token as string;
+    const regionUrl = `${API_URL}/regions`;
+    const regionsApiRes: ApiResponse = await sendGetRequest(regionUrl, token);
+
     return (
-        <div>
-            <h2>Welcome to Admin page.</h2>
-        </div>
+        <Admin regions={regionsApiRes.data}/>
     );
 };
 
-export default AdminPage;
+export default Page;
