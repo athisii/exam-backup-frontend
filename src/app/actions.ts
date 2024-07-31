@@ -12,7 +12,7 @@ if (!API_URL) {
 
 const defaultTime = " 10:30" // time also expected to be sent to the server
 
-export async function uploadFile(state: boolean, formData: FormData) {
+export async function uploadFile(formData: FormData) {
     /*
     // String examCentreCode, Long examSlotId, Long fileTypeId, examDate //examDate pattern -> "yyyy-MM-dd HH:mm a"
     a. call save ExamFile api

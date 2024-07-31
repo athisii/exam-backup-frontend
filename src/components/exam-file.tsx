@@ -1,7 +1,6 @@
 "use client"
 
-import React, {useEffect, useRef, useState} from 'react';
-import {useFormState} from "react-dom";
+import React, {useRef, useState} from 'react';
 import {uploadFile} from "@/app/actions";
 
 interface ExamFileProps {
@@ -13,6 +12,7 @@ interface ExamFileProps {
     userUploadedFilename: string | null
 }
 
+
 const ExamFile: React.FC<ExamFileProps> = ({
                                                examSlotId,
                                                fileTypeId,
@@ -21,38 +21,42 @@ const ExamFile: React.FC<ExamFileProps> = ({
                                                examDate,
                                                userUploadedFilename
                                            }) => {
-
-    // state becomes true after uploaded successfully.
-    const [state, action] = useFormState(uploadFile, false);
-    const [filename, setFilename] = useState('');
+    const [status, setStatus] = useState(false);
+    const [userSelectedFilename, setUserSelectedFilename] = useState('');
     const [disabledBtn, setDisabledBtn] = useState(true);
     const inputFileRef = useRef<HTMLInputElement>(null);
+    const userUploadedFilenameRef = useRef<string | null>(null); // initialize only once, but React does hydration in two passes
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files) {
             // enable/disable button based on file selection/de-selection
             if (files[0]) {
-                setFilename(files[0].name);
+                setUserSelectedFilename(files[0].name);
                 setDisabledBtn(false)
+                setStatus(false);
             } else {
                 setDisabledBtn(true)
+                setStatus(false);
             }
         }
-    }
+    };
 
-    useEffect(() => {
-        // after successful upload disable button and de-select the file
+    const handleSubmit = async (formData: FormData) => {
+        let returnStatus = await uploadFile(formData);
+        setStatus(returnStatus);
+        if (returnStatus) {
+            userUploadedFilenameRef.current = userSelectedFilename;
+        }
         setDisabledBtn(true)
         if (inputFileRef.current) {
             inputFileRef.current.value = '';
         }
-    }, [state]);
+    }
 
-    // console.log(`examDate: ${examDate}, examSlotId: ${examSlotId}, fileTypeId: ${fileTypeId}`)
     return (
         <div className="w-full rounded-md bg-gray-300">
-            <form action={action} className="grid w-full grid-cols-3 gap-1 p-1 sm:grid-cols-12">
+            <form action={handleSubmit} className="grid w-full grid-cols-3 gap-1 p-1 sm:grid-cols-12">
                 <div className="col-span-1 flex items-center justify-center sm:col-span-3">
                     <label>{fileTypeName}</label>
                 </div>
@@ -66,16 +70,16 @@ const ExamFile: React.FC<ExamFileProps> = ({
                     </button>
                 </div>
                 <div className="col-span-2 flex items-center justify-center sm:col-span-3">
-                    <p className="w-full rounded bg-gray-100 text-gray-500">
+                    <p className="w-full rounded bg-gray-100 text-gray-500 overflow-hidden">
                         {
-                            state ? filename : userUploadedFilename
+                            uploaded && userUploadedFilenameRef.current === null ? userUploadedFilename : userUploadedFilenameRef.current
                         }
                     </p>
                 </div>
                 <div
                     className="col-span-2 flex items-center justify-center sm:col-span-1">
                     {
-                        state || uploaded ?
+                        status || uploaded ?
                             <svg className="h-6 w-6 flex-none fill-green-500 stroke-white stroke-2"
                                  strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="11"/>

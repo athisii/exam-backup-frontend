@@ -1,8 +1,9 @@
 "use client"
 
-import React, {Suspense, useState} from "react";
-import {ExamSlot, FileType} from "@/types/types";
+import React, {Suspense, useEffect, useState} from "react";
+import {ExamSlot, FileType, IExamFile} from "@/types/types";
 import ExamFileContainer from "@/components/exam-file-container";
+import {fetchExamFile} from "@/app/actions";
 
 
 interface MainProps {
@@ -24,6 +25,17 @@ const MainSection: React.FC<MainProps> = ({examSlots, fileTypes}) => {
 
     const [examDate, setExamDate] = useState<string>(returnInHtmlInputDateFormat(today));
     const [examSlotId, setExamSlotId] = useState<number>(1);
+    const [examFiles, setExamFiles] = useState<IExamFile[]>([]);
+
+
+    const fetchExamFiles = async () => {
+        const resExamFiles = await fetchExamFile(examSlotId, examDate);
+        setExamFiles(resExamFiles);
+    }
+
+    useEffect(() => {
+        fetchExamFiles()
+    }, [examDate, examSlotId])
 
     return (
         <>
@@ -41,8 +53,12 @@ const MainSection: React.FC<MainProps> = ({examSlots, fileTypes}) => {
                                 key={examSlot.id}>{examSlot.id}</option>))}
                 </select>
             </div>
-            <Suspense fallback={<p>Loading....</p>}>
-                <ExamFileContainer examDate={examDate} examSlotId={examSlotId} fileTypes={fileTypes}/>
+            < Suspense fallback={<p>Loading....</p>}>
+                <ExamFileContainer examDate={examDate}
+                                   examSlotId={examSlotId}
+                                   fileTypes={fileTypes}
+                                   examFiles={examFiles}
+                />
             </Suspense>
         </>
     );

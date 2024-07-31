@@ -25,6 +25,7 @@ export interface IdentityContext {
 export interface IExamFile {
     fileSize: number,
     userUploadedFilename: string,
+    examDate: Date,
     examCentre: {
         id: number
     },
@@ -58,6 +59,11 @@ export interface IExamCentre {
     id: number,
     name: string,
     code: string,
+}
+
+export interface FormUploadActionRes {
+    status: boolean,
+    previousComplement: boolean
 }
 
 export type SortOrder = "ASC" | "DESC"

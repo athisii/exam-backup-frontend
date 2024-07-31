@@ -49,7 +49,8 @@ export default async function Page() {
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
                 <Header examCentre={examCentreApiRes.data[0]}/>
-                <MainSection examSlots={slotsApiRes.data} fileTypes={fileTypesApiRes.data}/>
+                <MainSection examSlots={slotsApiRes.data}
+                             fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>
     );
