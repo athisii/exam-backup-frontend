@@ -7,7 +7,7 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
-    if (req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/admin") {
+    if (req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/(admin)") {
         const cookieStore = cookies()
         const token = cookieStore.get("token")
         if (!token || token.value.split(":").length < 3) {

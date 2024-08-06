@@ -25,6 +25,7 @@ export interface IdentityContext {
 export interface IExamFile {
     fileSize: number,
     userUploadedFilename: string,
+    filePath: string
     examDate: Date,
     examCentre: {
         id: number
