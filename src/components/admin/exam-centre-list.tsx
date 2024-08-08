@@ -1,7 +1,10 @@
+"use client"
+
 import React, {useEffect, useState} from 'react';
 import {IExamCentre, Region, SortOrder} from "@/types/types";
 import {fetchExamCentresByRegion} from "@/app/admin/actions";
 import Link from "next/link";
+import {Pagination} from "@nextui-org/pagination";
 
 
 const ExamCentreList = ({region}: {
@@ -9,28 +12,20 @@ const ExamCentreList = ({region}: {
 }) => {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
-    const [pageNumber, setPageNumber] = useState<number>(0)
+    const [search, setSearch] = useState<string>("")
+    const [totalPages, setTotalPages] = useState<number>(1)
     const [sortBy, setSortBy] = useState<string>("code")
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC")
 
-    useEffect(() => {
-        const updateExamCentresOnUi = async () => {
-            const resExamCentres = await fetchExamCentresByRegion(pageNumber, region.id, sortBy, sortOrder);
-            setExamCentres(resExamCentres);
-        }
-        updateExamCentresOnUi()
-
-    }, [])
+    const fetchExamCentres = async (page: number) => {
+        const apiResponsePage = await fetchExamCentresByRegion(page, region.id, sortBy, sortOrder);
+        setExamCentres(apiResponsePage.items);
+        setTotalPages(apiResponsePage.totalPages)
+    }
 
     useEffect(() => {
-        const updateExamCentresOnUi = async () => {
-            const resExamCentres = await fetchExamCentresByRegion(pageNumber, region.id, sortBy, sortOrder);
-            setExamCentres(resExamCentres);
-        }
-        updateExamCentresOnUi()
-
+        fetchExamCentres(0);
     }, [region])
-
 
     return (
         <div className='grid justify-center items-center'>
@@ -48,7 +43,7 @@ const ExamCentreList = ({region}: {
                        className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md w-full bg-gray-50"
                        placeholder="Search by exam centre code or name"/>
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div className=" shadow-md">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
@@ -69,17 +64,17 @@ const ExamCentreList = ({region}: {
                             <tr key={examCentre.id}
                                 className="bg-white border-b hover:bg-gray-50"
                                 onClick={event => console.log(event.target)}>
-                                <td className="px-6 py-4">
+                                <td className="px-6 py-4 text-center">
                                     <Link href={`/admin/exam-centres/${examCentre.code}`}>
                                         {examCentre.code}
                                     </Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
                                         {examCentre.name}
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-6 py-4 text-center">
                                     True
                                 </td>
                             </tr>
@@ -88,6 +83,14 @@ const ExamCentreList = ({region}: {
                     </tbody>
                 </table>
             </div>
+            <div className="flex justify-center p-3">
+                <Pagination key={region.id} showControls
+                            color="success"
+                            total={totalPages}
+                            initialPage={1}
+                            onChange={page => fetchExamCentres(page - 1)}/>
+            </div>
+
         </div>
     );
 };

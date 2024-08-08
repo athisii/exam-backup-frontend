@@ -20,7 +20,6 @@ export async function sendGetRequest(url: string, token: string): Promise<ApiRes
     if (!apiRes.status) {
         throw new Error(`API-${url} response status: false`)
     }
-
     return apiRes;
 }
 
@@ -44,6 +43,5 @@ export async function sendPostRequest(url: string, token: string, body: {}): Pro
     if (!apiRes.status) {
         throw new Error(`API-${url} response status: false`)
     }
-
     return apiRes;
 }

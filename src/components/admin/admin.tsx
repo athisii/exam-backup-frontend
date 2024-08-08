@@ -11,13 +11,13 @@ const Admin = ({regions}: {
     const [region, setRegion] = useState<Region>(regions[0]);
 
     const handleRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedRegion = regions.find(region => region.name === event.target.value) as Region
+        const selectedRegion = regions.find(region => region.name === event.target.value) as Region;
         setRegion(selectedRegion);
     }
 
     return (
         <main className="flex justify-center font-[sans-serif]">
-            <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[60vw]">
+            <div className="flex h-screen w-full flex-col items-center gap-1 bg-gray-50 shadow-lg sm:w-[60vw]">
                 <div className='flex bg-blue-500 w-full justify-between p-2 text-white'>
                     <h2>EXAM CENTRES</h2>
                     <div className='flex gap-0.5'>

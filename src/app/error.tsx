@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from 'react';
 
-const ErrorPage = ({error, reset}: {
+const Error = ({error, reset}: {
     error: Error & { digest?: string },
     reset: () => void
 }) => {
@@ -43,4 +43,4 @@ const ErrorPage = ({error, reset}: {
         ;
 };
 
-export default ErrorPage;
+export default Error;

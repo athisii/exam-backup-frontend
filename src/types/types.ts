@@ -4,6 +4,12 @@ export interface ApiResponse {
     data?: any
 }
 
+export interface ApiResponsePage {
+    page: number,
+    totalPages: number,
+    items: any[]
+}
+
 export interface TokenClaims {
     "sub": string,
     "iss": string,

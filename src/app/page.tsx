@@ -3,6 +3,7 @@ import {redirect} from "next/navigation";
 import React from "react";
 import Header from "@/components/header";
 import {sendGetRequest} from "@/utils/api";
+import {ApiResponsePage} from "@/types/types";
 import MainSection from "@/components/main-section";
 
 
@@ -21,17 +22,10 @@ export default async function Page() {
     if (!idContext.authenticated) {
         redirect("/login")
     }
-    // if admin tries to access home page(/) of user then redirect to /admin as admin has different home page
+    // if admin tries to access home apiResponsePage(/) of user then redirect to /admin as admin has different home apiResponsePage
     if (idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/admin")
     }
-    // use try-catch block / just show error page -- fails when server is down.
-    // fetch exam centre based on examCentreCode
-    // check if exam centre exists
-    // what error to display if not exists?
-    // fetch slots list, file types
-    // fetch exam files based on examCentreCode, date, slot, etc
-
 
     const examCentreCode = idContext.tokenClaims?.sub as string
     const token = idContext.token as string;
@@ -50,13 +44,14 @@ export default async function Page() {
         sendGetRequest(fileTypesUrl, token),
     ]);
 
-    if (examCentreApiRes.data.length === 0) {
+    const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
+    if (apiResponsePage.totalPages === 0) {
         throw new Error("Exam centre not found");
     }
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <Header examCentre={examCentreApiRes.data[0]}/>
+                <Header examCentre={apiResponsePage.items[0]}/>
                 <MainSection examCentreCode={examCentreCode}
                              examSlots={slotsApiRes.data}
                              fileTypes={fileTypesApiRes.data}/>

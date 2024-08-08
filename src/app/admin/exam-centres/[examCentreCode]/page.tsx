@@ -4,6 +4,7 @@ import React from "react";
 import Header from "@/components/header";
 import {sendGetRequest} from "@/utils/api";
 import AdminMainSection from "@/components/admin/admin-main-section";
+import {ApiResponsePage} from "@/types/types";
 
 interface Props {
     params: {
@@ -22,13 +23,6 @@ export default async function Page({params}: Props) {
     if (!idContext.authenticated) {
         redirect("/login")
     }
-    // use try-catch block / just show error page -- fails when server is down.
-    // fetch exam centre based on examCentreCode
-    // check if exam centre exists
-    // what error to display if not exists?
-    // fetch slots list, file types
-    // fetch exam files based on examCentreCode, date, slot, etc
-
 
     const token = idContext.token as string;
 
@@ -46,13 +40,14 @@ export default async function Page({params}: Props) {
         sendGetRequest(fileTypesUrl, token),
     ]);
 
-    if (examCentreApiRes.data.length === 0) {
+    const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
+    if (apiResponsePage.totalPages === 0) {
         throw new Error("Exam centre not found");
     }
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <Header examCentre={examCentreApiRes.data[0]}/>
+                <Header examCentre={apiResponsePage.items[0]}/>
                 <AdminMainSection examCentreCode={params.examCentreCode}
                                   examSlots={slotsApiRes.data}
                                   fileTypes={fileTypesApiRes.data}/>
