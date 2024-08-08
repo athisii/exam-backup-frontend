@@ -49,7 +49,7 @@ export async function uploadFile(formData: FormData) {
 
 }
 
-export async function fetchExamFile(selectedSlotId: number, examDate: string): Promise<IExamFile[]> {
+export async function fetchExamFile(examCentreCode: string, selectedSlotId: number, examDate: string): Promise<IExamFile[]> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -57,7 +57,6 @@ export async function fetchExamFile(selectedSlotId: number, examDate: string): P
 
     let url = `${API_URL}/exam-files/search`;
     const token = idContext.token as string;
-    const examCentreCode = idContext.tokenClaims?.sub as string;
     const apiRes: ApiResponse = await sendPostRequest(url, token, {
         examCentreCode,
         examSlotId: selectedSlotId,

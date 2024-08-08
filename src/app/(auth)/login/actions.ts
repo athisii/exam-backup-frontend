@@ -7,24 +7,30 @@ import {encrypt, EncryptedData} from "@/utils/crypto";
 import {getClaims} from "@/utils/jwt";
 
 const API_URL = process.env.API_URL;
+const ADMIN_ROLE_CODE_STR = process.env.ADMIN_ROLE_CODE
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
+if (!ADMIN_ROLE_CODE_STR) {
+    throw new Error('ADMIN_ROLE_CODE environment variable is not set');
+}
+const ADMIN_ROLE_CODE = Number.parseInt(ADMIN_ROLE_CODE_STR, 10)
 
 export async function login(state: { message: string }, formData: FormData) {
     /*
     a. call login api
         if auth passed:
             1. encrypt the token returned from api
-            2. revalidate api login path
-            3. set in cookie.next
-            4. redirect to home page
+            2. set encrypted token in cookie
+            3. redirect to home page
         else:
-            1. send error message
+            1. display error message
      */
 
     let url = `${API_URL}/login`;
     let firstTimeLogin = false;
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
 
     // fetch might throw connection refused/timeout
     const response = await fetch(url, {
@@ -32,7 +38,7 @@ export async function login(state: { message: string }, formData: FormData) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({username: formData.get("username"), password: formData.get("password")}),
+        body: JSON.stringify({username, password}),
         cache: "no-store",
     });
 
@@ -83,5 +89,11 @@ export async function login(state: { message: string }, formData: FormData) {
     if (firstTimeLogin) {
         redirect("/change-password"); // throws error internally so cant used in try-catch block
     }
+
+    const isAdmin = claims.permissions.includes(ADMIN_ROLE_CODE)
+    if (isAdmin) {
+        redirect("/admin"); // throws error internally so cant used in try-catch block
+    }
+
     redirect("/"); // throws error internally so cant used in try-catch block
 }

@@ -7,15 +7,23 @@ import MainSection from "@/components/main-section";
 
 
 const API_URL = process.env.API_URL;
+const ADMIN_ROLE_CODE_STR = process.env.ADMIN_ROLE_CODE
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
-
+if (!ADMIN_ROLE_CODE_STR) {
+    throw new Error('ADMIN_ROLE_CODE environment variable is not set');
+}
+const ADMIN_ROLE_CODE = Number.parseInt(ADMIN_ROLE_CODE_STR, 10)
 
 export default async function Page() {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
+    }
+    // if admin tries to access home page(/) of user then redirect to /admin as admin has different home page
+    if (idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
+        redirect("/admin")
     }
     // use try-catch block / just show error page -- fails when server is down.
     // fetch exam centre based on examCentreCode
@@ -49,7 +57,8 @@ export default async function Page() {
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
                 <Header examCentre={examCentreApiRes.data[0]}/>
-                <MainSection examSlots={slotsApiRes.data}
+                <MainSection examCentreCode={examCentreCode}
+                             examSlots={slotsApiRes.data}
                              fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>

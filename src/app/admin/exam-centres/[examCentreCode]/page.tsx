@@ -30,7 +30,6 @@ export default async function Page({params}: Props) {
     // fetch exam files based on examCentreCode, date, slot, etc
 
 
-    const examCentreCode = idContext.tokenClaims?.sub as string
     const token = idContext.token as string;
 
     // fetch exam centre details
@@ -54,7 +53,8 @@ export default async function Page({params}: Props) {
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
                 <Header examCentre={examCentreApiRes.data[0]}/>
-                <AdminMainSection examSlots={slotsApiRes.data}
+                <AdminMainSection examCentreCode={params.examCentreCode}
+                                  examSlots={slotsApiRes.data}
                                   fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>

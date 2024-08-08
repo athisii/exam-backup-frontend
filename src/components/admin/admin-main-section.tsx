@@ -7,6 +7,7 @@ import AdminExamFileContainer from "@/components/admin/admin-exam-file-container
 
 
 interface MainProps {
+    examCentreCode: string;
     examSlots: ExamSlot[];
     fileTypes: FileType[];
 }
@@ -18,7 +19,7 @@ const returnInHtmlInputDateFormat = (date: Date) => {
     return `${dateSplit[2]}-${twoDigitMonth}-${twoDigitDate}`;
 };
 
-const AdminMainSection: React.FC<MainProps> = ({examSlots, fileTypes}) => {
+const AdminMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {
     const today = new Date();
     const twoMonthsAgo = new Date();
     twoMonthsAgo.setMonth(today.getMonth() - 2);
@@ -29,7 +30,7 @@ const AdminMainSection: React.FC<MainProps> = ({examSlots, fileTypes}) => {
 
 
     const fetchExamFiles = async () => {
-        const resExamFiles = await fetchExamFile(examSlotId, examDate);
+        const resExamFiles = await fetchExamFile(examCentreCode, examSlotId, examDate);
         setExamFiles(resExamFiles);
     }
 

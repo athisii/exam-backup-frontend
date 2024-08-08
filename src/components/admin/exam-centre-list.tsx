@@ -69,13 +69,15 @@ const ExamCentreList = ({region}: {
                             <tr key={examCentre.id}
                                 className="bg-white border-b hover:bg-gray-50"
                                 onClick={event => console.log(event.target)}>
-                                <Link href={`/admin/exam-centres/${examCentre.code}`}>
-                                    <td className="px-6 py-4">
-                                        {examCentre.code}
-                                    </td>
-                                </Link>
                                 <td className="px-6 py-4">
-                                    {examCentre.name}
+                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                        {examCentre.code}
+                                    </Link>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                        {examCentre.name}
+                                    </Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     True
