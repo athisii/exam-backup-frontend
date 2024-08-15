@@ -30,7 +30,7 @@ const Admin = ({regions}: {
                         </select>
                     </div>
                 </div>
-                <ExamCentreList region={region}/>
+                <ExamCentreList key={region.id} region={region}/>
             </div>
         </main>
     );

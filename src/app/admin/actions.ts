@@ -34,3 +34,24 @@ export async function fetchExamCentresByRegion(pageNumber: number, regionId: num
     const apiResponse = await sendGetRequest(url, token);
     return apiResponse.data as ApiResponsePage;
 }
+
+export async function searchExamCentresWithRegion(query: string, pageNumber: number, regionId: number, sortBy: string, sortOrder: SortOrder): Promise<ApiResponsePage> {
+    /*
+    // String examCentreCode, Long examSlotId, Long fileTypeId, examDate //examDate pattern -> "yyyy-MM-dd HH:mm a"
+    a. call save ExamFile api
+       1. Authorization: Bearer ${token}
+       2. Body --> multipart/form-data + examCentreCode + examSlotId +fileTypeId + examDate
+     */
+
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login")
+    }
+
+    let url = `${API_URL}/exam-centres/query?query=${query}&regionId=${regionId}&page=${pageNumber}&size=${PAGE_SIZE}&sort=${sortBy},${sortOrder}`;
+    const token = idContext.token as string;
+
+    // fetch might throw connection refused/timeout
+    const apiResponse = await sendGetRequest(url, token);
+    return apiResponse.data as ApiResponsePage;
+}

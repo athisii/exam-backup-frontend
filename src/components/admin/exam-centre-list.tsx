@@ -1,24 +1,46 @@
 "use client"
 
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {IExamCentre, Region, SortOrder} from "@/types/types";
-import {fetchExamCentresByRegion} from "@/app/admin/actions";
+import {fetchExamCentresByRegion, searchExamCentresWithRegion} from "@/app/admin/actions";
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
-
+import useDebounce from "@/hooks/useDebounce";
 
 const ExamCentreList = ({region}: {
     region: Region
 }) => {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
-    const [search, setSearch] = useState<string>("")
+    const [searchTerm, setSearchTerm] = useState<string>("")
     const [totalPages, setTotalPages] = useState<number>(1)
     const [sortBy, setSortBy] = useState<string>("code")
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC")
+    const debouncedSearchTerm = useDebounce(searchTerm);
+
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            searchExamCentres(0)
+        }
+    }, [debouncedSearchTerm]);
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        let value = event.target.value;
+        setSearchTerm(value);
+        // empty searchTerm
+        if (!value) {
+            fetchExamCentres(0);
+        }
+    };
 
     const fetchExamCentres = async (page: number) => {
         const apiResponsePage = await fetchExamCentresByRegion(page, region.id, sortBy, sortOrder);
+        setExamCentres(apiResponsePage.items);
+        setTotalPages(apiResponsePage.totalPages)
+    }
+
+    const searchExamCentres = async (page: number) => {
+        const apiResponsePage = await searchExamCentresWithRegion(debouncedSearchTerm, page, region.id, sortBy, sortOrder);
         setExamCentres(apiResponsePage.items);
         setTotalPages(apiResponsePage.totalPages)
     }
@@ -39,9 +61,12 @@ const ExamCentreList = ({region}: {
                               clipRule="evenodd"/>
                     </svg>
                 </div>
-                <input type="text" id="table-search"
+                <input type="text" id="search"
                        className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md w-full bg-gray-50"
-                       placeholder="Search by exam centre code or name"/>
+                       placeholder="Search by exam centre code or name"
+                       value={searchTerm}
+                       onChange={handleChange}
+                />
             </div>
             <div className=" shadow-md">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -84,13 +109,20 @@ const ExamCentreList = ({region}: {
                 </table>
             </div>
             <div className="flex justify-center p-3">
-                <Pagination key={region.id} showControls
+                <Pagination key={searchTerm}
+                            showControls
                             color="success"
                             total={totalPages}
                             initialPage={1}
-                            onChange={page => fetchExamCentres(page - 1)}/>
+                            onChange={page => {
+                                if (searchTerm) {
+                                    searchExamCentres(page - 1)
+                                } else {
+                                    fetchExamCentres(page - 1)
+                                }
+                            }
+                            }/>
             </div>
-
         </div>
     );
 };
