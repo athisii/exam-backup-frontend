@@ -66,6 +66,9 @@ export interface IExamCentre {
     id: number,
     name: string,
     code: string,
+    regionName: string,
+    totalFileCount: number,
+    uploadedFileCount: number
 }
 
 export interface FormUploadActionRes {

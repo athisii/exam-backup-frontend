@@ -6,6 +6,7 @@ import {fetchExamCentresByRegion, searchExamCentresWithRegion} from "@/app/admin
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
+import PieChart from "@/components/admin/pie-chart";
 
 const ExamCentreList = ({region}: {
     region: Region
@@ -19,6 +20,7 @@ const ExamCentreList = ({region}: {
     const debouncedSearchTerm = useDebounce(searchTerm);
 
     useEffect(() => {
+        // throw new Error("Error while searching.")
         if (debouncedSearchTerm) {
             searchExamCentres(0)
         }
@@ -79,7 +81,7 @@ const ExamCentreList = ({region}: {
                             Exam Centre Name
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Status
+                            Upload Status
                         </th>
                     </tr>
                     </thead>
@@ -100,7 +102,16 @@ const ExamCentreList = ({region}: {
                                     </Link>
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    True
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
+                                        <PieChart data={[
+                                            {
+                                                name: "notUploaded",
+                                                value: examCentre.totalFileCount - examCentre.uploadedFileCount
+                                            },
+                                            {name: "uploaded", value: examCentre.uploadedFileCount}
+                                        ]}/>
+                                    </Link>
+
                                 </td>
                             </tr>
                         ))
@@ -108,7 +119,7 @@ const ExamCentreList = ({region}: {
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-center p-3">
+            <div className="flex justify-center p-1">
                 <Pagination key={searchTerm}
                             showControls
                             color="success"
