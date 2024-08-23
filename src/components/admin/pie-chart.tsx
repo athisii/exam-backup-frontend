@@ -38,7 +38,6 @@ const renderCustomizedLabel = ({cx, cy, midAngle, innerRadius, outerRadius, perc
 };
 
 const PieChartComp: React.FC<PieCharProps> = ({data}) => {
-    console.log("data", data)
     return (
         <div className='flex flex-col items-center'>
             <div className="w-[24px] h-[24px]">

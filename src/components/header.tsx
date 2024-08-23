@@ -12,7 +12,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({examCentre: {regionName, name, code}}) => {
     return (
-        <div className="flex w-full items-center justify-between bg-blue-500 p-2">
+        <div className="flex w-full text-white items-center justify-between bg-blue-500 p-2">
             <h2>Region: {regionName}</h2>
             <h2>Exam Centre: {name}</h2>
             <h2>Code: {code}</h2>

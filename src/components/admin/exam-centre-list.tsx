@@ -70,45 +70,52 @@ const ExamCentreList = ({region}: {
                        onChange={handleChange}
                 />
             </div>
-            <div className=" shadow-md">
+            <div className="shadow-md">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-8 py-3">
+                            SN
+                        </th>
+                        <th scope="col" className="px-8 py-3">
                             Exam Centre Code
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-8 py-3">
                             Exam Centre Name
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-8 py-3">
                             Upload Status
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     {
-                        examCentres.map(examCentre => (
+                        examCentres.map((examCentre, index) => (
                             <tr key={examCentre.id}
-                                className="bg-white border-b hover:bg-gray-50"
-                                onClick={event => console.log(event.target)}>
-                                <td className="px-6 py-4 text-center">
+                                className="bg-white border-b hover:bg-gray-50">
+                                <td className="px-8 py-4 text-center">
+                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                        {index + 1}
+                                    </Link>
+                                </td>
+                                <td className="px-8 py-4 text-center">
                                     <Link href={`/admin/exam-centres/${examCentre.code}`}>
                                         {examCentre.code}
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-8 py-4">
                                     <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
                                         {examCentre.name}
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4 text-center">
+                                <td className="px-8 py-4 text-center">
                                     <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
                                         <PieChart data={[
                                             {
-                                                name: "notUploaded",
+                                                name: "Not Uploaded",
                                                 value: examCentre.totalFileCount - examCentre.uploadedFileCount
                                             },
-                                            {name: "uploaded", value: examCentre.uploadedFileCount}
+                                            {name: "Uploaded", value: examCentre.uploadedFileCount}
                                         ]}/>
                                     </Link>
 

@@ -24,14 +24,14 @@ const Error = ({error, reset}: {
                     fetchError ? (
                             <>
                                 <h1>Oops. It looks like the server is down.</h1>
-                                <button className='border border-1 bg-blue-500 p-2 rounded-md text-white'
+                                <button className='border-1 bg-blue-500 p-2 rounded-md text-white'
                                         onClick={reset}>Try again
                                 </button>
                             </>) :
                         <>
                             <h1>Something went wrong.</h1>
                             <h1>Please contact the system admin.</h1>
-                            <button className='border border-1 bg-blue-500 p-2 rounded-md text-white'
+                            <button className='border-1 bg-blue-500 p-2 rounded-md text-white'
                                     onClick={reset}>Try again
                             </button>
                         </>

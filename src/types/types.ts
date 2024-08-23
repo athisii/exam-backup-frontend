@@ -71,6 +71,15 @@ export interface IExamCentre {
     uploadedFileCount: number
 }
 
+export interface IExamSlot {
+    id: number,
+    active: boolean,
+    createdDate: Date,
+    modifiedDate: Date,
+    code: string,
+    name: string
+}
+
 export interface FormUploadActionRes {
     status: boolean,
     previousComplement: boolean
