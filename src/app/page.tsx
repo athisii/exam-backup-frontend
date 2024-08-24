@@ -31,7 +31,7 @@ export default async function Page() {
     const token = idContext.token as string;
 
     // fetch exam centre details
-    let examCentreUrl = `${API_URL}/exam-centres/search`;
+    let examCentreUrl = `${API_URL}/exam-centres/query`;
     // fetch exam slot list
     const examSlotsUrl = `${API_URL}/exam-slots`;
     // fetch exam file type list

@@ -27,7 +27,7 @@ export async function fetchExamCentresByRegion(pageNumber: number, regionId: num
         redirect("/login")
     }
 
-    let url = `${API_URL}/exam-centres/search?regionId=${regionId}&page=${pageNumber}&size=${PAGE_SIZE}&sort=${sortBy},${sortOrder}`;
+    let url = `${API_URL}/exam-centres/query?regionId=${regionId}&page=${pageNumber}&size=${PAGE_SIZE}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
@@ -35,7 +35,7 @@ export async function fetchExamCentresByRegion(pageNumber: number, regionId: num
     return apiResponse.data as ApiResponsePage;
 }
 
-export async function searchExamCentresWithRegion(query: string, pageNumber: number, regionId: number, sortBy: string, sortOrder: SortOrder): Promise<ApiResponsePage> {
+export async function searchExamCentresWithRegion(searchTerm: string, pageNumber: number, regionId: number, sortBy: string, sortOrder: SortOrder): Promise<ApiResponsePage> {
     /*
     // String examCentreCode, Long examSlotId, Long fileTypeId, examDate //examDate pattern -> "yyyy-MM-dd HH:mm a"
     a. call save ExamFile api
@@ -48,7 +48,7 @@ export async function searchExamCentresWithRegion(query: string, pageNumber: num
         redirect("/login")
     }
 
-    let url = `${API_URL}/exam-centres/query?query=${query}&regionId=${regionId}&page=${pageNumber}&size=${PAGE_SIZE}&sort=${sortBy},${sortOrder}`;
+    let url = `${API_URL}/exam-centres/search?searchTerm=${searchTerm}&regionId=${regionId}&page=${pageNumber}&size=${PAGE_SIZE}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout

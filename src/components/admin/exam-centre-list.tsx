@@ -64,7 +64,7 @@ const ExamCentreList = ({region}: {
                     </svg>
                 </div>
                 <input type="text" id="search"
-                       className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md w-full bg-gray-50"
+                       className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md w-full bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
                        placeholder="Search by exam centre code or name"
                        value={searchTerm}
                        onChange={handleChange}

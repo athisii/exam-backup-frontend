@@ -36,6 +36,26 @@ const ExamSlot = ({examSlot, index, changeEditExamSlotId, editExamSlotId}: ExamS
         }
     }, [edit, editExamSlotId, examSlot.id]);
 
+
+    const handleEditOrSaveClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        if (edit) {
+            setPreviousName(currentName)
+            setPreviousCode(currentCode)
+            setEdit(false);
+            changeEditExamSlotId(0);
+            // call save exam slot api
+            // if error show error notification in bottom right
+        } else {
+            setEdit(true);
+            changeEditExamSlotId(examSlot.id);
+        }
+    }
+
+    const handleDeleteClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        // call delete exam slot api
+        // if error show error notification in bottom right
+    }
+
     return (
         <tr key={examSlot.id} className="border-b">
             <td className="px-6 py-4 text-center">
@@ -73,19 +93,8 @@ const ExamSlot = ({examSlot, index, changeEditExamSlotId, editExamSlotId}: ExamS
                 <button
                     hidden={editExamSlotId !== 0 && editExamSlotId !== examSlot.id}
                     className={`border-1 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700 ${edit && "bg-blue-600"}`}
-                    onClick={event => {
-                        if (edit) {
-                            setPreviousName(currentName)
-                            setPreviousCode(currentCode)
-                            setEdit(false);
-                            changeEditExamSlotId(0);
-                            // call save exam slot api
-                            // if error show error notification in bottom right
-                        } else {
-                            setEdit(true);
-                            changeEditExamSlotId(examSlot.id);
-                        }
-                    }}>{editExamSlotId === examSlot.id && edit ? "Save" : "Edit"}
+                    onClick={handleEditOrSaveClick}>
+                    {editExamSlotId === examSlot.id && edit ? "Save" : "Edit"}
                 </button>
             </td>
             <td className="px-3 py-4">
@@ -100,7 +109,10 @@ const ExamSlot = ({examSlot, index, changeEditExamSlotId, editExamSlotId}: ExamS
                         >Cancel</button>
                         : <button
                             hidden={editExamSlotId !== 0}
-                            className={`py-2 px-4 rounded-md active:bg-red-700 ${editExamSlotId === 0 ? "text-white bg-red-500" : "bg-gray-100"}`}>Delete</button>
+                            className={`py-2 px-4 rounded-md active:bg-red-700 ${editExamSlotId === 0 ? "text-white bg-red-500" : "bg-gray-100"}`}
+                            onClick={handleDeleteClick}>
+                            Delete
+                        </button>
                 }
             </td>
         </tr>

@@ -55,7 +55,7 @@ export async function fetchExamFile(examCentreCode: string, selectedSlotId: numb
         redirect("/login")
     }
 
-    let url = `${API_URL}/exam-files/search`;
+    let url = `${API_URL}/exam-files/query`;
     const token = idContext.token as string;
     const apiRes: ApiResponse = await sendPostRequest(url, token, {
         examCentreCode,

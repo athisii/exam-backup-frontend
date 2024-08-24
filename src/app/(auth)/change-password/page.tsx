@@ -59,7 +59,7 @@ const ForgotPassword = () => {
                         <form className="space-y-4 md:space-y-6" action={action}>
                             <div>
                                 <input type="password" name="oldPassword" placeholder="Old password"
-                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:outline-none focus:ring-primary-300 block w-full p-2.5"
                                        required
                                        value={oldPassword}
                                        onChange={event => setOldPassword(event.target.value)}
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
                             </div>
                             <div>
                                 <input type="password" name="newPassword" placeholder="New password"
-                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:outline-none focus:ring-primary-300 block w-full p-2.5"
                                        required
                                        value={newPassword}
                                        onChange={event => setNewPassword(event.target.value)}
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
                             </div>
                             <div>
                                 <input type="password" name="confirmNewPassword" placeholder="Confirm new password"
-                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                       className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:outline-none focus:ring-primary-300 block w-full p-2.5"
                                        required
                                        value={confirmNewPassword}
                                        onChange={event => setConfirmNewPassword(event.target.value)}
