@@ -23,9 +23,9 @@ const Page = async () => {
         redirect("/")
     }
     const token = idContext.token as string;
-    const regionUrl = `${API_URL}/regions`;
+    const fileTypesUrl = `${API_URL}/file-types`;
 
-    const regionsApiRes: ApiResponse = await sendGetRequest(regionUrl, token);
+    const fileTypesApiRes: ApiResponse = await sendGetRequest(fileTypesUrl, token);
 
     return (
         <>

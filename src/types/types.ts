@@ -86,3 +86,4 @@ export interface FormUploadActionRes {
 }
 
 export type SortOrder = "ASC" | "DESC"
+export type UploadStatusFilterType = "DEFAULT" | "UPLOADED" | "NOT_UPLOADED"

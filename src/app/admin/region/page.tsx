@@ -23,14 +23,14 @@ const Page = async () => {
         redirect("/")
     }
     const token = idContext.token as string;
-    const examDatesUrl = `${API_URL}/exam-dates`;
+    const regionUrl = `${API_URL}/regions`;
 
-    const examDatesApiRes: ApiResponse = await sendGetRequest(examDatesUrl, token);
+    const regionsApiRes: ApiResponse = await sendGetRequest(regionUrl, token);
 
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                <h1>Exam Centre</h1>
+                <h1>Region</h1>
             </div>
         </>
     );

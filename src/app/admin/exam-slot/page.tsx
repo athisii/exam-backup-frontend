@@ -2,7 +2,7 @@ import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import {sendGetRequest} from "@/utils/api";
-import {ApiResponse} from "@/types/types";
+import {ApiResponse, ApiResponsePage} from "@/types/types";
 import ExamSlotContainer from "@/components/admin/exam-slot-container";
 
 const API_URL = process.env.API_URL;
@@ -23,16 +23,12 @@ const Page = async () => {
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-    const token = idContext.token as string;
-    const examSlots = `${API_URL}/exam-slots`;
-    const examSlotsApiRes: ApiResponse = await sendGetRequest(examSlots, token);
-
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
                 <h2>EXAM SLOT</h2>
             </div>
-            <ExamSlotContainer examSlots={examSlotsApiRes.data}/>
+            <ExamSlotContainer />
         </>
     );
 };

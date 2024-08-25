@@ -5,6 +5,7 @@ import React from "react";
 import {usePathname} from "next/navigation";
 
 const adminRoute = "/admin";
+const regionRoute = "/admin/region";
 const examSlotRoute = "/admin/exam-slot";
 const fileTypeRoute = "/admin/file-type";
 const examDateRoute = "/admin/exam-date";
@@ -19,6 +20,11 @@ export default function NavLink() {
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === adminRoute && activeLinkColor}`}
                 href={adminRoute}>
                 Home
+            </Link>
+            <Link
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === regionRoute && activeLinkColor}`}
+                href={regionRoute}>
+                Region
             </Link>
             <Link
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === examSlotRoute && activeLinkColor}`}
