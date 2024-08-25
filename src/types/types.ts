@@ -15,7 +15,7 @@ export interface TokenClaims {
     "iss": string,
     "iat": number,
     "exp": number,
-    "permissions": number[],
+    "permissions": string[],
     "id": number,
     "name": string,
     "key": string | null
