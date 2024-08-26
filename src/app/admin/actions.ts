@@ -2,7 +2,7 @@
 
 import {redirect} from "next/navigation";
 import identityContext from "@/utils/session";
-import {ApiResponsePage, SortOrder, UploadStatusFilterType} from "@/types/types";
+import {ApiResponse, SortOrder, UploadStatusFilterType} from "@/types/types";
 import {sendGetRequest} from "@/utils/api";
 
 const API_URL = process.env.API_URL as string
@@ -15,7 +15,7 @@ if (!ADMIN_ROLE_CODE) {
 }
 
 
-export async function fetchExamCentresByRegion(pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponsePage> {
+export async function fetchExamCentresByRegion(pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -28,11 +28,10 @@ export async function fetchExamCentresByRegion(pageNumber: number, pageSize: num
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    const apiResponse = await sendGetRequest(url, token);
-    return apiResponse.data as ApiResponsePage;
+    return await sendGetRequest(url, token);
 }
 
-export async function searchExamCentresWithRegion(searchTerm: string, pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponsePage> {
+export async function searchExamCentresWithRegion(searchTerm: string, pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -44,11 +43,10 @@ export async function searchExamCentresWithRegion(searchTerm: string, pageNumber
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    const apiResponse = await sendGetRequest(url, token);
-    return apiResponse.data as ApiResponsePage;
+    return await sendGetRequest(url, token);
 }
 
-export async function filterExamCentresWithSearchTermAndRegion(searchTerm: string, filterType: UploadStatusFilterType, pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponsePage> {
+export async function filterExamCentresWithSearchTermAndRegion(searchTerm: string, filterType: UploadStatusFilterType, pageNumber: number, pageSize: number = 11, regionId: number, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -61,6 +59,5 @@ export async function filterExamCentresWithSearchTermAndRegion(searchTerm: strin
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    const apiResponse = await sendGetRequest(url, token);
-    return apiResponse.data as ApiResponsePage;
+    return await sendGetRequest(url, token);
 }

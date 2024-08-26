@@ -1,10 +1,10 @@
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import React from "react";
-import Header from "@/components/header";
 import {sendGetRequest} from "@/utils/api";
-import AdminMainSection from "@/components/admin/admin-main-section";
+import ExamCentreUploadDetailsMainSection from "@/components/admin/exam-centre-upload-details-main-section";
 import {ApiResponsePage} from "@/types/types";
+import ExamCentreUploadDetailsHeader from "@/components/admin/exam-centre-upload-details-header";
 
 
 interface Props {
@@ -35,7 +35,7 @@ export default async function Page({params}: Props) {
     const token = idContext.token as string;
 
     // fetch exam centre details
-    let examCentreUrl = `${API_URL}/exam-centres/search`;
+    let examCentreUrl = `${API_URL}/exam-centres/query?code=${params.examCentreCode}`;
     // fetch exam slot list
     const examSlotsUrl = `${API_URL}/exam-slots`;
     // fetch exam file type list
@@ -43,10 +43,23 @@ export default async function Page({params}: Props) {
 
     // Fetch concurrently
     const [examCentreApiRes, slotsApiRes, fileTypesApiRes] = await Promise.all([
-        sendGetRequest(`${examCentreUrl}?code=${params.examCentreCode}`, token),
+        sendGetRequest(examCentreUrl, token),
         sendGetRequest(examSlotsUrl, token),
         sendGetRequest(fileTypesUrl, token),
     ]);
+
+    if (!examCentreApiRes.status) {
+        console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
+        throw new Error("Error fetching exam centre.");
+    }
+    if (!slotsApiRes.status || slotsApiRes.data.length === 0) {
+        console.log(`error: status=${slotsApiRes.status}, message=${slotsApiRes.message}`);
+        throw new Error("Error fetching exam slots.");
+    }
+    if (!fileTypesApiRes.status || fileTypesApiRes.data.length === 0) {
+        console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
+        throw new Error("Error fetching file types.");
+    }
 
     const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
     if (apiResponsePage.totalPages === 0) {
@@ -55,10 +68,10 @@ export default async function Page({params}: Props) {
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <Header examCentre={apiResponsePage.items[0]}/>
-                <AdminMainSection examCentreCode={params.examCentreCode}
-                                  examSlots={slotsApiRes.data}
-                                  fileTypes={fileTypesApiRes.data}/>
+                <ExamCentreUploadDetailsHeader examCentre={apiResponsePage.items[0]}/>
+                <ExamCentreUploadDetailsMainSection examCentreCode={params.examCentreCode}
+                                                    examSlots={slotsApiRes.data}
+                                                    fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>
     );

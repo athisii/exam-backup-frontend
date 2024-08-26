@@ -1,9 +1,10 @@
 "use client"
 
 import React, {Suspense, useEffect, useState} from "react";
-import {ExamSlot, FileType, IExamFile} from "@/types/types";
-import {fetchExamFile} from "@/app/actions";
+import {ApiResponse, ExamSlot, FileType, IExamFile} from "@/types/types";
+import {fetchExamFiles} from "@/app/actions";
 import AdminExamFileContainer from "@/components/admin/admin-exam-file-container";
+import {returnInHtmlInputDateFormat} from "@/utils/date-util";
 
 
 interface MainProps {
@@ -12,14 +13,7 @@ interface MainProps {
     fileTypes: FileType[];
 }
 
-const returnInHtmlInputDateFormat = (date: Date) => {
-    const dateSplit = date.toLocaleDateString().split("/");
-    const twoDigitMonth = dateSplit[0].length === 1 ? "0" + dateSplit[0] : dateSplit[0]
-    const twoDigitDate = dateSplit[1].length === 1 ? "0" + dateSplit[1] : dateSplit[1]
-    return `${dateSplit[2]}-${twoDigitMonth}-${twoDigitDate}`;
-};
-
-const AdminMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {
+const ExamCentreUploadDetailsMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {
     const today = new Date();
     const twoMonthsAgo = new Date();
     twoMonthsAgo.setMonth(today.getMonth() - 2);
@@ -29,13 +23,17 @@ const AdminMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileT
     const [examFiles, setExamFiles] = useState<IExamFile[]>([]);
 
 
-    const fetchExamFiles = async () => {
-        const resExamFiles = await fetchExamFile(examCentreCode, examSlotId, examDate);
-        setExamFiles(resExamFiles);
+    const fetchExamFilesOnValueChanged = async () => {
+        const apiResponse: ApiResponse = await fetchExamFiles(examCentreCode, examSlotId, examDate);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam files.");
+        }
+        setExamFiles(apiResponse.data);
     }
 
     useEffect(() => {
-        fetchExamFiles()
+        fetchExamFilesOnValueChanged()
     }, [examDate, examSlotId])
 
     return (
@@ -65,4 +63,4 @@ const AdminMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileT
     );
 }
 
-export default AdminMainSection
+export default ExamCentreUploadDetailsMainSection

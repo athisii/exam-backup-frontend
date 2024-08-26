@@ -2,7 +2,6 @@ import "server-only"
 
 import {ApiResponse} from "@/types/types";
 
-// throws error if response status code is not 200 and response status if false.
 export async function sendGetRequest(url: string, token: string): Promise<ApiResponse> {
     const response = await fetch(url, {
         headers: {
@@ -11,19 +10,9 @@ export async function sendGetRequest(url: string, token: string): Promise<ApiRes
         },
         cache: "no-store",
     });
-
-    if (!response.ok) {
-        throw new Error(`API-${url} response status code: ${response.status}`);
-    }
-
-    const apiRes = await response.json();
-    if (!apiRes.status) {
-        throw new Error(`API-${url} response status: false`)
-    }
-    return apiRes;
+    return await response.json();
 }
 
-// throws error if response status code is not 200 and response status if false.
 export async function sendPostRequest(url: string, token: string, body: {}): Promise<ApiResponse> {
     const response = await fetch(url, {
         method: 'POST',
@@ -34,14 +23,5 @@ export async function sendPostRequest(url: string, token: string, body: {}): Pro
         cache: "no-store",
         body: JSON.stringify(body)
     });
-
-    if (!response.ok) {
-        throw new Error(`API-${url} response status code: ${response.status}`);
-    }
-
-    const apiRes = await response.json();
-    if (!apiRes.status) {
-        throw new Error(`API-${url} response status: false`)
-    }
-    return apiRes;
+    return await response.json();
 }

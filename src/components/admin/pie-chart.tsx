@@ -40,7 +40,7 @@ const renderCustomizedLabel = ({cx, cy, midAngle, innerRadius, outerRadius, perc
 const PieChartComp: React.FC<PieCharProps> = ({data}) => {
     return (
         <div className='flex flex-col items-center'>
-            <div className="w-[24px] h-[24px]">
+            <div className="sm:w-[24px] sm:h-[24px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart width={24} height={24}>
                         <Tooltip/>

@@ -3,7 +3,7 @@
 import {redirect} from "next/navigation";
 import identityContext from "@/utils/session";
 import {sendPostRequest} from "@/utils/api";
-import {ApiResponse, IExamFile} from "@/types/types";
+import {ApiResponse} from "@/types/types";
 
 const API_URL = process.env.API_URL;
 if (!API_URL) {
@@ -13,13 +13,6 @@ if (!API_URL) {
 const defaultTime = " 10:30" // time also expected to be sent to the server
 
 export async function uploadFile(formData: FormData) {
-    /*
-    // String examCentreCode, Long examSlotId, Long fileTypeId, examDate //examDate pattern -> "yyyy-MM-dd HH:mm a"
-    a. call save ExamFile api
-       1. Authorization: Bearer ${token}
-       2. Body --> multipart/form-data + examCentreCode + examSlotId +fileTypeId + examDate
-     */
-
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -49,7 +42,7 @@ export async function uploadFile(formData: FormData) {
 
 }
 
-export async function fetchExamFile(examCentreCode: string, selectedSlotId: number, examDate: string): Promise<IExamFile[]> {
+export async function fetchExamFiles(examCentreCode: string, selectedSlotId: number, examDate: string): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -57,11 +50,11 @@ export async function fetchExamFile(examCentreCode: string, selectedSlotId: numb
 
     let url = `${API_URL}/exam-files/query`;
     const token = idContext.token as string;
-    const apiRes: ApiResponse = await sendPostRequest(url, token, {
+
+    return await sendPostRequest(url, token, {
         examCentreCode,
         examSlotId: selectedSlotId,
         examDate: examDate + defaultTime,
 
     });
-    return apiRes.data;
 }

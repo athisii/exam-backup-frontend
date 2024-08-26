@@ -1,10 +1,10 @@
 "use client"
 
 import React, {useState} from 'react';
-import ExamCentreList from "@/components/admin/exam-centre-list";
+import ExamCentreContainer from "@/components/admin/exam-centre-container";
 import {Region} from "@/types/types";
 
-const Admin = ({regions}: {
+const AdminHome = ({regions}: {
     regions: Region[]
 }) => {
     // sync state between header and body
@@ -29,9 +29,9 @@ const Admin = ({regions}: {
                     </select>
                 </div>
             </div>
-            <ExamCentreList key={region.id} region={region}/>
+            <ExamCentreContainer key={region.id} region={region}/>
         </>
     );
 };
 
-export default Admin;
+export default AdminHome;

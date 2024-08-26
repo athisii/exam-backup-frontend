@@ -1,10 +1,10 @@
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import React from "react";
-import Header from "@/components/header";
 import {sendGetRequest} from "@/utils/api";
 import {ApiResponsePage} from "@/types/types";
-import MainSection from "@/components/main-section";
+import UserMainSection from "@/components/user-main-section";
+import UserHeader from "@/components/user-header";
 
 
 const API_URL = process.env.API_URL as string
@@ -43,6 +43,19 @@ export default async function Page() {
         sendGetRequest(fileTypesUrl, token),
     ]);
 
+    if (!examCentreApiRes.status) {
+        console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
+        throw new Error("Error fetching exam centres.");
+    }
+    if (!slotsApiRes.status || slotsApiRes.data.length === 0) {
+        console.log(`error: status=${slotsApiRes.status}, message=${slotsApiRes.message}`);
+        throw new Error("Error fetching exam slots.");
+    }
+    if (!fileTypesApiRes.status || fileTypesApiRes.data.length === 0) {
+        console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
+        throw new Error("Error fetching file types.");
+    }
+
     const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
     if (apiResponsePage.totalPages === 0) {
         throw new Error("Exam centre not found");
@@ -50,10 +63,10 @@ export default async function Page() {
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <Header examCentre={apiResponsePage.items[0]}/>
-                <MainSection examCentreCode={examCentreCode}
-                             examSlots={slotsApiRes.data}
-                             fileTypes={fileTypesApiRes.data}/>
+                <UserHeader examCentre={apiResponsePage.items[0]}/>
+                <UserMainSection examCentreCode={examCentreCode}
+                                 examSlots={slotsApiRes.data}
+                                 fileTypes={fileTypesApiRes.data}/>
             </div>
         </main>
     );

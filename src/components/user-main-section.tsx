@@ -1,9 +1,9 @@
 "use client"
 
 import React, {Suspense, useEffect, useState} from "react";
-import {ExamSlot, FileType, IExamFile} from "@/types/types";
+import {ApiResponse, ExamSlot, FileType, IExamFile} from "@/types/types";
 import ExamFileContainer from "@/components/exam-file-container";
-import {fetchExamFile} from "@/app/actions";
+import {fetchExamFiles} from "@/app/actions";
 
 
 interface MainProps {
@@ -12,35 +12,39 @@ interface MainProps {
     fileTypes: FileType[];
 }
 
-const returnInHtmlInputDateFormat = (date: Date) => {
+const returnInHtmlInputDateFormat = (date: Date): string => {
     const dateSplit = date.toLocaleDateString().split("/");
     const twoDigitMonth = dateSplit[0].length === 1 ? "0" + dateSplit[0] : dateSplit[0]
     const twoDigitDate = dateSplit[1].length === 1 ? "0" + dateSplit[1] : dateSplit[1]
     return `${dateSplit[2]}-${twoDigitMonth}-${twoDigitDate}`;
 };
 
-const MainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {
+const UserMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {
     const today = new Date();
     const twoMonthsAgo = new Date();
     twoMonthsAgo.setMonth(today.getMonth() - 2);
 
     const [examDate, setExamDate] = useState<string>(returnInHtmlInputDateFormat(today));
-    const [examSlotId, setExamSlotId] = useState<number>(1);
+    const [examSlotId, setExamSlotId] = useState(1);
     const [examFiles, setExamFiles] = useState<IExamFile[]>([]);
 
 
-    const fetchExamFiles = async () => {
-        const resExamFiles = await fetchExamFile(examCentreCode, examSlotId, examDate);
-        setExamFiles(resExamFiles);
+    const fetchExamFilesOnValueChange = async () => {
+        const apiResponse: ApiResponse = await fetchExamFiles(examCentreCode, examSlotId, examDate);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam files.");
+        }
+        setExamFiles(apiResponse.data);
     }
 
     useEffect(() => {
-        fetchExamFiles()
+        fetchExamFilesOnValueChange()
     }, [examDate, examSlotId])
 
     return (
         <>
-            <div className='flex justify-end p-1 gap-1'>
+            <div className='flex justify-end items-center p-1 gap-1'>
                 <label>Select Exam Date:</label>
                 <input type="date" name="examDate" value={examDate}
                        onChange={(event) => setExamDate(event.target.value)}
@@ -65,4 +69,4 @@ const MainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}
     );
 }
 
-export default MainSection
+export default UserMainSection

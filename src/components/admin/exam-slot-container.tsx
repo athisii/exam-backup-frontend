@@ -1,35 +1,113 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {IExamSlot} from "@/types/types";
+import {ApiResponsePage, IExamSlot} from "@/types/types";
 import ExamSlot from "@/components/admin/exam-slot";
-import {fetchExamSlotsByPage} from "@/app/admin/exam-slot/actions";
+import {fetchExamSlotsByPage, saveExamSlot} from "@/app/admin/exam-slot/actions";
 import {Pagination} from "@nextui-org/pagination";
-import Modal from "@/components/admin/DeleteModal";
+import Modal from "@/components/admin/modal";
+import SaveEditModal from "@/components/admin/save-edit-modal";
+
+const PAGE_SIZE = 8;
+type ActionType = "ADD" | "EDIT";
 
 const ExamSlotContainer = () => {
-    const [editExamSlotId, setEditExamSlotId] = useState<number>(0);
-    const [examSlots, setExamSlots] = useState<IExamSlot[]>([]);
-    const [totalPages, setTotalPages] = useState<number>(1)
+    //TODO; on save, delete success, show bottom notification
+    // on failure, stay on the modal
 
-    const [showAddModal, setShowAddModal] = useState<boolean>(false);
-    const [showEditSaveModal, setShowEditSaveModal] = useState<boolean>(false);
-    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState("")
+
+    const [selectedExamSlot, setSelectedExamSlot] = useState<IExamSlot>({code: "", name: ""} as IExamSlot);
+    const [examSlots, setExamSlots] = useState<IExamSlot[]>([]);
+    const [pageNumber, setPageNumber] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
+
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        // fetch exam slots from api
-        fetchExamSlots(0)
+        fetchExamSlots(0);
     }, []);
 
+    useEffect(() => {
+        setErrorMessage("");
+    }, [selectedExamSlot]);
+
+
     const fetchExamSlots = async (page: number) => {
-        const apiResponsePage = await fetchExamSlotsByPage(page);
-        setExamSlots(apiResponsePage.items)
-        setTotalPages(apiResponsePage.totalPages)
+        const apiResponse = await fetchExamSlotsByPage(page);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam slots.");
+        }
+        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
+        setExamSlots(apiResponsePage.items);
+        setTotalPages(apiResponsePage.totalPages);
+    }
+
+    const asyncSaveExamSlot = async (examSlot: IExamSlot, actionType: ActionType) => {
+        const apiResponse = await saveExamSlot(examSlot);
+        if (!apiResponse.status) {
+            setErrorMessage(apiResponse.message)
+            return
+        }
+        setPageNumber(0);
+        fetchExamSlots(0); // re-fetch from the server
+        if (actionType == "ADD") {
+            setShowAddModal(false);
+        } else {
+            setShowEditModal(false);
+        }
+    }
+
+    const clearErrorMessage = () => {
+        if (errorMessage) {
+            setErrorMessage("");
+        }
+    };
+
+    const editHandlerModalSaveHandler = (name: string, code: string) => {
+        if (name.trim().length === 0) {
+            setErrorMessage("Name should not be empty.");
+            return;
+        }
+        if (Number.parseInt(code) <= 0) {
+            setErrorMessage("Code should be a non-negative number.");
+            return;
+        }
+        clearErrorMessage();
+        asyncSaveExamSlot({...selectedExamSlot, code, name} as IExamSlot, "EDIT");
+    }
+
+    const editHandlerModalCancelHandler = () => {
+        clearErrorMessage();
+        setSelectedExamSlot({code: "", name: ""} as IExamSlot)
+        setShowEditModal(false);
+    }
+
+    const addHandlerModalSaveHandler = (name: string, code: string) => {
+        if (name.trim().length === 0) {
+            setErrorMessage("Name should not be empty.");
+            return;
+        }
+        if (Number.parseInt(code) <= 0) {
+            setErrorMessage("Code should be a non-negative number.");
+            return;
+        }
+        clearErrorMessage();
+        asyncSaveExamSlot({code, name,} as IExamSlot, "ADD");
+    }
+
+    const addHandlerModalCancelHandler = () => {
+        clearErrorMessage();
+        setSelectedExamSlot({code: "", name: ""} as IExamSlot)
+        setShowAddModal(false);
     }
 
     return (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+        <div className="shadow-md sm:rounded-lg">
+            <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
                     <th scope="col" className="px-6 py-4">
@@ -55,10 +133,9 @@ const ExamSlotContainer = () => {
                         return (
                             <ExamSlot key={examSlot.id}
                                       examSlot={examSlot}
-                                      index={index}
-                                      changeEditExamSlotId={setEditExamSlotId}
-                                      editExamSlotId={editExamSlotId}
-                                      setShowEditSaveModal={setShowEditSaveModal}
+                                      index={pageNumber * PAGE_SIZE + index + 1}
+                                      changeSelectedExamSlot={setSelectedExamSlot}
+                                      setShowEditModal={setShowEditModal}
                                       setShowDeleteModal={setShowDeleteModal}
                             />
                         );
@@ -66,50 +143,58 @@ const ExamSlotContainer = () => {
                 }
                 </tbody>
             </table>
-            <div className="flex justify-end p-2">
+            <div className="flex justify-end p-3">
                 <button
-                    disabled={editExamSlotId !== 0}
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
-                    onClick={() => setShowAddModal(true)}
-                >Add Exam Slot
+                    onClick={() => {
+                        clearErrorMessage();
+                        setSelectedExamSlot({code: "", name: ""} as IExamSlot);
+                        setShowAddModal(true);
+                    }}>
+                    Add Exam Slot
                 </button>
             </div>
             <div className="flex justify-center p-1">
                 {
-                    examSlots.length && !showAddModal && !showEditSaveModal && !showDeleteModal &&
-                    <Pagination key={new Date().toString()}
-                                showControls
-                                color="success"
-                                total={totalPages}
-                                initialPage={1}
-                                onChange={page => {
-                                    fetchExamSlots(page - 1)
-                                }
-                                }/>
+                    examSlots.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    <Pagination
+                        showControls
+                        color="success"
+                        total={totalPages}
+                        initialPage={1}
+                        onChange={page => {
+                            setPageNumber(page - 1);
+                            fetchExamSlots(page - 1);
+                        }}/>
                 }
             </div>
 
-            {showEditSaveModal && <Modal
-                showModal={showEditSaveModal}
-                setShowModal={setShowEditSaveModal}
-                message="Exam Slot Updated"
-            />
+            {
+                showEditModal && <SaveEditModal key={selectedExamSlot.code + "1"}
+                                                initialName={selectedExamSlot.name}
+                                                initialCode={selectedExamSlot.code}
+                                                errorMessage={errorMessage}
+                                                errorMessageHandler={setErrorMessage}
+                                                saveClickHandler={editHandlerModalSaveHandler}
+                                                cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
-            {showDeleteModal && <Modal
-                showModal={showDeleteModal}
-                setShowModal={setShowDeleteModal}
-                message="Exam Slot Deleted"
-            />
+            {showDeleteModal && <Modal>
+                <div>
+                    Delete Exam Slot
+                    <p>Name: {selectedExamSlot.name}</p>
+                    <p>Code: {selectedExamSlot.code}</p>
+                </div>
+            </Modal>
             }
-            {showAddModal && <Modal
-                showModal={showAddModal}
-                setShowModal={setShowAddModal}
-                message="Create a form in the modal and save new Exam Slot"
-            />
+            {showAddModal && <SaveEditModal key={selectedExamSlot.code + "1"}
+                                            errorMessage={errorMessage}
+                                            errorMessageHandler={setErrorMessage}
+                                            saveClickHandler={addHandlerModalSaveHandler}
+                                            cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
-    )
+    );
 }
 
 export default ExamSlotContainer;

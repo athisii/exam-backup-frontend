@@ -29,7 +29,7 @@ const Page = async () => {
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                <h1>Exam Centre</h1>
+                <h1>Exam Date</h1>
             </div>
         </>
     );

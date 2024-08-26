@@ -74,8 +74,8 @@ export interface IExamCentre {
 export interface IExamSlot {
     id: number,
     active: boolean,
-    createdDate: Date,
-    modifiedDate: Date,
+    createdDate: string | null,
+    modifiedDate: string | null,
     code: string,
     name: string
 }

@@ -58,7 +58,7 @@ const ForgotPassword = () => {
                         </div>
                         <form className="space-y-4 md:space-y-6" action={action}>
                             <div>
-                                <input type="password" name="oldPassword" placeholder="Old password"
+                                <input autoFocus type="password" name="oldPassword" placeholder="Old password"
                                        className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:outline-none focus:ring-primary-300 block w-full p-2.5"
                                        required
                                        value={oldPassword}

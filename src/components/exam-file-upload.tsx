@@ -13,7 +13,7 @@ interface ExamFileProps {
 }
 
 
-const ExamFile: React.FC<ExamFileProps> = ({
+const ExamFileUpload: React.FC<ExamFileProps> = ({
                                                examSlotId,
                                                fileTypeId,
                                                fileTypeName,
@@ -96,4 +96,4 @@ const ExamFile: React.FC<ExamFileProps> = ({
     );
 };
 
-export default ExamFile;
+export default ExamFileUpload;

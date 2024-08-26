@@ -1,7 +1,7 @@
 "use client"
 
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {IExamCentre, Region, SortOrder, UploadStatusFilterType} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IExamCentre, Region, SortOrder, UploadStatusFilterType} from "@/types/types";
 import {
     fetchExamCentresByRegion,
     filterExamCentresWithSearchTermAndRegion,
@@ -14,16 +14,16 @@ import PieChart from "@/components/admin/pie-chart";
 
 const PAGE_SIZE = 11;
 
-const ExamCentreList = ({region}: {
+const ExamCentreContainer = ({region}: {
     region: Region
 }) => {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>("")
-    const [pageNumber, setPageNumber] = useState<number>(1)
-    const [totalPages, setTotalPages] = useState<number>(1)
+    const [searchTerm, setSearchTerm] = useState("")
+    const [pageNumber, setPageNumber] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
     const [uploadStatusFilter, setUploadStatusFilter] = useState<UploadStatusFilterType>("DEFAULT")
-    const [sortBy, setSortBy] = useState<string>("code") // in case selection allowed on UI
+    const [sortBy, setSortBy] = useState("code") // in case selection allowed on UI
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC") // in case selection allowed on UI
     const debouncedSearchTerm = useDebounce(searchTerm);
 
@@ -31,7 +31,7 @@ const ExamCentreList = ({region}: {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
         setSearchTerm("");
         fetchExamCentreFilteredByUploadStatus("", event.target.value as UploadStatusFilterType, 0);
-        setPageNumber(1);
+        setPageNumber(0);
     };
 
     useEffect(() => {
@@ -39,10 +39,10 @@ const ExamCentreList = ({region}: {
         if (debouncedSearchTerm) {
             if (uploadStatusFilter !== "DEFAULT") {
                 fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 0);
-                setPageNumber(1);
+                setPageNumber(0);
             } else {
                 searchExamCentres(0);
-                setPageNumber(1);
+                setPageNumber(0);
             }
         }
     }, [debouncedSearchTerm]);
@@ -54,35 +54,50 @@ const ExamCentreList = ({region}: {
         if (!value) {
             if (uploadStatusFilter !== "DEFAULT") {
                 fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 0);
-                setPageNumber(1);
+                setPageNumber(0);
             } else {
                 fetchExamCentres(0);
-                setPageNumber(1);
+                setPageNumber(0);
             }
         }
     };
 
     const fetchExamCentreFilteredByUploadStatus = async (searchTerm: string, uploadStatusFilter: UploadStatusFilterType, page: number) => {
-        const apiResponsePage = await filterExamCentresWithSearchTermAndRegion(searchTerm, uploadStatusFilter, page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        const apiResponse: ApiResponse = await filterExamCentresWithSearchTermAndRegion(searchTerm, uploadStatusFilter, page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam centres.");
+        }
+        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         setExamCentres(apiResponsePage.items);
         setTotalPages(apiResponsePage.totalPages);
     };
 
     const fetchExamCentres = async (page: number) => {
-        const apiResponsePage = await fetchExamCentresByRegion(page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        const apiResponse: ApiResponse = await fetchExamCentresByRegion(page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam centres.");
+        }
+        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         setExamCentres(apiResponsePage.items);
         setTotalPages(apiResponsePage.totalPages);
     }
 
     const searchExamCentres = async (page: number) => {
-        const apiResponsePage = await searchExamCentresWithRegion(debouncedSearchTerm, page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        const apiResponse: ApiResponse = await searchExamCentresWithRegion(debouncedSearchTerm, page, PAGE_SIZE, region.id, sortBy, sortOrder);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error fetching exam centres.");
+        }
+        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         setExamCentres(apiResponsePage.items);
         setTotalPages(apiResponsePage.totalPages);
     }
 
     useEffect(() => {
         fetchExamCentres(0);
-        setPageNumber(1);
+        setPageNumber(0);
     }, [region])
 
     return (
@@ -98,7 +113,7 @@ const ExamCentreList = ({region}: {
                     </svg>
                 </div>
                 <input type="text" id="search"
-                       className="w-[60%] p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
+                       className="sm:w-[60%] p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
                        placeholder="Search by exam centre code or name"
                        value={searchTerm}
                        onChange={handleSearchChange}
@@ -138,7 +153,7 @@ const ExamCentreList = ({region}: {
                                 className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-8 py-4 text-center">
                                     <Link href={`/admin/exam-centres/${examCentre.code}`}>
-                                        {pageNumber === 1 ? index + 1 : pageNumber * PAGE_SIZE + index}
+                                        {pageNumber * PAGE_SIZE + index + 1}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
@@ -177,7 +192,7 @@ const ExamCentreList = ({region}: {
                                                       total={totalPages}
                                                       initialPage={1}
                                                       onChange={page => {
-                                                          setPageNumber(page);
+                                                          setPageNumber(page - 1);
                                                           if (uploadStatusFilter !== "DEFAULT") {
                                                               fetchExamCentreFilteredByUploadStatus(searchTerm, uploadStatusFilter, page - 1);
                                                               return;
@@ -196,4 +211,4 @@ const ExamCentreList = ({region}: {
     );
 };
 
-export default ExamCentreList;
+export default ExamCentreContainer;
