@@ -1,20 +1,19 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponsePage, IExamSlot} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IExamSlot} from "@/types/types";
 import ExamSlot from "@/components/admin/exam-slot";
 import {fetchExamSlotsByPage, saveExamSlot} from "@/app/admin/exam-slot/actions";
 import {Pagination} from "@nextui-org/pagination";
 import Modal from "@/components/admin/modal";
-import SaveEditModal from "@/components/admin/save-edit-modal";
+import AddAndEditModal from "@/components/add-and-edit-modal";
+import {toast, Toaster} from "sonner";
 
 const PAGE_SIZE = 8;
-type ActionType = "ADD" | "EDIT";
 
 const ExamSlotContainer = () => {
-    //TODO; on save, delete success, show bottom notification
-    // on failure, stay on the modal
 
+    const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
     const [selectedExamSlot, setSelectedExamSlot] = useState<IExamSlot>({code: "", name: ""} as IExamSlot);
@@ -46,39 +45,28 @@ const ExamSlotContainer = () => {
         setTotalPages(apiResponsePage.totalPages);
     }
 
-    const asyncSaveExamSlot = async (examSlot: IExamSlot, actionType: ActionType) => {
-        const apiResponse = await saveExamSlot(examSlot);
-        if (!apiResponse.status) {
-            setErrorMessage(apiResponse.message)
-            return
-        }
-        setPageNumber(0);
-        fetchExamSlots(0); // re-fetch from the server
-        if (actionType == "ADD") {
-            setShowAddModal(false);
-        } else {
-            setShowEditModal(false);
-        }
-    }
-
     const clearErrorMessage = () => {
         if (errorMessage) {
             setErrorMessage("");
         }
     };
 
-    const editHandlerModalSaveHandler = (name: string, code: string) => {
-        if (name.trim().length === 0) {
-            setErrorMessage("Name should not be empty.");
-            return;
-        }
-        if (Number.parseInt(code) <= 0) {
-            setErrorMessage("Code should be a non-negative number.");
+    const editHandlerModalSaveHandler = async (name: string, code: string) => {
+        setIsLoading(true);
+        if (!isValid(name, code)) {
+            setIsLoading(false);
             return;
         }
         clearErrorMessage();
-        asyncSaveExamSlot({...selectedExamSlot, code, name} as IExamSlot, "EDIT");
-    }
+        const apiResponse: ApiResponse = await saveExamSlot({...selectedExamSlot, code, name} as IExamSlot);
+        if (!apiResponse.status) {
+            setErrorMessage(apiResponse.message)
+            setIsLoading(false);
+            return
+        }
+        postSuccess("Exam slot updated successfully.")
+        setShowEditModal(false);
+    };
 
     const editHandlerModalCancelHandler = () => {
         clearErrorMessage();
@@ -86,17 +74,40 @@ const ExamSlotContainer = () => {
         setShowEditModal(false);
     }
 
-    const addHandlerModalSaveHandler = (name: string, code: string) => {
+    const isValid = (name: string, code: string): boolean => {
         if (name.trim().length === 0) {
             setErrorMessage("Name should not be empty.");
-            return;
+            return false;
         }
-        if (Number.parseInt(code) <= 0) {
+        if (code.trim().length === 0 || Number.parseInt(code) <= 0) {
             setErrorMessage("Code should be a non-negative number.");
+            return false;
+        }
+        return true;
+    }
+
+    const addHandlerModalSaveHandler = async (name: string, code: string) => {
+        setIsLoading(true);
+        if (!isValid(name, code)) {
+            setIsLoading(false);
             return;
         }
         clearErrorMessage();
-        asyncSaveExamSlot({code, name,} as IExamSlot, "ADD");
+        const apiResponse: ApiResponse = await saveExamSlot({code, name,} as IExamSlot);
+        if (!apiResponse.status) {
+            setErrorMessage(apiResponse.message)
+            setIsLoading(false);
+            return
+        }
+        postSuccess("Exam slot created successfully.")
+        setShowAddModal(false);
+    };
+
+    const postSuccess = (message: string) => {
+        setPageNumber(0);
+        fetchExamSlots(0); // re-fetch from the server, avoid pagination issue
+        setIsLoading(false);
+        toast.success(message);
     }
 
     const addHandlerModalCancelHandler = () => {
@@ -107,6 +118,7 @@ const ExamSlotContainer = () => {
 
     return (
         <div className="shadow-md sm:rounded-lg">
+            <Toaster position="top-right" richColors duration={3000}/>
             <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
@@ -170,13 +182,15 @@ const ExamSlotContainer = () => {
             </div>
 
             {
-                showEditModal && <SaveEditModal key={selectedExamSlot.code + "1"}
-                                                initialName={selectedExamSlot.name}
-                                                initialCode={selectedExamSlot.code}
-                                                errorMessage={errorMessage}
-                                                errorMessageHandler={setErrorMessage}
-                                                saveClickHandler={editHandlerModalSaveHandler}
-                                                cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <AddAndEditModal key={selectedExamSlot.code + "1"}
+                                                  title="Update Exam Slot"
+                                                  isLoading={isLoading}
+                                                  initialName={selectedExamSlot.name}
+                                                  initialCode={selectedExamSlot.code}
+                                                  errorMessage={errorMessage}
+                                                  errorMessageHandler={setErrorMessage}
+                                                  saveClickHandler={editHandlerModalSaveHandler}
+                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {showDeleteModal && <Modal>
@@ -187,11 +201,13 @@ const ExamSlotContainer = () => {
                 </div>
             </Modal>
             }
-            {showAddModal && <SaveEditModal key={selectedExamSlot.code + "1"}
-                                            errorMessage={errorMessage}
-                                            errorMessageHandler={setErrorMessage}
-                                            saveClickHandler={addHandlerModalSaveHandler}
-                                            cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <AddAndEditModal key={selectedExamSlot.code + "1"}
+                                              title="Add New Exam Slot"
+                                              isLoading={isLoading}
+                                              errorMessage={errorMessage}
+                                              errorMessageHandler={setErrorMessage}
+                                              saveClickHandler={addHandlerModalSaveHandler}
+                                              cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
     );

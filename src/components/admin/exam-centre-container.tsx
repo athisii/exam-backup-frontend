@@ -113,12 +113,12 @@ const ExamCentreContainer = ({region}: {
                     </svg>
                 </div>
                 <input type="text" id="search"
-                       className="sm:w-[60%] p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
+                       className="flex-grow p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
                        placeholder="Search by exam centre code or name"
                        value={searchTerm}
                        onChange={handleSearchChange}
                 />
-                <div className="text-gray-700 uppercase text-sm">
+                <div className="text-gray-700 p-1 justify-center uppercase text-sm">
                     <h3 className="inline">Filter: </h3>
                     <select className="uppercase text-sm rounded" onChange={handleFilterChange}>
                         <option value="DEFAULT">Default</option>
@@ -126,7 +126,6 @@ const ExamCentreContainer = ({region}: {
                         <option value="NOT_UPLOADED">Not Uploaded</option>
                     </select>
                 </div>
-
             </div>
             <div className="shadow-md">
                 <table className="w-full text-sm text-left text-gray-500">
