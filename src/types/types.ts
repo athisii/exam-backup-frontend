@@ -6,6 +6,8 @@ export interface ApiResponse {
 
 export interface ApiResponsePage {
     page: number,
+    numberOfElements: number,
+    totalElements: number,
     totalPages: number,
     items: any[]
 }

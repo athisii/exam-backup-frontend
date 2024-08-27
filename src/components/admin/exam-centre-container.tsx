@@ -20,7 +20,7 @@ const ExamCentreContainer = ({region}: {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
     const [searchTerm, setSearchTerm] = useState("")
-    const [pageNumber, setPageNumber] = useState(0)
+    const [pageNumber, setPageNumber] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [uploadStatusFilter, setUploadStatusFilter] = useState<UploadStatusFilterType>("DEFAULT")
     const [sortBy, setSortBy] = useState("code") // in case selection allowed on UI
@@ -30,19 +30,19 @@ const ExamCentreContainer = ({region}: {
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
         setSearchTerm("");
-        fetchExamCentreFilteredByUploadStatus("", event.target.value as UploadStatusFilterType, 0);
-        setPageNumber(0);
+        fetchExamCentreFilteredByUploadStatus("", event.target.value as UploadStatusFilterType, 1);
+        setPageNumber(1);
     };
 
     useEffect(() => {
         // throw new Error("Error while searching.")
         if (debouncedSearchTerm) {
             if (uploadStatusFilter !== "DEFAULT") {
-                fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 0);
-                setPageNumber(0);
+                fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 1);
+                setPageNumber(1);
             } else {
-                searchExamCentres(0);
-                setPageNumber(0);
+                searchExamCentres(1);
+                setPageNumber(1);
             }
         }
     }, [debouncedSearchTerm]);
@@ -53,11 +53,11 @@ const ExamCentreContainer = ({region}: {
         // empty searchTerm
         if (!value) {
             if (uploadStatusFilter !== "DEFAULT") {
-                fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 0);
-                setPageNumber(0);
+                fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 1);
+                setPageNumber(1);
             } else {
-                fetchExamCentres(0);
-                setPageNumber(0);
+                fetchExamCentres(1);
+                setPageNumber(1);
             }
         }
     };
@@ -96,8 +96,8 @@ const ExamCentreContainer = ({region}: {
     }
 
     useEffect(() => {
-        fetchExamCentres(0);
-        setPageNumber(0);
+        fetchExamCentres(1);
+        setPageNumber(1);
     }, [region])
 
     return (
@@ -152,7 +152,7 @@ const ExamCentreContainer = ({region}: {
                                 className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-8 py-4 text-center">
                                     <Link href={`/admin/exam-centres/${examCentre.code}`}>
-                                        {pageNumber * PAGE_SIZE + index + 1}
+                                        {(pageNumber - 1) * PAGE_SIZE + index + 1}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
@@ -185,25 +185,27 @@ const ExamCentreContainer = ({region}: {
             </div>
             <div className="flex justify-center p-1">
                 {
-                    examCentres.length && <Pagination key={searchTerm + uploadStatusFilter}
-                                                      showControls
-                                                      color="success"
-                                                      total={totalPages}
-                                                      initialPage={1}
-                                                      onChange={page => {
-                                                          setPageNumber(page - 1);
-                                                          if (uploadStatusFilter !== "DEFAULT") {
-                                                              fetchExamCentreFilteredByUploadStatus(searchTerm, uploadStatusFilter, page - 1);
-                                                              return;
-                                                          }
-                                                          // DEFAULT Filter
-                                                          if (searchTerm) {
-                                                              searchExamCentres(page - 1);
-                                                          } else {
-                                                              fetchExamCentres(page - 1);
-                                                          }
-                                                      }
-                                                      }/>
+                    examCentres.length && (
+                        <Pagination
+                            showControls
+                            color="success"
+                            page={pageNumber}
+                            total={totalPages}
+                            initialPage={1}
+                            onChange={page => {
+                                setPageNumber(page);
+                                if (uploadStatusFilter !== "DEFAULT") {
+                                    fetchExamCentreFilteredByUploadStatus(searchTerm, uploadStatusFilter, page);
+                                    return;
+                                }
+                                // DEFAULT Filter
+                                if (searchTerm) {
+                                    searchExamCentres(page);
+                                } else {
+                                    fetchExamCentres(page);
+                                }
+                            }
+                            }/>)
                 }
             </div>
         </div>

@@ -23,8 +23,8 @@ export async function fetchExamCentresByRegion(pageNumber: number, pageSize: num
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-
-    let url = `${API_URL}/exam-centres/query?regionId=${regionId}&page=${pageNumber}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
+    // page number is zero-based in backend API. So page = pageNumber - 1
+    let url = `${API_URL}/exam-centres/query?regionId=${regionId}&page=${pageNumber - 1}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
@@ -39,7 +39,8 @@ export async function searchExamCentresWithRegion(searchTerm: string, pageNumber
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-    let url = `${API_URL}/exam-centres/search?searchTerm=${encodeURIComponent(searchTerm)}&regionId=${regionId}&page=${pageNumber}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
+    // page number is zero-based in backend API. So page = pageNumber - 1
+    let url = `${API_URL}/exam-centres/search?searchTerm=${encodeURIComponent(searchTerm)}&regionId=${regionId}&page=${pageNumber - 1}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
@@ -54,8 +55,8 @@ export async function filterExamCentresWithSearchTermAndRegion(searchTerm: strin
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-
-    let url = `${API_URL}/exam-centres/upload-status-filter-page?searchTerm=${searchTerm}&filterType=${filterType}&regionId=${regionId}&page=${pageNumber}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
+    // page number is zero-based in backend API. So page = pageNumber - 1
+    let url = `${API_URL}/exam-centres/upload-status-filter-page?searchTerm=${searchTerm}&filterType=${filterType}&regionId=${regionId}&page=${pageNumber - 1}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
