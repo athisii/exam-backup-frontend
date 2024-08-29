@@ -2,16 +2,16 @@
 
 import React, {useState} from 'react';
 import ExamCentreContainer from "@/components/admin/exam-centre-container";
-import {Region} from "@/types/types";
+import {IRegion} from "@/types/types";
 
 const AdminHome = ({regions}: {
-    regions: Region[]
+    regions: IRegion[]
 }) => {
     // sync state between header and body
-    const [region, setRegion] = useState<Region>(regions[0]);
+    const [region, setRegion] = useState<IRegion>(regions[0]);
 
     const handleRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedRegion = regions.find(region => region.name === event.target.value) as Region;
+        const selectedRegion = regions.find(region => region.name === event.target.value) as IRegion;
         setRegion(selectedRegion);
     }
 

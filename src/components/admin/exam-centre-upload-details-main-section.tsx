@@ -1,7 +1,7 @@
 "use client"
 
 import React, {Suspense, useEffect, useState} from "react";
-import {ApiResponse, ExamSlot, FileType, IExamFile} from "@/types/types";
+import {ApiResponse, ISlot, IFileType, IExamFile} from "@/types/types";
 import {fetchExamFiles} from "@/app/actions";
 import AdminExamFileContainer from "@/components/admin/admin-exam-file-container";
 import {returnInHtmlInputDateFormat} from "@/utils/date-util";
@@ -9,8 +9,8 @@ import {returnInHtmlInputDateFormat} from "@/utils/date-util";
 
 interface MainProps {
     examCentreCode: string;
-    examSlots: ExamSlot[];
-    fileTypes: FileType[];
+    examSlots: ISlot[];
+    fileTypes: IFileType[];
 }
 
 const ExamCentreUploadDetailsMainSection: React.FC<MainProps> = ({examCentreCode, examSlots, fileTypes}) => {

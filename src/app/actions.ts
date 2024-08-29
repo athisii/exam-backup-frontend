@@ -2,15 +2,14 @@
 
 import {redirect} from "next/navigation";
 import identityContext from "@/utils/session";
-import {sendPostRequest} from "@/utils/api";
-import {ApiResponse} from "@/types/types";
+import {sendGetRequest, sendPostRequest} from "@/utils/api";
+import {ApiResponse, IExam, SortOrder} from "@/types/types";
 
 const API_URL = process.env.API_URL;
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
 
-const defaultTime = " 10:30" // time also expected to be sent to the server
 
 export async function uploadFile(formData: FormData) {
     const idContext = identityContext();
@@ -21,7 +20,7 @@ export async function uploadFile(formData: FormData) {
     let url = `${API_URL}/exam-files/create`;
     const token = idContext.token as string;
     formData.append("examCentreCode", idContext.tokenClaims?.sub as string);
-    formData.set("examDate", formData.get("examDate") + defaultTime)
+    formData.set("examDate", formData.get("examDate"))
 
     // fetch might throw connection refused/timeout
     const response = await fetch(url, {
@@ -42,7 +41,7 @@ export async function uploadFile(formData: FormData) {
 
 }
 
-export async function fetchExamFiles(examCentreCode: string, selectedSlotId: number, examDate: string): Promise<ApiResponse> {
+export async function fetchExamFiles(examCentreId: number, selectedSlotId: number, examDateId: number): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -52,9 +51,19 @@ export async function fetchExamFiles(examCentreCode: string, selectedSlotId: num
     const token = idContext.token as string;
 
     return await sendPostRequest(url, token, {
-        examCentreCode,
-        examSlotId: selectedSlotId,
-        examDate: examDate + defaultTime,
-
+        examCentreId,
+        slotId: selectedSlotId,
+        examDateId: examDateId,
     });
 }
+
+export async function fetchSlotsForExam(examCentreId: number, examDateId: number, pageNumber: number = 0, pageSize: number = 10, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login")
+    }
+    const token = idContext.token as string;
+    return await sendGetRequest(`${API_URL}/slots/query?examCentreId=${examCentreId}&examDateId=${examDateId}&page=${pageNumber}&size=${pageSize}`, token);
+}
+
+

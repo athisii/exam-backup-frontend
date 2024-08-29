@@ -1,15 +1,15 @@
 'use client'
 
 import React, {Dispatch, SetStateAction} from 'react';
-import {IExamSlot} from "@/types/types";
+import {ISlot} from "@/types/types";
 
 
 interface ExamSlotProps {
-    examSlot: IExamSlot,
+    examSlot: ISlot,
     index: number
     setShowEditModal: Dispatch<SetStateAction<boolean>>
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>
-    changeSelectedExamSlot: Dispatch<SetStateAction<IExamSlot>>
+    changeSelectedExamSlot: Dispatch<SetStateAction<ISlot>>
 }
 
 const ExamSlot = ({

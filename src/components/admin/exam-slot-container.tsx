@@ -1,9 +1,9 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, IExamSlot} from "@/types/types";
+import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
 import ExamSlot from "@/components/admin/exam-slot";
-import {deleteExamSlot, fetchExamSlotsByPage, saveExamSlot} from "@/app/admin/exam-slot/actions";
+import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/app/admin/slot/actions";
 import {Pagination} from "@nextui-org/pagination";
 import AddAndEditModal from "@/components/add-and-edit-modal";
 import {toast, Toaster} from "sonner";
@@ -17,8 +17,8 @@ const ExamSlotContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedExamSlot, setSelectedExamSlot] = useState<IExamSlot>({code: "", name: ""} as IExamSlot);
-    const [examSlots, setExamSlots] = useState<IExamSlot[]>([]);
+    const [selectedExamSlot, setSelectedExamSlot] = useState<ISlot>({code: "", name: ""} as ISlot);
+    const [examSlots, setExamSlots] = useState<ISlot[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -38,7 +38,7 @@ const ExamSlotContainer = () => {
 
 
     const fetchExamSlots = async (page: number) => {
-        const apiResponse = await fetchExamSlotsByPage(page);
+        const apiResponse = await fetchSlotsAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
             throw new Error("Error fetching exam slots.");
@@ -74,14 +74,14 @@ const ExamSlotContainer = () => {
             setIsLoading(false);
             return;
         }
-        const updatedExamSlot: IExamSlot = {
+        const updatedExamSlot: ISlot = {
             ...selectedExamSlot,
             code,
             name,
             modifiedDate: convertToLocalDateTime(new Date())
-        } as IExamSlot;
+        } as ISlot;
 
-        const apiResponse: ApiResponse = await saveExamSlot(updatedExamSlot);
+        const apiResponse: ApiResponse = await saveSlot(updatedExamSlot);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -103,12 +103,12 @@ const ExamSlotContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as IExamSlot)
+        setSelectedExamSlot({code: "", name: ""} as ISlot)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
         setIsLoading(true);
-        const apiResponse: ApiResponse = await deleteExamSlot(id);
+        const apiResponse: ApiResponse = await deleteSlotById(id);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -143,7 +143,7 @@ const ExamSlotContainer = () => {
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as IExamSlot)
+        setSelectedExamSlot({code: "", name: ""} as ISlot)
         setShowDeleteModal(false);
     }
 
@@ -153,20 +153,20 @@ const ExamSlotContainer = () => {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveExamSlot({code, name} as IExamSlot);
+        const apiResponse: ApiResponse = await saveSlot({code, name} as ISlot);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
         const date = new Date();
-        const newExamSlot: IExamSlot = {
+        const newExamSlot: ISlot = {
             code,
             name,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id
-        } as IExamSlot;
+        } as ISlot;
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
@@ -192,7 +192,7 @@ const ExamSlotContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as IExamSlot)
+        setSelectedExamSlot({code: "", name: ""} as ISlot)
         setShowAddModal(false);
     }
 
@@ -246,7 +246,7 @@ const ExamSlotContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedExamSlot({code: "", name: ""} as IExamSlot);
+                        setSelectedExamSlot({code: "", name: ""} as ISlot);
                         setShowAddModal(true);
                     }}>
                     Add Exam Slot

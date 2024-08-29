@@ -1,7 +1,7 @@
 "use client"
 
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, IExamCentre, Region, SortOrder, UploadStatusFilterType} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IExamCentre, IRegion, SortOrder, UploadStatusFilterType} from "@/types/types";
 import {
     fetchExamCentresByRegion,
     filterExamCentresWithSearchTermAndRegion,
@@ -15,7 +15,7 @@ import PieChart from "@/components/admin/pie-chart";
 const PAGE_SIZE = 11;
 
 const ExamCentreContainer = ({region}: {
-    region: Region
+    region: IRegion
 }) => {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);

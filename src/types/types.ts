@@ -46,19 +46,22 @@ export interface IExamFile {
     },
 }
 
-export interface ExamSlot {
+export interface IExamDate {
+    id: number,
+    date: string;
+}
+
+export interface IExam {
+    id: number
+}
+
+export interface IFileType {
     id: number,
     name: string,
     code: string,
 }
 
-export interface FileType {
-    id: number,
-    name: string,
-    code: string,
-}
-
-export interface Region {
+export interface IRegion {
     id: number,
     name: string,
     code: string,
@@ -73,7 +76,7 @@ export interface IExamCentre {
     uploadedFileCount: number
 }
 
-export interface IExamSlot {
+export interface ISlot {
     id: number,
     active: boolean,
     createdDate: string | null,

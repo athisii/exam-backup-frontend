@@ -2,7 +2,7 @@ import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import React from "react";
 import {sendGetRequest} from "@/utils/api";
-import {ApiResponsePage} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IExamCentre} from "@/types/types";
 import UserMainSection from "@/components/user-main-section";
 import UserHeader from "@/components/user-header";
 
@@ -30,43 +30,35 @@ export default async function Page() {
     const token = idContext.token as string;
 
     // fetch exam centre details
-    let examCentreUrl = `${API_URL}/exam-centres/query`;
-    // fetch exam slot list
-    const examSlotsUrl = `${API_URL}/exam-slots`;
-    // fetch exam file type list
-    const fileTypesUrl = `${API_URL}/file-types`;
+    let examCentreUrl = `${API_URL}/exam-centres/query?code=${examCentreCode}`;
 
-    // Fetch concurrently
-    const [examCentreApiRes, slotsApiRes, fileTypesApiRes] = await Promise.all([
-        sendGetRequest(`${examCentreUrl}?code=${examCentreCode}`, token),
-        sendGetRequest(examSlotsUrl, token),
-        sendGetRequest(fileTypesUrl, token),
-    ]);
-
+    const examCentreApiRes: ApiResponse = await sendGetRequest(examCentreUrl, token);
     if (!examCentreApiRes.status) {
         console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
         throw new Error("Error fetching exam centres.");
     }
-    if (!slotsApiRes.status || slotsApiRes.data.length === 0) {
-        console.log(`error: status=${slotsApiRes.status}, message=${slotsApiRes.message}`);
-        throw new Error("Error fetching exam slots.");
-    }
-    if (!fileTypesApiRes.status || fileTypesApiRes.data.length === 0) {
-        console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
-        throw new Error("Error fetching file types.");
-    }
-
-    const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
-    if (apiResponsePage.totalPages === 0) {
+    const examCentreApiResponsePage = examCentreApiRes.data as ApiResponsePage;
+    if (examCentreApiResponsePage.numberOfElements === 0) {
         throw new Error("Exam centre not found");
     }
+
+    const examCentre: IExamCentre = examCentreApiResponsePage.items[0] as IExamCentre;
+
+
+    const examDateUrl = `${API_URL}/exam-dates/query?examCentreId=${examCentre.id}`;
+    const examDatesApiRes = await sendGetRequest(examDateUrl, token)
+    if (!examDatesApiRes.status) {
+        console.log(`error: status=${examDatesApiRes.status}, message=${examDatesApiRes.message}`);
+        throw new Error("Error fetching exam dates.");
+    }
+    const examDatesApiResponsePage = examDatesApiRes.data as ApiResponsePage;
+
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <UserHeader examCentre={apiResponsePage.items[0]}/>
-                <UserMainSection examCentreCode={examCentreCode}
-                                 examSlots={slotsApiRes.data}
-                                 fileTypes={fileTypesApiRes.data}/>
+                <UserHeader examCentre={examCentre}/>
+                <UserMainSection examCentre={examCentre}
+                                 examDates={examDatesApiResponsePage.items}/>
             </div>
         </main>
     );

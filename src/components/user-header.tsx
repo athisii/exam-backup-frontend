@@ -1,13 +1,9 @@
 import React from 'react';
+import {IExamCentre} from "@/types/types";
 
-type ExamCentre = {
-    regionName: string,
-    name: string,
-    code: string,
-};
 
 interface HeaderProps {
-    examCentre: ExamCentre;
+    examCentre: IExamCentre;
 }
 
 const UserHeader: React.FC<HeaderProps> = ({examCentre: {regionName, name, code}}) => {

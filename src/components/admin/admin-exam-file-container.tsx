@@ -1,13 +1,13 @@
 "use client"
 
-import {FileType, IExamFile} from "@/types/types";
+import {IFileType, IExamFile} from "@/types/types";
 import React from "react";
 import AdminExamFile from "@/components/admin/admin-exam-file";
 
 interface ExamFileContainerProps {
     examSlotId: number,
     examDate: string,
-    fileTypes: FileType[],
+    fileTypes: IFileType[],
     examFiles: IExamFile[]
 }
 
