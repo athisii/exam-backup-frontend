@@ -34,11 +34,13 @@ export interface IExamFile {
     fileSize: number,
     userUploadedFilename: string,
     filePath: string
-    examDate: Date,
+    examDate: {
+        id: number
+    }
     examCentre: {
         id: number
     },
-    examSlot: {
+    slot: {
         id: number
     },
     fileType: {
@@ -82,7 +84,9 @@ export interface ISlot {
     createdDate: string | null,
     modifiedDate: string | null,
     code: string,
-    name: string
+    name: string,
+    startTime: string,
+    endTime: string
 }
 
 export interface FormUploadActionRes {

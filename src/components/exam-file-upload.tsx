@@ -2,25 +2,28 @@
 
 import React, {useRef, useState} from 'react';
 import {uploadFile} from "@/app/actions";
+import {ApiResponse} from "@/types/types";
 
 interface ExamFileProps {
-    examSlotId: number,
+    examCentreId: number,
+    examDateId: number,
+    slotId: number,
     fileTypeId: number,
     fileTypeName: string,
     uploaded: boolean,
-    examDate: string,
     userUploadedFilename: string | null
 }
 
 
 const ExamFileUpload: React.FC<ExamFileProps> = ({
-                                               examSlotId,
-                                               fileTypeId,
-                                               fileTypeName,
-                                               uploaded,
-                                               examDate,
-                                               userUploadedFilename
-                                           }) => {
+                                                     examCentreId,
+                                                     examDateId,
+                                                     slotId,
+                                                     fileTypeId,
+                                                     fileTypeName,
+                                                     uploaded,
+                                                     userUploadedFilename
+                                                 }) => {
     const [status, setStatus] = useState(false);
     const [userSelectedFilename, setUserSelectedFilename] = useState('');
     const [disabledBtn, setDisabledBtn] = useState(true);
@@ -43,9 +46,13 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
     };
 
     const handleSubmit = async (formData: FormData) => {
-        let returnStatus = await uploadFile(formData);
-        setStatus(returnStatus);
-        if (returnStatus) {
+        const apiResponse: ApiResponse = await uploadFile(formData);
+        if (!apiResponse.status) {
+            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+            throw new Error("Error uploading exam file.");
+        }
+        setStatus(apiResponse.status);
+        if (apiResponse) {
             userUploadedFilenameRef.current = userSelectedFilename;
         }
         setDisabledBtn(true)
@@ -55,7 +62,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
     }
 
     return (
-        <div className="w-full rounded-md bg-gray-300">
+        <div className="w-full bg-gray-200">
             <form action={handleSubmit} className="grid w-full grid-cols-3 gap-1 p-1 sm:grid-cols-12">
                 <div className="col-span-1 flex items-center justify-center sm:col-span-3">
                     <label>{fileTypeName}</label>
@@ -88,9 +95,10 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
                             : ""
                     }
                 </div>
-                <input type="hidden" name="examSlotId" value={examSlotId} readOnly/>
+                <input type="hidden" name="examCentreId" value={examCentreId} readOnly/>
+                <input type="hidden" name="examDateId" value={examDateId} readOnly/>
+                <input type="hidden" name="slotId" value={slotId} readOnly/>
                 <input type="hidden" name="fileTypeId" value={fileTypeId} readOnly/>
-                <input type="hidden" name="examDate" value={examDate} readOnly/>
             </form>
         </div>
     );
