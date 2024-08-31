@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import ExamCentreContainer from "@/components/admin/exam-centre-container";
 import {IRegion} from "@/types/types";
 
-const AdminHome = ({regions}: {
+const AdminDashboard = ({regions}: {
     regions: IRegion[]
 }) => {
     // sync state between header and body
@@ -24,8 +24,7 @@ const AdminHome = ({regions}: {
                     <select className='bg-blue-500 hover:bg-gray-200 hover:text-black hover:rounded-md'
                             onChange={handleRegionChange}
                     >
-                        {regions.map(mRegion => (<option key={mRegion.id}
-                                                         defaultChecked={mRegion.id === region.id}>{mRegion.name}</option>))}
+                        {regions.map(region => <option key={region.id}>{region.name}</option>)}
                     </select>
                 </div>
             </div>
@@ -34,4 +33,4 @@ const AdminHome = ({regions}: {
     );
 };
 
-export default AdminHome;
+export default AdminDashboard;

@@ -151,22 +151,22 @@ const ExamCentreContainer = ({region}: {
                             <tr key={examCentre.id}
                                 className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
                                         {(pageNumber - 1) * PAGE_SIZE + index + 1}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.code}`}>
+                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
                                         {examCentre.code}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
                                         {examCentre.name}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.code}`}>
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
                                         <PieChart data={[
                                             {
                                                 name: "Not Uploaded",

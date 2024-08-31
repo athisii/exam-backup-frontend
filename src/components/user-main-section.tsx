@@ -6,21 +6,21 @@ import {fetchExamFiles, fetchSlotsForExam} from "@/app/actions";
 import ExamFileContainer from "@/components/exam-file-container";
 
 
-interface MainProps {
+interface CompProp {
     examCentre: IExamCentre;
     examDates: IExamDate[];
     fileTypes: IFileType[]
 }
 
 
-const UserMainSection: React.FC<MainProps> = ({examCentre, fileTypes, examDates}) => {
+const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates}) => {
     const [examDate, setExamDate] = useState<IExamDate>(examDates[0]);
     const [slot, setSlot] = useState<ISlot>({id: 0, name: "", code: ""} as ISlot);
     const [slots, setSlots] = useState<ISlot[]>([]);
     const [examFiles, setExamFiles] = useState<IExamFile[]>([]);
 
     useEffect(() => {
-        fetchExamSlotAsync()
+        fetchSlotAsync()
     }, [examDate]);
 
     useEffect(() => {
@@ -29,11 +29,7 @@ const UserMainSection: React.FC<MainProps> = ({examCentre, fileTypes, examDates}
         }
     }, [slot]);
 
-    useEffect(() => {
-        console.log("examFilesChanged::examFiles", examFiles);
-    }, [examFiles]);
-
-    async function handleExamDateDropdown(event: React.ChangeEvent<HTMLSelectElement>) {
+    const handleExamDateDropdown = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedExamDate = examDates.find(ed => ed.date === event.target.value)
         if (!selectedExamDate) {
             return;
@@ -49,7 +45,7 @@ const UserMainSection: React.FC<MainProps> = ({examCentre, fileTypes, examDates}
         setSlot(() => selectedSlot);
     }
 
-    const fetchExamSlotAsync = async () => {
+    const fetchSlotAsync = async () => {
         const apiResponse: ApiResponse = await fetchSlotsForExam(examCentre.id, examDate.id);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
@@ -93,7 +89,7 @@ const UserMainSection: React.FC<MainProps> = ({examCentre, fileTypes, examDates}
                     <select className="bg-blue-500 rounded text-white active:bg-white active:text-black"
                             name="slotDropdown"
                             onChange={handleSlopDropdown}>
-                        {slots.map(slot => (<option key={slot.id}> {slot.name}</option>))}
+                        {slots.map(slot => (<option key={slot.id + " " + examDate.id}> {slot.name}</option>))}
                     </select>
                 </div>
             </div>
@@ -105,13 +101,15 @@ const UserMainSection: React.FC<MainProps> = ({examCentre, fileTypes, examDates}
                         </div>)
                     :
                     < Suspense fallback={<p>Loading....</p>}>
-                        <ExamFileContainer
-                            examCentreId={examCentre.id}
-                            examDateId={examDate.id}
-                            slotId={slot.id}
-                            fileTypes={fileTypes}
-                            examFiles={examFiles}
-                        />
+                        <div>
+                            <ExamFileContainer
+                                examCentreId={examCentre.id}
+                                examDateId={examDate.id}
+                                slotId={slot.id}
+                                fileTypes={fileTypes}
+                                examFiles={examFiles}
+                            />
+                        </div>
                     </Suspense>
             }
         </>

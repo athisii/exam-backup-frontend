@@ -1,7 +1,7 @@
 import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
-import ExamSlotContainer from "@/components/admin/exam-slot-container";
+import SlotContainer from "@/components/admin/slot-container";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -23,9 +23,9 @@ const Page = async () => {
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                <h2>EXAM SLOT</h2>
+                <h2>SLOT</h2>
             </div>
-            <ExamSlotContainer/>
+            <SlotContainer/>
         </>
     );
 };

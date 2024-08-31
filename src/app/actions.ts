@@ -16,10 +16,8 @@ export async function uploadFile(formData: FormData): Promise<ApiResponse> {
     if (!idContext.authenticated) {
         redirect("/login")
     }
-
     let url = `${API_URL}/exam-files/create`;
     const token = idContext.token as string;
-    console.log("formData: ", formData)
 
     // fetch might throw connection refused/timeout
     return await sendPostRequest(url, token, formData, true);

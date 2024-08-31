@@ -4,49 +4,49 @@ import React, {Dispatch, SetStateAction} from 'react';
 import {ISlot} from "@/types/types";
 
 
-interface ExamSlotProps {
-    examSlot: ISlot,
+interface SlotProps {
+    slot: ISlot,
     index: number
     setShowEditModal: Dispatch<SetStateAction<boolean>>
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>
-    changeSelectedExamSlot: Dispatch<SetStateAction<ISlot>>
+    changeSelectedSlot: Dispatch<SetStateAction<ISlot>>
 }
 
-const ExamSlot = ({
-                      examSlot,
+const Slot = ({
+                      slot,
                       index,
-                      changeSelectedExamSlot,
+                      changeSelectedSlot,
                       setShowEditModal,
                       setShowDeleteModal
-                  }: ExamSlotProps) => {
+                  }: SlotProps) => {
 
     const handleEditClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedExamSlot(examSlot);
+        changeSelectedSlot(slot);
         setShowEditModal(true)
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedExamSlot(examSlot);
+        changeSelectedSlot(slot);
         setShowDeleteModal(true);
     };
 
     return (
         <>
-            <tr key={examSlot.id} className="border-1 hover:bg-gray-100">
+            <tr key={slot.id} className="border-1 hover:bg-gray-100">
                 <td className="px-6 py-4 text-center">
                     {index}
                 </td>
                 <td className="px-6 py-4">
-                    {examSlot.name}
+                    {slot.name}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {examSlot.code}
+                    {slot.code}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {examSlot.createdDate?.toLocaleString()}
+                    {slot.createdDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {examSlot.modifiedDate?.toLocaleString()}
+                    {slot.modifiedDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
                     <button
@@ -80,4 +80,4 @@ const ExamSlot = ({
     );
 }
 
-export default ExamSlot;
+export default Slot;

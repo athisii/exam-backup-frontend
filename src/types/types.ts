@@ -67,6 +67,8 @@ export interface IRegion {
     id: number,
     name: string,
     code: string,
+    createdDate: string | null,
+    modifiedDate: string | null,
 }
 
 export interface IExamCentre {
@@ -74,6 +76,7 @@ export interface IExamCentre {
     name: string,
     code: string,
     regionName: string,
+    region: IRegion,
     totalFileCount: number,
     uploadedFileCount: number
 }

@@ -62,8 +62,8 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
     }
 
     return (
-        <div className="w-full bg-gray-200">
-            <form action={handleSubmit} className="grid w-full grid-cols-3 gap-1 p-1 sm:grid-cols-12">
+        <div className="w-full p-2 border-b-2 border-gray-300">
+            <form action={handleSubmit} className="grid w-full grid-cols-3 gap-1 sm:grid-cols-12">
                 <div className="col-span-1 flex items-center justify-center sm:col-span-3">
                     <label>{fileTypeName}</label>
                 </div>
@@ -77,7 +77,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
                     </button>
                 </div>
                 <div className="col-span-2 flex items-center justify-center sm:col-span-3">
-                    <p className="w-full rounded bg-gray-100 text-gray-500 overflow-hidden">
+                    <p className="w-full rounded text-gray-500 overflow-hidden">
                         {
                             uploaded && userUploadedFilenameRef.current === null ? userUploadedFilename : userUploadedFilenameRef.current
                         }

@@ -2,12 +2,12 @@ import {createContext, useContext} from "react";
 import {ISlot, IFileType} from "@/types/types";
 
 interface DataContextProps {
-    examSlots: ISlot[],
+    slots: ISlot[],
     fileTypes: IFileType[]
 }
 
 const DataContext = createContext<DataContextProps>({
-    examSlots: [],
+    slots: [],
     fileTypes: [],
 });
 

@@ -2,8 +2,8 @@
 
 import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
-import ExamSlot from "@/components/admin/exam-slot";
-import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/app/admin/slot/actions";
+import Slot from "@/components/admin/slot";
+import {deleteSlotById, fetchSlotAsPage, saveSlot} from "@/app/admin/slot/actions";
 import {Pagination} from "@nextui-org/pagination";
 import AddAndEditModal from "@/components/add-and-edit-modal";
 import {toast, Toaster} from "sonner";
@@ -12,13 +12,13 @@ import {convertToLocalDateTime} from "@/utils/date-util";
 
 const PAGE_SIZE = 8;
 
-const ExamSlotContainer = () => {
+const SlotContainer = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedExamSlot, setSelectedExamSlot] = useState<ISlot>({code: "", name: ""} as ISlot);
-    const [examSlots, setExamSlots] = useState<ISlot[]>([]);
+    const [selectedSlot, setSelectedSlot] = useState<ISlot>({code: "", name: ""} as ISlot);
+    const [slots, setSlots] = useState<ISlot[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -29,22 +29,22 @@ const ExamSlotContainer = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        fetchExamSlots(pageNumber);
+        fetchSlots(pageNumber);
     }, []);
 
     useEffect(() => {
         setErrorMessage("");
-    }, [selectedExamSlot]);
+    }, [selectedSlot]);
 
 
-    const fetchExamSlots = async (page: number) => {
-        const apiResponse = await fetchSlotsAsPage(page);
+    const fetchSlots = async (page: number) => {
+        const apiResponse = await fetchSlotAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching exam slots.");
+            throw new Error("Error fetching slots.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setExamSlots(() => apiResponsePage.items);
+        setSlots(() => apiResponsePage.items);
         setNumberOfElements(() => apiResponsePage.numberOfElements);
         setTotalElements(() => apiResponsePage.totalElements);
         setTotalPages(() => apiResponsePage.totalPages);
@@ -74,26 +74,26 @@ const ExamSlotContainer = () => {
             setIsLoading(false);
             return;
         }
-        const updatedExamSlot: ISlot = {
-            ...selectedExamSlot,
+        const updatedSlot: ISlot = {
+            ...selectedSlot,
             code,
             name,
             modifiedDate: convertToLocalDateTime(new Date())
         } as ISlot;
 
-        const apiResponse: ApiResponse = await saveSlot(updatedExamSlot);
+        const apiResponse: ApiResponse = await saveSlot(updatedSlot);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        setExamSlots(prevState => {
-            const filteredExamSlots = prevState.filter(examSlot => examSlot.id != selectedExamSlot.id);
-            const newExamSlots = [...filteredExamSlots, updatedExamSlot]
-            newExamSlots.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
-            return newExamSlots;
+        setSlots(prevState => {
+            const filteredSlots = prevState.filter(slot => slot.id != selectedSlot.id);
+            const newSlots = [...filteredSlots, updatedSlot]
+            newSlots.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
+            return newSlots;
         })
-        postSuccess("Exam slot updated successfully.")
+        postSuccess("Slot updated successfully.")
         setShowEditModal(false);
     };
 
@@ -103,7 +103,7 @@ const ExamSlotContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as ISlot)
+        setSelectedSlot({code: "", name: ""} as ISlot)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
@@ -114,17 +114,17 @@ const ExamSlotContainer = () => {
             setIsLoading(false);
             return
         }
-        const filteredExamSlots = examSlots.filter(examSlot => examSlot.id != id);
+        const filteredSlots = slots.filter(slot => slot.id != id);
 
         if ((numberOfElements - 1) == 0 && pageNumber == totalPages) {
             // last page and last element, has prev page
             if (pageNumber > 1) {
-                fetchExamSlots(pageNumber - 1); // go back one page as current page has no element left.
+                fetchSlots(pageNumber - 1); // go back one page as current page has no element left.
                 setTotalPages(totalPages - 1);
                 setPageNumber(pageNumber - 1);
             } else {
                 // last page and last element, doesn't have prev
-                setExamSlots([]);
+                setSlots([]);
                 setPageNumber(0);
                 setNumberOfElements(0);
                 setTotalElements(0);
@@ -132,18 +132,18 @@ const ExamSlotContainer = () => {
             }
         } else if (numberOfElements > 1 && pageNumber == totalPages) {
             // last page and more element left, don't reload
-            setExamSlots(filteredExamSlots)
+            setSlots(filteredSlots)
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
             // delete in between, then reload current page.
-            fetchExamSlots(pageNumber);
+            fetchSlots(pageNumber);
         }
-        postSuccess("Exam Slot deleted successfully.");
+        postSuccess("Slot deleted successfully.");
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as ISlot)
+        setSelectedSlot({code: "", name: ""} as ISlot)
         setShowDeleteModal(false);
     }
 
@@ -160,7 +160,7 @@ const ExamSlotContainer = () => {
             return
         }
         const date = new Date();
-        const newExamSlot: ISlot = {
+        const newSlot: ISlot = {
             code,
             name,
             createdDate: convertToLocalDateTime(date),
@@ -170,29 +170,29 @@ const ExamSlotContainer = () => {
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
-            setExamSlots([...examSlots, newExamSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setSlots([...slots, newSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setPageNumber(1);
             setNumberOfElements(1)
             setTotalElements(1);
             setTotalPages(1);
-        } else if (examSlots.length < PAGE_SIZE && pageNumber == totalPages) {
+        } else if (slots.length < PAGE_SIZE && pageNumber == totalPages) {
             // current page is not filled, and it's the last page, then add here, not needed to re-fetch from the server.
-            setExamSlots([...examSlots, newExamSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setSlots([...slots, newSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setNumberOfElements(numberOfElements + 1);
             setTotalElements(totalElements + 1);
         } else {
             //go to last page after adding and re-fetch from the server.
             let currentTotalPages = Math.max(Math.ceil((totalElements + 1) / PAGE_SIZE), totalPages);
-            fetchExamSlots(currentTotalPages);
+            fetchSlots(currentTotalPages);
             setTotalPages(currentTotalPages);
             setPageNumber(currentTotalPages);
         }
-        postSuccess("Exam slot created successfully.")
+        postSuccess("Slot created successfully.")
         setShowAddModal(false);
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedExamSlot({code: "", name: ""} as ISlot)
+        setSelectedSlot({code: "", name: ""} as ISlot)
         setShowAddModal(false);
     }
 
@@ -227,14 +227,14 @@ const ExamSlotContainer = () => {
                 </thead>
                 <tbody>
                 {
-                    examSlots.map((examSlot, index) => {
+                    slots.map((slot, index) => {
                         return (
-                            <ExamSlot key={examSlot.id}
-                                      examSlot={examSlot}
-                                      index={(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                      changeSelectedExamSlot={setSelectedExamSlot}
-                                      setShowEditModal={setShowEditModal}
-                                      setShowDeleteModal={setShowDeleteModal}
+                            <Slot key={slot.id}
+                                  slot={slot}
+                                  index={(pageNumber - 1) * PAGE_SIZE + index + 1}
+                                  changeSelectedSlot={setSelectedSlot}
+                                  setShowEditModal={setShowEditModal}
+                                  setShowDeleteModal={setShowDeleteModal}
                             />
                         );
                     })
@@ -246,15 +246,15 @@ const ExamSlotContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedExamSlot({code: "", name: ""} as ISlot);
+                        setSelectedSlot({code: "", name: ""} as ISlot);
                         setShowAddModal(true);
                     }}>
-                    Add Exam Slot
+                    Add Slot
                 </button>
             </div>
             <div className="flex justify-center p-1">
                 {
-                    examSlots.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    slots.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
                         showControls
                         color="success"
@@ -263,17 +263,17 @@ const ExamSlotContainer = () => {
                         initialPage={1}
                         onChange={page => {
                             setPageNumber(() => page);
-                            fetchExamSlots(page);
+                            fetchSlots(page);
                         }}/>
                 }
             </div>
 
             {
-                showEditModal && <AddAndEditModal key={selectedExamSlot.code + "1"}
-                                                  title="Update Exam Slot"
+                showEditModal && <AddAndEditModal key={selectedSlot.code + "1"}
+                                                  title="Update Slot"
                                                   isLoading={isLoading}
-                                                  initialName={selectedExamSlot.name}
-                                                  initialCode={selectedExamSlot.code}
+                                                  initialName={selectedSlot.name}
+                                                  initialCode={selectedSlot.code}
                                                   errorMessage={errorMessage}
                                                   errorMessageHandler={setErrorMessage}
                                                   saveClickHandler={editHandlerModalSaveHandler}
@@ -281,20 +281,20 @@ const ExamSlotContainer = () => {
             }
 
             {
-                showDeleteModal && <DeleteModal key={selectedExamSlot.code + "1"}
-                                                title="Delete Exam Slot"
-                                                type="Exam Slot"
+                showDeleteModal && <DeleteModal key={selectedSlot.code + "1"}
+                                                title="Delete Slot"
+                                                type="Slot"
                                                 isLoading={isLoading}
-                                                idToDelete={selectedExamSlot.id}
-                                                initialName={selectedExamSlot.name}
-                                                initialCode={selectedExamSlot.code}
+                                                idToDelete={selectedSlot.id}
+                                                initialName={selectedSlot.name}
+                                                initialCode={selectedSlot.code}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <AddAndEditModal key={selectedExamSlot.code + "1"}
-                                              title="Add New Exam Slot"
+            {showAddModal && <AddAndEditModal key={selectedSlot.code + "1"}
+                                              title="Add New Slot"
                                               isLoading={isLoading}
                                               errorMessage={errorMessage}
                                               errorMessageHandler={setErrorMessage}
@@ -305,4 +305,4 @@ const ExamSlotContainer = () => {
     );
 }
 
-export default ExamSlotContainer;
+export default SlotContainer;

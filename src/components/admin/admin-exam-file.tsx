@@ -3,11 +3,8 @@
 import React from 'react';
 
 interface ExamFileProps {
-    examSlotId: number,
-    fileTypeId: number,
     fileTypeName: string,
     uploaded: boolean,
-    examDate: string,
     userUploadedFilename: string | null,
     fileSize: number | null,
     filePath: string | null
@@ -25,11 +22,8 @@ const downloadByteArray = (byteArray: Uint8Array, fileName: string) => {
 };
 
 const AdminExamFile: React.FC<ExamFileProps> = ({
-                                                    examSlotId,
-                                                    fileTypeId,
                                                     fileTypeName,
                                                     uploaded,
-                                                    examDate,
                                                     userUploadedFilename,
                                                     fileSize,
                                                     filePath

@@ -4,10 +4,10 @@ import Link from "next/link";
 import React from "react";
 import {usePathname} from "next/navigation";
 
-const adminRoute = "/admin";
-const regionRoute = "/admin/region";
-const roleRoute = "/admin/role";
+const dashboardRoute = "/admin";
 const slotRoute = "/admin/slot";
+const roleRoute = "/admin/role";
+const regionRoute = "/admin/region";
 const fileTypeRoute = "/admin/file-type";
 const examDateRoute = "/admin/exam-date";
 const examCentreRoute = "/admin/exam-centre";
@@ -18,9 +18,14 @@ export default function NavLink() {
     return (
         <>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === adminRoute && activeLinkColor}`}
-                href={adminRoute}>
-                Home
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === dashboardRoute && activeLinkColor}`}
+                href={dashboardRoute}>
+                Dashboard
+            </Link>
+            <Link
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === slotRoute && activeLinkColor}`}
+                href={slotRoute}>
+                Slot
             </Link>
             <Link
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === roleRoute && activeLinkColor}`}
@@ -36,11 +41,6 @@ export default function NavLink() {
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === fileTypeRoute && activeLinkColor}`}
                 href={fileTypeRoute}>
                 File Type
-            </Link>
-            <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === slotRoute && activeLinkColor}`}
-                href={slotRoute}>
-                Slot
             </Link>
             <Link
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === examDateRoute && activeLinkColor}`}

@@ -2,14 +2,14 @@ import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
 import React from "react";
 import {sendGetRequest} from "@/utils/api";
-import ExamCentreUploadDetailsMainSection from "@/components/admin/exam-centre-upload-details-main-section";
-import {ApiResponsePage} from "@/types/types";
+import ExamCentreUploadDetailsMain from "@/components/admin/exam-centre-upload-details-main";
 import ExamCentreUploadDetailsHeader from "@/components/admin/exam-centre-upload-details-header";
+import {ApiResponsePage, IExamCentre, IExamDate} from "@/types/types";
 
 
 interface Props {
     params: {
-        examCentreCode: string
+        examCentreId: number
     }
 }
 
@@ -31,47 +31,53 @@ export default async function Page({params}: Props) {
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-
     const token = idContext.token as string;
 
-    // fetch exam centre details
-    let examCentreUrl = `${API_URL}/exam-centres/query?code=${params.examCentreCode}`;
-    // fetch exam slot list
-    const examSlotsUrl = `${API_URL}/exam-slots`;
-    // fetch exam file type list
+    const examCentreUrl = `${API_URL}/exam-centres/${params.examCentreId}`;
+    const examDateUrl = `${API_URL}/exam-dates/query?examCentreId=${params.examCentreId}`;
     const fileTypesUrl = `${API_URL}/file-types`;
 
     // Fetch concurrently
-    const [examCentreApiRes, slotsApiRes, fileTypesApiRes] = await Promise.all([
+    const [examCentreApiRes, examDateApiRes, fileTypesApiRes] = await Promise.all([
         sendGetRequest(examCentreUrl, token),
-        sendGetRequest(examSlotsUrl, token),
+        sendGetRequest(examDateUrl, token),
         sendGetRequest(fileTypesUrl, token),
     ]);
+
 
     if (!examCentreApiRes.status) {
         console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
         throw new Error("Error fetching exam centre.");
     }
-    if (!slotsApiRes.status || slotsApiRes.data.length === 0) {
-        console.log(`error: status=${slotsApiRes.status}, message=${slotsApiRes.message}`);
-        throw new Error("Error fetching exam slots.");
+    if (!examDateApiRes.status) {
+        console.log(`error: status=${examDateApiRes.status}, message=${examDateApiRes.message}`);
+        throw new Error("Error fetching exam dates.");
     }
+
     if (!fileTypesApiRes.status || fileTypesApiRes.data.length === 0) {
         console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
         throw new Error("Error fetching file types.");
     }
+    const examCentre = examCentreApiRes.data as IExamCentre;
+    const examDateApiResponsePage = examDateApiRes.data as ApiResponsePage;
+    const examDates: IExamDate[] = examDateApiResponsePage.items as IExamDate[];
 
-    const apiResponsePage = examCentreApiRes.data as ApiResponsePage;
-    if (apiResponsePage.totalPages === 0) {
-        throw new Error("Exam centre not found");
-    }
     return (
         <main className="flex justify-center font-[sans-serif]">
             <div className="flex h-screen w-full flex-col items-center gap-2 bg-gray-50 shadow-lg sm:w-[80vw]">
-                <ExamCentreUploadDetailsHeader examCentre={apiResponsePage.items[0]}/>
-                <ExamCentreUploadDetailsMainSection examCentreCode={params.examCentreCode}
-                                                    examSlots={slotsApiRes.data}
-                                                    fileTypes={fileTypesApiRes.data}/>
+                <ExamCentreUploadDetailsHeader examCentre={examCentre}/>
+                {
+                    examDates.length === 0 ?
+                        <div className="text-large font-bold text-center justify-center items-center m-auto">
+                            <h2>No exam found for exam centre code: {examCentre.code}!</h2>
+                            <h2> Kindly add exam.</h2>
+                        </div>
+                        :
+                        <ExamCentreUploadDetailsMain examCentreId={examCentre.id}
+                                                     fileTypes={fileTypesApiRes.data}
+                                                     examDates={examDates.sort((a, b) => a.date.toLowerCase().localeCompare(b.date.toLowerCase()))}
+                        />
+                }
             </div>
         </main>
     );
