@@ -13,12 +13,12 @@ interface SlotProps {
 }
 
 const Slot = ({
-                      slot,
-                      index,
-                      changeSelectedSlot,
-                      setShowEditModal,
-                      setShowDeleteModal
-                  }: SlotProps) => {
+                  slot,
+                  index,
+                  changeSelectedSlot,
+                  setShowEditModal,
+                  setShowDeleteModal
+              }: SlotProps) => {
 
     const handleEditClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         changeSelectedSlot(slot);
@@ -41,6 +41,12 @@ const Slot = ({
                 </td>
                 <td className="px-6 py-4 text-center">
                     {slot.code}
+                </td>
+                <td className="px-6 py-4 text-center">
+                    {slot.startTime}
+                </td>
+                <td className="px-6 py-4 text-center">
+                    {slot.endTime}
                 </td>
                 <td className="px-6 py-4 text-center">
                     {slot.createdDate?.toLocaleString()}

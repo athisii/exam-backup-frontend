@@ -52,9 +52,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
             throw new Error("Error uploading exam file.");
         }
         setStatus(apiResponse.status);
-        if (apiResponse) {
-            userUploadedFilenameRef.current = userSelectedFilename;
-        }
+        userUploadedFilenameRef.current = userSelectedFilename;
         setDisabledBtn(true)
         if (inputFileRef.current) {
             inputFileRef.current.value = '';

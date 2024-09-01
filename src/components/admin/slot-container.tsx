@@ -5,10 +5,10 @@ import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
 import Slot from "@/components/admin/slot";
 import {deleteSlotById, fetchSlotAsPage, saveSlot} from "@/app/admin/slot/actions";
 import {Pagination} from "@nextui-org/pagination";
-import AddAndEditModal from "@/components/add-and-edit-modal";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
+import SLotAddAndEditModal from "@/components/slot-add-edit-modal";
 
 const PAGE_SIZE = 8;
 
@@ -56,21 +56,35 @@ const SlotContainer = () => {
         }
     };
 
-    const isValid = (name: string, code: string): boolean => {
+    const isValid = (name: string, code: string, startTime: string, endTime: string): boolean => {
         if (name.trim().length === 0) {
-            setErrorMessage("Name should not be empty.");
+            setErrorMessage("'Name' should not be empty.");
             return false;
         }
         if (code.trim().length === 0 || Number.parseInt(code) <= 0) {
-            setErrorMessage("Code should be a non-negative number.");
+            setErrorMessage("'Code' should be a non-negative number.");
+            return false;
+        }
+        if (startTime.trim().length === 0) {
+            setErrorMessage("'Start Time' should not be empty.");
+            return false;
+        }
+        if (endTime.trim().length === 0) {
+            setErrorMessage("'End Time' should not be empty.");
+            return false;
+        }
+
+        if (Number.parseInt(endTime.split(":")[0]) <= Number.parseInt(startTime.split(":")[0])) {
+            setErrorMessage("'End Time' should be after 'Start Time'");
             return false;
         }
         return true;
-    }
+    };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string, startTime: string, endTime: string) => {
+        // TODO; work on time, startTime < endTime check
         setIsLoading(true);
-        if (!isValid(name, code)) {
+        if (!isValid(name, code, startTime, endTime)) {
             setIsLoading(false);
             return;
         }
@@ -78,6 +92,8 @@ const SlotContainer = () => {
             ...selectedSlot,
             code,
             name,
+            startTime,
+            endTime,
             modifiedDate: convertToLocalDateTime(new Date())
         } as ISlot;
 
@@ -147,13 +163,13 @@ const SlotContainer = () => {
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string, startTime: string, endTime: string) => {
         setIsLoading(true);
-        if (!isValid(name, code)) {
+        if (!isValid(name, code, startTime, endTime)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveSlot({code, name} as ISlot);
+        const apiResponse: ApiResponse = await saveSlot({code, name, startTime, endTime} as ISlot);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -163,6 +179,8 @@ const SlotContainer = () => {
         const newSlot: ISlot = {
             code,
             name,
+            startTime,
+            endTime,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id
@@ -210,6 +228,12 @@ const SlotContainer = () => {
                     </th>
                     <th scope="col" className="px-6 py-4">
                         Code
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                        Start Time
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                        End Time
                     </th>
                     <th scope="col" className="px-6 py-4">
                         Created Date
@@ -269,15 +293,17 @@ const SlotContainer = () => {
             </div>
 
             {
-                showEditModal && <AddAndEditModal key={selectedSlot.code + "1"}
-                                                  title="Update Slot"
-                                                  isLoading={isLoading}
-                                                  initialName={selectedSlot.name}
-                                                  initialCode={selectedSlot.code}
-                                                  errorMessage={errorMessage}
-                                                  errorMessageHandler={setErrorMessage}
-                                                  saveClickHandler={editHandlerModalSaveHandler}
-                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <SLotAddAndEditModal key={selectedSlot.code + "1"}
+                                                      title="Update Slot"
+                                                      isLoading={isLoading}
+                                                      initialStartTime={selectedSlot.startTime}
+                                                      initialEndTime={selectedSlot.endTime}
+                                                      initialName={selectedSlot.name}
+                                                      initialCode={selectedSlot.code}
+                                                      errorMessage={errorMessage}
+                                                      errorMessageHandler={setErrorMessage}
+                                                      saveClickHandler={editHandlerModalSaveHandler}
+                                                      cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {
@@ -293,13 +319,13 @@ const SlotContainer = () => {
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <AddAndEditModal key={selectedSlot.code + "1"}
-                                              title="Add New Slot"
-                                              isLoading={isLoading}
-                                              errorMessage={errorMessage}
-                                              errorMessageHandler={setErrorMessage}
-                                              saveClickHandler={addHandlerModalSaveHandler}
-                                              cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <SLotAddAndEditModal key={selectedSlot.code + "1"}
+                                                  title="Add New Slot"
+                                                  isLoading={isLoading}
+                                                  errorMessage={errorMessage}
+                                                  errorMessageHandler={setErrorMessage}
+                                                  saveClickHandler={addHandlerModalSaveHandler}
+                                                  cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
     );
