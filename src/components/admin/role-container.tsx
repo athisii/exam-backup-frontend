@@ -1,24 +1,24 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
-import Slot from "@/components/admin/slot";
-import {deleteSlotById, fetchSlotAsPage, saveSlot} from "@/app/admin/slot/actions";
+import {ApiResponse, ApiResponsePage, IRole} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import SlotAddAndEditModal from "@/components/slot-add-edit-modal";
+import {deleteRoleById, fetchRoleAsPage, saveRole} from "@/app/admin/role/actions";
+import Role from "@/components/admin/role";
+import AddAndEditModal from "@/components/add-and-edit-modal";
 
 const PAGE_SIZE = 8;
 
-const SlotContainer = () => {
+const RoleContainer = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedSlot, setSelectedSlot] = useState<ISlot>({code: "", name: ""} as ISlot);
-    const [slots, setSlots] = useState<ISlot[]>([]);
+    const [selectedRole, setSelectedRole] = useState<IRole>({code: "", name: ""} as IRole);
+    const [roles, setRoles] = useState<IRole[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -29,22 +29,22 @@ const SlotContainer = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        fetchSlots(pageNumber);
+        fetchRoles(pageNumber);
     }, []);
 
     useEffect(() => {
         setErrorMessage("");
-    }, [selectedSlot]);
+    }, [selectedRole]);
 
 
-    const fetchSlots = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchSlotAsPage(page);
+    const fetchRoles = async (page: number) => {
+        const apiResponse: ApiResponse = await fetchRoleAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching slots.");
+            throw new Error("Error fetching roles.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setSlots(() => apiResponsePage.items);
+        setRoles(() => apiResponsePage.items);
         setNumberOfElements(() => apiResponsePage.numberOfElements);
         setTotalElements(() => apiResponsePage.totalElements);
         setTotalPages(() => apiResponsePage.totalPages);
@@ -56,7 +56,7 @@ const SlotContainer = () => {
         }
     };
 
-    const isValid = (name: string, code: string, startTime: string, endTime: string): boolean => {
+    const isValid = (name: string, code: string): boolean => {
         if (name.trim().length === 0) {
             setErrorMessage("'Name' should not be empty.");
             return false;
@@ -65,50 +65,35 @@ const SlotContainer = () => {
             setErrorMessage("'Code' should be a non-negative number.");
             return false;
         }
-        if (startTime.trim().length === 0) {
-            setErrorMessage("'Start Time' should not be empty.");
-            return false;
-        }
-        if (endTime.trim().length === 0) {
-            setErrorMessage("'End Time' should not be empty.");
-            return false;
-        }
-
-        if (Number.parseInt(endTime.split(":")[0]) <= Number.parseInt(startTime.split(":")[0])) {
-            setErrorMessage("'End Time' should be after 'Start Time'");
-            return false;
-        }
         return true;
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string, startTime: string, endTime: string) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, startTime, endTime)) {
+        if (!isValid(name, code)) {
             setIsLoading(false);
             return;
         }
-        const updatedSlot: ISlot = {
-            ...selectedSlot,
+        const updatedRole: IRole = {
+            ...selectedRole,
             code,
             name,
-            startTime,
-            endTime,
             modifiedDate: convertToLocalDateTime(new Date())
-        } as ISlot;
+        } as IRole;
 
-        const apiResponse: ApiResponse = await saveSlot(updatedSlot);
+        const apiResponse: ApiResponse = await saveRole(updatedRole);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        setSlots(prevState => {
-            const filteredSlots = prevState.filter(slot => slot.id != selectedSlot.id);
-            const newSlots = [...filteredSlots, updatedSlot]
-            newSlots.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
-            return newSlots;
+        setRoles(prevState => {
+            const filteredRoles = prevState.filter(role => role.id != selectedRole.id);
+            const newRoles = [...filteredRoles, updatedRole]
+            newRoles.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
+            return newRoles;
         })
-        postSuccess("Slot updated successfully.")
+        postSuccess("Role updated successfully.")
         setShowEditModal(false);
     };
 
@@ -118,28 +103,28 @@ const SlotContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedSlot({code: "", name: ""} as ISlot)
+        setSelectedRole({code: "", name: ""} as IRole)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
         setIsLoading(true);
-        const apiResponse: ApiResponse = await deleteSlotById(id);
+        const apiResponse: ApiResponse = await deleteRoleById(id);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        const filteredSlots = slots.filter(slot => slot.id != id);
+        const filteredRoles = roles.filter(role => role.id != id);
 
         if ((numberOfElements - 1) == 0 && pageNumber == totalPages) {
             // last page and last element, has prev page
             if (pageNumber > 1) {
-                fetchSlots(pageNumber - 1); // go back one page as current page has no element left.
+                fetchRoles(pageNumber - 1); // go back one page as current page has no element left.
                 setTotalPages(totalPages - 1);
                 setPageNumber(pageNumber - 1);
             } else {
                 // last page and last element, doesn't have prev
-                setSlots([]);
+                setRoles([]);
                 setPageNumber(0);
                 setNumberOfElements(0);
                 setTotalElements(0);
@@ -147,69 +132,67 @@ const SlotContainer = () => {
             }
         } else if (numberOfElements > 1 && pageNumber == totalPages) {
             // last page and more element left, don't reload
-            setSlots(filteredSlots)
+            setRoles(filteredRoles)
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
             // delete in between, then reload current page.
-            fetchSlots(pageNumber);
+            fetchRoles(pageNumber);
         }
-        postSuccess("Slot deleted successfully.");
+        postSuccess("Role deleted successfully.");
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedSlot({code: "", name: ""} as ISlot)
+        setSelectedRole({code: "", name: ""} as IRole)
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string, startTime: string, endTime: string) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, startTime, endTime)) {
+        if (!isValid(name, code)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveSlot({code, name, startTime, endTime} as ISlot);
+        const apiResponse: ApiResponse = await saveRole({code, name} as IRole);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
         const date = new Date();
-        const newSlot: ISlot = {
+        const newRole: IRole = {
             code,
             name,
-            startTime,
-            endTime,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id
-        } as ISlot;
+        } as IRole;
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
-            setSlots([...slots, newSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setRoles([...roles, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setPageNumber(1);
             setNumberOfElements(1)
             setTotalElements(1);
             setTotalPages(1);
-        } else if (slots.length < PAGE_SIZE && pageNumber == totalPages) {
+        } else if (roles.length < PAGE_SIZE && pageNumber == totalPages) {
             // current page is not filled, and it's the last page, then add here, not needed to re-fetch from the server.
-            setSlots([...slots, newSlot].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setRoles([...roles, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setNumberOfElements(numberOfElements + 1);
             setTotalElements(totalElements + 1);
         } else {
             //go to last page after adding and re-fetch from the server.
             let currentTotalPages = Math.max(Math.ceil((totalElements + 1) / PAGE_SIZE), totalPages);
-            fetchSlots(currentTotalPages);
+            fetchRoles(currentTotalPages);
             setTotalPages(currentTotalPages);
             setPageNumber(currentTotalPages);
         }
-        postSuccess("Slot created successfully.")
+        postSuccess("Role created successfully.")
         setShowAddModal(false);
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedSlot({code: "", name: ""} as ISlot)
+        setSelectedRole({code: "", name: ""} as IRole)
         setShowAddModal(false);
     }
 
@@ -229,12 +212,6 @@ const SlotContainer = () => {
                         Code
                     </th>
                     <th scope="col" className="px-6 py-4">
-                        Start Time
-                    </th>
-                    <th scope="col" className="px-6 py-4">
-                        End Time
-                    </th>
-                    <th scope="col" className="px-6 py-4">
                         Created Date
                     </th>
                     <th scope="col" className="px-6 py-4">
@@ -250,12 +227,12 @@ const SlotContainer = () => {
                 </thead>
                 <tbody>
                 {
-                    slots.map((slot, index) => {
+                    roles.map((role, index) => {
                         return (
-                            <Slot key={slot.id}
-                                  slot={slot}
+                            <Role key={role.id}
+                                  role={role}
                                   index={(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                  changeSelectedSlot={setSelectedSlot}
+                                  changeSelectedRole={setSelectedRole}
                                   setShowEditModal={setShowEditModal}
                                   setShowDeleteModal={setShowDeleteModal}
                             />
@@ -269,15 +246,15 @@ const SlotContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedSlot({code: "", name: ""} as ISlot);
+                        setSelectedRole({code: "", name: ""} as IRole);
                         setShowAddModal(true);
                     }}>
-                    Add Slot
+                    Add Role
                 </button>
             </div>
             <div className="flex justify-center p-1">
                 {
-                    slots.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    roles.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
                         showControls
                         color="success"
@@ -286,48 +263,46 @@ const SlotContainer = () => {
                         initialPage={1}
                         onChange={page => {
                             setPageNumber(() => page);
-                            fetchSlots(page);
+                            fetchRoles(page);
                         }}/>
                 }
             </div>
 
             {
-                showEditModal && <SlotAddAndEditModal key={selectedSlot.code + "1"}
-                                                      title="Update Slot"
-                                                      isLoading={isLoading}
-                                                      initialStartTime={selectedSlot.startTime}
-                                                      initialEndTime={selectedSlot.endTime}
-                                                      initialName={selectedSlot.name}
-                                                      initialCode={selectedSlot.code}
-                                                      errorMessage={errorMessage}
-                                                      errorMessageHandler={setErrorMessage}
-                                                      saveClickHandler={editHandlerModalSaveHandler}
-                                                      cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <AddAndEditModal key={selectedRole.code + "1"}
+                                                  title="Update Role"
+                                                  isLoading={isLoading}
+                                                  initialName={selectedRole.name}
+                                                  initialCode={selectedRole.code}
+                                                  errorMessage={errorMessage}
+                                                  errorMessageHandler={setErrorMessage}
+                                                  saveClickHandler={editHandlerModalSaveHandler}
+                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {
-                showDeleteModal && <DeleteModal key={selectedSlot.code + "1"}
-                                                title="Delete Slot"
-                                                type="Slot"
+                showDeleteModal && <DeleteModal key={selectedRole.code + "1"}
+                                                title="Delete Role"
+                                                type="Role"
                                                 isLoading={isLoading}
-                                                idToDelete={selectedSlot.id}
-                                                initialName={selectedSlot.name}
-                                                initialCode={selectedSlot.code}
+                                                idToDelete={selectedRole.id}
+                                                initialName={selectedRole.name}
+                                                initialCode={selectedRole.code}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <SlotAddAndEditModal key={selectedSlot.code + "1"}
-                                                  title="Add New Slot"
-                                                  isLoading={isLoading}
-                                                  errorMessage={errorMessage}
-                                                  errorMessageHandler={setErrorMessage}
-                                                  saveClickHandler={addHandlerModalSaveHandler}
-                                                  cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <AddAndEditModal key={selectedRole.code + "1"}
+                                              title="Add New Role"
+                                              isLoading={isLoading}
+                                              errorMessage={errorMessage}
+                                              errorMessageHandler={setErrorMessage}
+                                              saveClickHandler={addHandlerModalSaveHandler}
+                                              cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
     );
 }
 
-export default SlotContainer;
+export default RoleContainer;

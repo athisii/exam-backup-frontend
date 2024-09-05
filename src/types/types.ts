@@ -53,10 +53,6 @@ export interface IExamDate {
     date: string;
 }
 
-export interface IExam {
-    id: number
-}
-
 export interface IFileType {
     id: number,
     name: string,
@@ -92,9 +88,13 @@ export interface ISlot {
     endTime: string
 }
 
-export interface FormUploadActionRes {
-    status: boolean,
-    previousComplement: boolean
+export interface IRole {
+    id: number,
+    active: boolean,
+    createdDate: string | null,
+    modifiedDate: string | null,
+    code: string,
+    name: string
 }
 
 export type SortOrder = "ASC" | "DESC"

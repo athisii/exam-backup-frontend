@@ -1,5 +1,3 @@
-//2024-08-27 01:42
-
 export function convertToLocalDateTime(date: Date): string {
     const hours: number = date.getHours();
     const minutes: number = date.getMinutes();

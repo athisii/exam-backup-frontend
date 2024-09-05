@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useState} from 'react';
 import Loading from "@/components/loading";
 
 
-const SLotAddAndEditModal = ({
+const SlotAddAndEditModal = ({
                                  title,
                                  isLoading,
                                  errorMessage,
@@ -124,4 +124,4 @@ const SLotAddAndEditModal = ({
     );
 };
 
-export default SLotAddAndEditModal;
+export default SlotAddAndEditModal;
