@@ -203,7 +203,7 @@ const RoleContainer = () => {
                 <thead className="text-xs w-full text-gray-700 uppercase bg-gray-100">
                 <tr>
                     <th scope="col" className="px-6 py-4">
-                        SN
+                        Serial Number
                     </th>
                     <th scope="col" className="px-6 py-4">
                         Name

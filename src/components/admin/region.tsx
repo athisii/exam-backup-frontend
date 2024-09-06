@@ -1,52 +1,52 @@
 'use client'
 
 import React, {Dispatch, SetStateAction} from 'react';
-import {IRole} from "@/types/types";
+import {IRegion} from "@/types/types";
 
 
 interface RoleProps {
-    role: IRole,
+    region: IRegion,
     index: number
     setShowEditModal: Dispatch<SetStateAction<boolean>>
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>
-    changeSelectedRole: Dispatch<SetStateAction<IRole>>
+    changeSelectedRegion: Dispatch<SetStateAction<IRegion>>
 }
 
-const Role = ({
-                  role,
-                  index,
-                  changeSelectedRole,
-                  setShowEditModal,
-                  setShowDeleteModal
-              }: RoleProps) => {
+const Region = ({
+                    region,
+                    index,
+                    changeSelectedRegion,
+                    setShowEditModal,
+                    setShowDeleteModal
+                }: RoleProps) => {
 
     const handleEditClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedRole(role);
+        changeSelectedRegion(region);
         setShowEditModal(true)
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedRole(role);
+        changeSelectedRegion(region);
         setShowDeleteModal(true);
     };
 
     return (
         <>
-            <tr key={role.id} className="border-1 hover:bg-gray-100">
+            <tr key={region.id} className="border-1 hover:bg-gray-100">
                 <td className="px-6 py-4 text-center">
                     {index}
                 </td>
                 <td className="px-6 py-4">
-                    {role.name}
+                    {region.name}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {role.code}
+                    {region.code}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {role.createdDate?.toLocaleString()}
+                    {region.createdDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {role.modifiedDate?.toLocaleString()}
+                    {region.modifiedDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
                     <button
@@ -80,4 +80,4 @@ const Role = ({
     );
 }
 
-export default Role;
+export default Region;
