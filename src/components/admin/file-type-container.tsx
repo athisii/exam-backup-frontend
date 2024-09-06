@@ -8,7 +8,7 @@ import DeleteModal from "@/components/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
 import AddAndEditModal from "@/components/add-and-edit-modal";
 import FileType from "@/components/admin/file-type";
-import {deleteFileTypeById, fetchFileTypeAsPage, saveFileType} from "@/app/admin/file-type/actions";
+import {deleteFileTypeById, fetchFileTypesAsPage, saveFileType} from "@/app/admin/file-type/actions";
 
 const PAGE_SIZE = 8;
 
@@ -37,10 +37,10 @@ const FileTypeContainer = () => {
 
 
     const fetchFileTypes = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchFileTypeAsPage(page);
+        const apiResponse: ApiResponse = await fetchFileTypesAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching fileTypes.");
+            throw new Error("Error fetching file types.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         setFileTypes(() => apiResponsePage.items);
@@ -285,8 +285,8 @@ const FileTypeContainer = () => {
                                                 type="File Type"
                                                 isLoading={isLoading}
                                                 idToDelete={selectedFileType.id}
-                                                initialName={selectedFileType.name}
-                                                initialCode={selectedFileType.code}
+                                                name={selectedFileType.name}
+                                                code={selectedFileType.code}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}

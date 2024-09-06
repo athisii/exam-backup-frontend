@@ -31,7 +31,7 @@ export async function fetchRolesAsPage(pageNumber: number, pageSize: number = 8,
     return await sendGetRequest(url, token);
 }
 
-export async function saveRole(slot: IRole): Promise<ApiResponse> {
+export async function saveRole(role: IRole): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -44,7 +44,7 @@ export async function saveRole(slot: IRole): Promise<ApiResponse> {
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    return await sendPostRequest(url, token, slot);
+    return await sendPostRequest(url, token, role);
 }
 
 export async function deleteRoleById(id: number): Promise<ApiResponse> {

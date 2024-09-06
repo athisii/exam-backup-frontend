@@ -51,6 +51,8 @@ export interface IExamFile {
 export interface IExamDate {
     id: number,
     date: string;
+    createdDate: string | null,
+    modifiedDate: string | null
 }
 
 export interface IFileType {

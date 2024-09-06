@@ -1,35 +1,30 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import Loading from "@/components/loading";
 
 
-const AddAndEditModal = ({
-                             title,
-                             type,
-                             isLoading,
-                             errorMessage,
-                             idToDelete,
-                             name,
-                             code,
-                             errorMessageHandler,
-                             deleteClickHandler,
-                             cancelClickHandler
-                         }: {
+const ExamDateAddAndEditModal = ({
+                                     title,
+                                     isLoading,
+                                     errorMessage,
+                                     initialDate,
+                                     errorMessageHandler,
+                                     saveClickHandler,
+                                     cancelClickHandler
+                                 }: {
     title: string,
-    type: string,
     isLoading: boolean,
     errorMessage: string,
-    idToDelete: number,
-    name: string,
-    code: string,
+    initialDate?: string,
     errorMessageHandler: Dispatch<SetStateAction<string>>,
-    deleteClickHandler: (id: number) => void,
+    saveClickHandler: (date: string) => void,
     cancelClickHandler: () => void
 }) => {
+    const [date, setDate] = useState(initialDate ? initialDate : "")
 
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
-        deleteClickHandler(idToDelete);
+        saveClickHandler(date);
     };
 
     function handleCancelClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -53,20 +48,27 @@ const AddAndEditModal = ({
                         </h2>
                     </div>
                     <div className="m-3 p-2 text-center">
-                        {errorMessage ?
-                            <div className="text-red-500">
-                                {errorMessage}
-                            </div> :
-                            <div className="flex flex-col justify-center items-center gap-3 p-2 mt-4">
-                                <label>Are you sure to delete <b>{type}</b>?</label>
-                                <p>Name: {name}</p>
-                                <p>Code: {code}</p>
-                            </div>}
+                        {errorMessage && <div className="text-red-500">
+                            {errorMessage}
+                        </div>}
+
+                        <div className="flex justify-center items-center gap-3 p-2 mt-4">
+                            <label>Date:</label>
+                            <input
+                                type="date"
+                                autoFocus
+                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                value={date}
+                                onChange={event => {
+                                    clearErrorMessage();
+                                    setDate(event.target.value);
+                                }}/>
+                        </div>
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white">
                             <button
                                 className={`sm:w-[20%] bg-green-500 py-2 px-4 rounded-md disabled:active:bg-green-500 active:bg-green-700`}
                                 onClick={handleSaveClick}>
-                                Delete
+                                Save
                             </button>
                             <button
                                 className={`sm:w-[20%] bg-yellow-500 py-2 px-4 rounded-md disabled:active:bg-yellow-500`}
@@ -81,4 +83,4 @@ const AddAndEditModal = ({
     );
 };
 
-export default AddAndEditModal;
+export default ExamDateAddAndEditModal;

@@ -285,8 +285,8 @@ const RegionContainer = () => {
                                                 type="Region"
                                                 isLoading={isLoading}
                                                 idToDelete={selectedRegion.id}
-                                                initialName={selectedRegion.name}
-                                                initialCode={selectedRegion.code}
+                                                name={selectedRegion.name}
+                                                code={selectedRegion.code}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}

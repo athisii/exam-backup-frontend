@@ -8,8 +8,7 @@ const AddAndEditModal = ({
                              isLoading,
                              errorMessage,
                              idToDelete,
-                             name,
-                             code,
+                             date,
                              errorMessageHandler,
                              deleteClickHandler,
                              cancelClickHandler
@@ -19,13 +18,11 @@ const AddAndEditModal = ({
     isLoading: boolean,
     errorMessage: string,
     idToDelete: number,
-    name: string,
-    code: string,
+    date?: string,
     errorMessageHandler: Dispatch<SetStateAction<string>>,
     deleteClickHandler: (id: number) => void,
     cancelClickHandler: () => void
 }) => {
-
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
@@ -59,8 +56,7 @@ const AddAndEditModal = ({
                             </div> :
                             <div className="flex flex-col justify-center items-center gap-3 p-2 mt-4">
                                 <label>Are you sure to delete <b>{type}</b>?</label>
-                                <p>Name: {name}</p>
-                                <p>Code: {code}</p>
+                                <p>Date: {date}</p>
                             </div>}
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white">
                             <button

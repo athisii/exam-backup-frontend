@@ -1,8 +1,7 @@
 import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
-import {sendGetRequest} from "@/utils/api";
-import {ApiResponse} from "@/types/types";
+import ExamDateContainer from "@/components/admin/exam-date-container";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -21,16 +20,13 @@ const Page = async () => {
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-    const token = idContext.token as string;
-    const examDatesUrl = `${API_URL}/exam-dates`;
-
-    const examDatesApiRes: ApiResponse = await sendGetRequest(examDatesUrl, token);
 
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
                 <h1>Exam Date</h1>
             </div>
+            <ExamDateContainer/>
         </>
     );
 };

@@ -311,8 +311,8 @@ const SlotContainer = () => {
                                                 type="Slot"
                                                 isLoading={isLoading}
                                                 idToDelete={selectedSlot.id}
-                                                initialName={selectedSlot.name}
-                                                initialCode={selectedSlot.code}
+                                                name={selectedSlot.name}
+                                                code={selectedSlot.code}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}

@@ -14,7 +14,7 @@ if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
 }
 
-export async function fetchFileTypeAsPage(pageNumber: number, pageSize: number = 8, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+export async function fetchFileTypesAsPage(pageNumber: number, pageSize: number = 8, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -31,7 +31,7 @@ export async function fetchFileTypeAsPage(pageNumber: number, pageSize: number =
     return await sendGetRequest(url, token);
 }
 
-export async function saveFileType(slot: IFileType): Promise<ApiResponse> {
+export async function saveFileType(fileType: IFileType): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -44,7 +44,7 @@ export async function saveFileType(slot: IFileType): Promise<ApiResponse> {
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    return await sendPostRequest(url, token, slot);
+    return await sendPostRequest(url, token, fileType);
 }
 
 export async function deleteFileTypeById(id: number): Promise<ApiResponse> {

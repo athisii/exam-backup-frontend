@@ -1,24 +1,23 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, IRole} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IExamDate} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import {deleteRoleById, fetchRolesAsPage, saveRole} from "@/app/admin/role/actions";
-import Role from "@/components/admin/role";
-import AddAndEditModal from "@/components/add-and-edit-modal";
+import {deleteExamDateById, fetchExamDatesAsPage, saveExamDate} from "@/app/admin/exam-date/actions";
+import ExamDateAddAndEditModal from "@/components/exam-date-add-and-edit-modal";
+import ExamDate from "@/components/admin/exam-date";
+import ExamDateDeleteModal from "@/components/exam-date-delete-modal";
 
 const PAGE_SIZE = 8;
 
-const RoleContainer = () => {
-
+const ExamDateContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedRole, setSelectedRole] = useState<IRole>({code: "", name: ""} as IRole);
-    const [roles, setRoles] = useState<IRole[]>([]);
+    const [selectedExamDate, setSelectedExamDate] = useState<IExamDate>({date: ""} as IExamDate);
+    const [examDates, setExamDates] = useState<IExamDate[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -29,22 +28,22 @@ const RoleContainer = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        fetchRoles(pageNumber);
+        fetchExamDates(pageNumber);
     }, []);
 
     useEffect(() => {
         setErrorMessage("");
-    }, [selectedRole]);
+    }, [selectedExamDate]);
 
 
-    const fetchRoles = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchRolesAsPage(page);
+    const fetchExamDates = async (page: number) => {
+        const apiResponse: ApiResponse = await fetchExamDatesAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching roles.");
+            throw new Error("Error fetching exam dates.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setRoles(() => apiResponsePage.items);
+        setExamDates(() => apiResponsePage.items);
         setNumberOfElements(() => apiResponsePage.numberOfElements);
         setTotalElements(() => apiResponsePage.totalElements);
         setTotalPages(() => apiResponsePage.totalPages);
@@ -56,44 +55,44 @@ const RoleContainer = () => {
         }
     };
 
-    const isValid = (name: string, code: string): boolean => {
-        if (name.trim().length === 0) {
-            setErrorMessage("'Name' should not be empty.");
+    const isValid = (date: string): boolean => {
+        if (date.trim().length === 0) {
+            setErrorMessage("'Date' should not be empty.");
             return false;
         }
-        if (code.trim().length === 0 || Number.parseInt(code) <= 0) {
-            setErrorMessage("'Code' should be a non-negative number.");
+        const today = new Date();
+        if (today.getTime() > new Date(date).getTime()) {
+            setErrorMessage("'Date' should not be later than today.");
             return false;
         }
         return true;
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string) => {
+    const editHandlerModalSaveHandler = async (date: string) => {
         setIsLoading(true);
-        if (!isValid(name, code)) {
+        if (!isValid(date)) {
             setIsLoading(false);
             return;
         }
-        const updatedRole: IRole = {
-            ...selectedRole,
-            code,
-            name,
+        const updatedExamDate: IExamDate = {
+            ...selectedExamDate,
+            date: date,
             modifiedDate: convertToLocalDateTime(new Date())
-        } as IRole;
+        } as IExamDate;
 
-        const apiResponse: ApiResponse = await saveRole(updatedRole);
+        const apiResponse: ApiResponse = await saveExamDate(updatedExamDate);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        setRoles(prevState => {
-            const filteredRoles = prevState.filter(role => role.id != selectedRole.id);
-            const newRoles = [...filteredRoles, updatedRole]
-            newRoles.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
-            return newRoles;
+        setExamDates(prevState => {
+            const filteredExamDate = prevState.filter(examDate => examDate.id != selectedExamDate.id);
+            const newExamDates = [...filteredExamDate, updatedExamDate]
+            newExamDates.sort((a, b) => a.date.localeCompare(b.date));
+            return newExamDates;
         })
-        postSuccess("Role updated successfully.")
+        postSuccess("Exam Date updated successfully.")
         setShowEditModal(false);
     };
 
@@ -103,28 +102,28 @@ const RoleContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedRole({code: "", name: ""} as IRole)
+        setSelectedExamDate({date: ""} as IExamDate)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
         setIsLoading(true);
-        const apiResponse: ApiResponse = await deleteRoleById(id);
+        const apiResponse: ApiResponse = await deleteExamDateById(id);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        const filteredRoles = roles.filter(role => role.id != id);
+        const filteredExamDates = examDates.filter(examDate => examDate.id != id);
 
         if ((numberOfElements - 1) == 0 && pageNumber == totalPages) {
             // last page and last element, has prev page
             if (pageNumber > 1) {
-                fetchRoles(pageNumber - 1); // go back one page as current page has no element left.
+                fetchExamDates(pageNumber - 1); // go back one page as current page has no element left.
                 setTotalPages(totalPages - 1);
                 setPageNumber(pageNumber - 1);
             } else {
                 // last page and last element, doesn't have prev
-                setRoles([]);
+                setExamDates([]);
                 setPageNumber(0);
                 setNumberOfElements(0);
                 setTotalElements(0);
@@ -132,67 +131,66 @@ const RoleContainer = () => {
             }
         } else if (numberOfElements > 1 && pageNumber == totalPages) {
             // last page and more element left, don't reload
-            setRoles(filteredRoles)
+            setExamDates(filteredExamDates)
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
             // delete in between, then reload current page.
-            fetchRoles(pageNumber);
+            fetchExamDates(pageNumber);
         }
-        postSuccess("Role deleted successfully.");
+        postSuccess("Exam Date deleted successfully.");
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedRole({code: "", name: ""} as IRole)
+        setSelectedExamDate({date: ""} as IExamDate)
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string) => {
+    const addHandlerModalSaveHandler = async (date: string) => {
         setIsLoading(true);
-        if (!isValid(name, code)) {
+        if (!isValid(date)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveRole({code, name} as IRole);
+        const apiResponse: ApiResponse = await saveExamDate({date} as IExamDate);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        const date = new Date();
-        const newRole: IRole = {
-            code,
-            name,
-            createdDate: convertToLocalDateTime(date),
-            modifiedDate: convertToLocalDateTime(date),
+        const dateObj = new Date();
+        const newExamDate: IExamDate = {
+            date: date,
+            createdDate: convertToLocalDateTime(dateObj),
+            modifiedDate: convertToLocalDateTime(dateObj),
             id: apiResponse.data.id
-        } as IRole;
+        } as IExamDate;
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
-            setRoles([...roles, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setExamDates([...examDates, newExamDate].sort((a, b) => Number.parseInt(a.date) - Number.parseInt(b.date)));
             setPageNumber(1);
             setNumberOfElements(1)
             setTotalElements(1);
             setTotalPages(1);
-        } else if (roles.length < PAGE_SIZE && pageNumber == totalPages) {
+        } else if (examDates.length < PAGE_SIZE && pageNumber == totalPages) {
             // current page is not filled, and it's the last page, then add here, not needed to re-fetch from the server.
-            setRoles([...roles, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setExamDates([...examDates, newExamDate].sort((a, b) => Number.parseInt(a.date) - Number.parseInt(b.date)));
             setNumberOfElements(numberOfElements + 1);
             setTotalElements(totalElements + 1);
         } else {
             //go to last page after adding and re-fetch from the server.
             let currentTotalPages = Math.max(Math.ceil((totalElements + 1) / PAGE_SIZE), totalPages);
-            fetchRoles(currentTotalPages);
+            fetchExamDates(currentTotalPages);
             setTotalPages(currentTotalPages);
             setPageNumber(currentTotalPages);
         }
-        postSuccess("Role created successfully.")
+        postSuccess("Exam Date created successfully.")
         setShowAddModal(false);
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedRole({code: "", name: ""} as IRole)
+        setSelectedExamDate({date: ""} as IExamDate)
         setShowAddModal(false);
     }
 
@@ -206,10 +204,7 @@ const RoleContainer = () => {
                         Serial Number
                     </th>
                     <th scope="col" className="px-6 py-4">
-                        Name
-                    </th>
-                    <th scope="col" className="px-6 py-4">
-                        Code
+                        Date
                     </th>
                     <th scope="col" className="px-6 py-4">
                         Created Date
@@ -227,14 +222,14 @@ const RoleContainer = () => {
                 </thead>
                 <tbody>
                 {
-                    roles.map((role, index) => {
+                    examDates.map((examDate, index) => {
                         return (
-                            <Role key={role.id}
-                                  role={role}
-                                  index={(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                  changeSelectedRole={setSelectedRole}
-                                  setShowEditModal={setShowEditModal}
-                                  setShowDeleteModal={setShowDeleteModal}
+                            <ExamDate key={examDate.id}
+                                      examDate={examDate}
+                                      index={(pageNumber - 1) * PAGE_SIZE + index + 1}
+                                      changeSelectedExamDate={setSelectedExamDate}
+                                      setShowEditModal={setShowEditModal}
+                                      setShowDeleteModal={setShowDeleteModal}
                             />
                         );
                     })
@@ -246,15 +241,15 @@ const RoleContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedRole({code: "", name: ""} as IRole);
+                        setSelectedExamDate({date: ""} as IExamDate);
                         setShowAddModal(true);
                     }}>
-                    Add Role
+                    Add Exam Date
                 </button>
             </div>
             <div className="flex justify-center p-1">
                 {
-                    roles.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    examDates.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
                         showControls
                         color="success"
@@ -263,46 +258,44 @@ const RoleContainer = () => {
                         initialPage={1}
                         onChange={page => {
                             setPageNumber(() => page);
-                            fetchRoles(page);
+                            fetchExamDates(page);
                         }}/>
                 }
             </div>
 
             {
-                showEditModal && <AddAndEditModal key={selectedRole.code + "1"}
-                                                  title="Update Role"
-                                                  isLoading={isLoading}
-                                                  initialName={selectedRole.name}
-                                                  initialCode={selectedRole.code}
-                                                  errorMessage={errorMessage}
-                                                  errorMessageHandler={setErrorMessage}
-                                                  saveClickHandler={editHandlerModalSaveHandler}
-                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <ExamDateAddAndEditModal key={selectedExamDate.date + "1"}
+                                                          title="Update Exam Date"
+                                                          isLoading={isLoading}
+                                                          initialDate={selectedExamDate.date}
+                                                          errorMessage={errorMessage}
+                                                          errorMessageHandler={setErrorMessage}
+                                                          saveClickHandler={editHandlerModalSaveHandler}
+                                                          cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {
-                showDeleteModal && <DeleteModal key={selectedRole.code + "1"}
-                                                title="Delete Role"
-                                                type="Role"
-                                                isLoading={isLoading}
-                                                idToDelete={selectedRole.id}
-                                                name={selectedRole.name}
-                                                code={selectedRole.code}
-                                                errorMessage={errorMessage}
-                                                errorMessageHandler={setErrorMessage}
-                                                deleteClickHandler={deleteHandlerModalDeleteHandler}
-                                                cancelClickHandler={deleteHandlerModalCancelHandler}/>
+                showDeleteModal && <ExamDateDeleteModal key={selectedExamDate.date + "1"}
+                                                        title="Delete Exam Date"
+                                                        type="Exam Date"
+                                                        isLoading={isLoading}
+                                                        idToDelete={selectedExamDate.id}
+                                                        date={selectedExamDate.date}
+                                                        errorMessage={errorMessage}
+                                                        errorMessageHandler={setErrorMessage}
+                                                        deleteClickHandler={deleteHandlerModalDeleteHandler}
+                                                        cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <AddAndEditModal key={selectedRole.code + "1"}
-                                              title="Add New Role"
-                                              isLoading={isLoading}
-                                              errorMessage={errorMessage}
-                                              errorMessageHandler={setErrorMessage}
-                                              saveClickHandler={addHandlerModalSaveHandler}
-                                              cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <ExamDateAddAndEditModal key={selectedExamDate.date + "1"}
+                                                      title="Add New Exam Date"
+                                                      isLoading={isLoading}
+                                                      errorMessage={errorMessage}
+                                                      errorMessageHandler={setErrorMessage}
+                                                      saveClickHandler={addHandlerModalSaveHandler}
+                                                      cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
     );
 }
 
-export default RoleContainer;
+export default ExamDateContainer;
