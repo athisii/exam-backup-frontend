@@ -4,9 +4,9 @@ import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IFileType} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/delete-modal";
+import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import AddAndEditModal from "@/components/add-and-edit-modal";
+import AddAndEditModal from "@/components/admin/modal/add-and-edit-modal";
 import FileType from "@/components/admin/file-type";
 import {deleteFileTypeById, fetchFileTypesAsPage, saveFileType} from "@/app/admin/file-type/actions";
 

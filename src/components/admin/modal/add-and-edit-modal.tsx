@@ -1,30 +1,33 @@
 import React, {Dispatch, SetStateAction, useState} from 'react';
-import Loading from "@/components/loading";
+import Loading from "@/components/admin/loading";
 
 
-const ExamDateAddAndEditModal = ({
-                                     title,
-                                     isLoading,
-                                     errorMessage,
-                                     initialDate,
-                                     errorMessageHandler,
-                                     saveClickHandler,
-                                     cancelClickHandler
-                                 }: {
+const AddAndEditModal = ({
+                             title,
+                             isLoading,
+                             errorMessage,
+                             initialName,
+                             initialCode,
+                             errorMessageHandler,
+                             saveClickHandler,
+                             cancelClickHandler
+                         }: {
     title: string,
     isLoading: boolean,
     errorMessage: string,
-    initialDate?: string,
+    initialName?: string,
+    initialCode?: string,
     errorMessageHandler: Dispatch<SetStateAction<string>>,
-    saveClickHandler: (date: string) => void,
+    saveClickHandler: (name: string, code: string) => void,
     cancelClickHandler: () => void
 }) => {
-    const [date, setDate] = useState(initialDate ? initialDate : "")
+    const [name, setName] = useState(initialName ? initialName : "")
+    const [code, setCode] = useState(initialCode ? initialCode : "")
 
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
-        saveClickHandler(date);
+        saveClickHandler(name, code);
     };
 
     function handleCancelClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -53,15 +56,25 @@ const ExamDateAddAndEditModal = ({
                         </div>}
 
                         <div className="flex justify-center items-center gap-3 p-2 mt-4">
-                            <label>Date:</label>
+                            <label>Name:</label>
                             <input
-                                type="date"
                                 autoFocus
                                 className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
-                                value={date}
+                                value={name}
                                 onChange={event => {
                                     clearErrorMessage();
-                                    setDate(event.target.value);
+                                    setName(event.target.value);
+                                }}/>
+                        </div>
+                        <div className="flex justify-center items-center gap-3 p-2">
+                            <label>Code:</label>
+                            <input
+                                type="number"
+                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                value={code}
+                                onChange={event => {
+                                    clearErrorMessage();
+                                    setCode(event.target.value);
                                 }}/>
                         </div>
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white">
@@ -83,4 +96,4 @@ const ExamDateAddAndEditModal = ({
     );
 };
 
-export default ExamDateAddAndEditModal;
+export default AddAndEditModal;

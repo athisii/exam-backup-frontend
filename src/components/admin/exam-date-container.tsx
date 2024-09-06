@@ -6,9 +6,9 @@ import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import {convertToLocalDateTime} from "@/utils/date-util";
 import {deleteExamDateById, fetchExamDatesAsPage, saveExamDate} from "@/app/admin/exam-date/actions";
-import ExamDateAddAndEditModal from "@/components/exam-date-add-and-edit-modal";
+import ExamDateAddAndEditModal from "@/components/admin/modal/exam-date-add-and-edit-modal";
 import ExamDate from "@/components/admin/exam-date";
-import ExamDateDeleteModal from "@/components/exam-date-delete-modal";
+import ExamDateDeleteModal from "@/components/admin/modal/exam-date-delete-modal";
 
 const PAGE_SIZE = 8;
 

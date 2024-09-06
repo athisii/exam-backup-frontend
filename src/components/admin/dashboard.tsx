@@ -1,10 +1,10 @@
 "use client"
 
 import React, {useState} from 'react';
-import ExamCentreContainer from "@/components/admin/exam-centre-container";
+import DashboardExamCentres from "@/components/admin/dashboard-exam-centres";
 import {IRegion} from "@/types/types";
 
-const AdminDashboard = ({regions}: {
+const Dashboard = ({regions}: {
     regions: IRegion[]
 }) => {
     // sync state between header and body
@@ -28,9 +28,9 @@ const AdminDashboard = ({regions}: {
                     </select>
                 </div>
             </div>
-            <ExamCentreContainer key={region.id} region={region}/>
+            <DashboardExamCentres key={region.id} region={region}/>
         </>
     );
 };
 
-export default AdminDashboard;
+export default Dashboard;

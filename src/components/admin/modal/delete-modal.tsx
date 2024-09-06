@@ -1,5 +1,5 @@
 import React, {Dispatch, SetStateAction} from 'react';
-import Loading from "@/components/loading";
+import Loading from "@/components/admin/loading";
 
 
 const AddAndEditModal = ({

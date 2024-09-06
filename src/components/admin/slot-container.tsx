@@ -6,9 +6,9 @@ import Slot from "@/components/admin/slot";
 import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/app/admin/slot/actions";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/delete-modal";
+import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import SlotAddAndEditModal from "@/components/slot-add-edit-modal";
+import SlotAddAndEditModal from "@/components/admin/modal/slot-add-edit-modal";
 
 const PAGE_SIZE = 8;
 

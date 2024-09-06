@@ -12,13 +12,13 @@ interface ExamFileContainerProps {
     examFiles: IExamFile[]
 }
 
-const ExamFileContainer: React.FC<ExamFileContainerProps> = ({
-                                                                 examCentreId,
-                                                                 examDateId,
-                                                                 slotId,
-                                                                 fileTypes,
-                                                                 examFiles
-                                                             }) => {
+const ExamFileUploadContainer: React.FC<ExamFileContainerProps> = ({
+                                                                       examCentreId,
+                                                                       examDateId,
+                                                                       slotId,
+                                                                       fileTypes,
+                                                                       examFiles
+                                                                   }) => {
     return (
         <>
             {
@@ -51,4 +51,4 @@ const ExamFileContainer: React.FC<ExamFileContainerProps> = ({
 };
 
 
-export default ExamFileContainer;
+export default ExamFileUploadContainer;

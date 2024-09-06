@@ -1,6 +1,7 @@
 import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
+import ExamDateContainer from "@/components/admin/exam-date-container";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -10,6 +11,7 @@ if (!API_URL) {
 if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
 }
+
 
 const Page = async () => {
     const idContext = identityContext();
@@ -23,9 +25,9 @@ const Page = async () => {
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                {/*No region, list all*/}
                 <h1>Exam Centre</h1>
             </div>
+            <ExamDateContainer/>
         </>
     );
 };

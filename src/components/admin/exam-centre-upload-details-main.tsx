@@ -3,7 +3,7 @@
 import React, {Suspense, useEffect, useState} from "react";
 import {ApiResponse, ApiResponsePage, IExamDate, IExamFile, IFileType, ISlot} from "@/types/types";
 import {fetchExamFiles, fetchSlotsForExam} from "@/app/actions";
-import AdminExamFile from "@/components/admin/admin-exam-file";
+import ExamFileView from "@/components/admin/exam-file-view";
 
 
 interface MainProps {
@@ -127,22 +127,22 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
                                         let uploadedExamFile = examFiles.find(examFile => examFile.fileType.id === fileType.id);
                                         if (uploadedExamFile) {
                                             return (
-                                                <AdminExamFile key={fileType.id + " " + slot.id + " " + examDate.id}
-                                                               fileTypeName={fileType.name}
-                                                               uploaded={true}
-                                                               userUploadedFilename={uploadedExamFile.userUploadedFilename}
-                                                               fileSize={uploadedExamFile.fileSize}
-                                                               filePath={uploadedExamFile.filePath}
+                                                <ExamFileView key={fileType.id + " " + slot.id + " " + examDate.id}
+                                                              fileTypeName={fileType.name}
+                                                              uploaded={true}
+                                                              userUploadedFilename={uploadedExamFile.userUploadedFilename}
+                                                              fileSize={uploadedExamFile.fileSize}
+                                                              filePath={uploadedExamFile.filePath}
                                                 />
                                             )
                                         }
                                         return (
-                                            <AdminExamFile key={fileType.id + " " + slot.id + " " + examDate.id}
-                                                           fileTypeName={fileType.name}
-                                                           uploaded={false}
-                                                           userUploadedFilename={null}
-                                                           fileSize={null}
-                                                           filePath={null}
+                                            <ExamFileView key={fileType.id + " " + slot.id + " " + examDate.id}
+                                                          fileTypeName={fileType.name}
+                                                          uploaded={false}
+                                                          userUploadedFilename={null}
+                                                          fileSize={null}
+                                                          filePath={null}
                                             />
                                         );
                                     })

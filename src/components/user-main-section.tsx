@@ -3,7 +3,7 @@
 import React, {Suspense, useEffect, useState} from "react";
 import {ApiResponse, ApiResponsePage, IExamCentre, IExamDate, IExamFile, IFileType, ISlot} from "@/types/types";
 import {fetchExamFiles, fetchSlotsForExam} from "@/app/actions";
-import ExamFileContainer from "@/components/exam-file-container";
+import ExamFileUploadContainer from "@/components/exam-file-upload-container";
 
 
 interface CompProp {
@@ -102,7 +102,7 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
                     :
                     < Suspense fallback={<p>Loading....</p>}>
                         <div>
-                            <ExamFileContainer
+                            <ExamFileUploadContainer
                                 examCentreId={examCentre.id}
                                 examDateId={examDate.id}
                                 slotId={slot.id}

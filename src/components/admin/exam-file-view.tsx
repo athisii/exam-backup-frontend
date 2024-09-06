@@ -10,18 +10,7 @@ interface ExamFileProps {
     filePath: string | null
 }
 
-
-const downloadByteArray = (byteArray: Uint8Array, fileName: string) => {
-    const blob = new Blob([byteArray], {type: 'application/octet-stream'});
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = URL.createObjectURL(blob);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
-const AdminExamFile: React.FC<ExamFileProps> = ({
+const ExamFileView: React.FC<ExamFileProps> = ({
                                                     fileTypeName,
                                                     uploaded,
                                                     userUploadedFilename,
@@ -76,4 +65,4 @@ const AdminExamFile: React.FC<ExamFileProps> = ({
         </tr>
     );
 }
-export default AdminExamFile;
+export default ExamFileView;

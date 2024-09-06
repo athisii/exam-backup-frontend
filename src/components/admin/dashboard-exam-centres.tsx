@@ -14,7 +14,7 @@ import PieChart from "@/components/admin/pie-chart";
 
 const PAGE_SIZE = 11;
 
-const ExamCentreContainer = ({region}: {
+const DashboardExamCentres = ({region}: {
     region: IRegion
 }) => {
 
@@ -212,4 +212,4 @@ const ExamCentreContainer = ({region}: {
     );
 };
 
-export default ExamCentreContainer;
+export default DashboardExamCentres;
