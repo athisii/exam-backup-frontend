@@ -1,52 +1,52 @@
 'use client'
 
 import React, {Dispatch, SetStateAction} from 'react';
-import {IRegion} from "@/types/types";
+import {IFileType} from "@/types/types";
 
 
-interface RegionProps {
-    region: IRegion,
+interface FileTypeProps {
+    fileType: IFileType,
     index: number
     setShowEditModal: Dispatch<SetStateAction<boolean>>
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>
-    changeSelectedRegion: Dispatch<SetStateAction<IRegion>>
+    changeSelectedFileType: Dispatch<SetStateAction<IFileType>>
 }
 
-const Region = ({
-                    region,
-                    index,
-                    changeSelectedRegion,
-                    setShowEditModal,
-                    setShowDeleteModal
-                }: RegionProps) => {
+const FileType = ({
+                      fileType,
+                      index,
+                      changeSelectedFileType,
+                      setShowEditModal,
+                      setShowDeleteModal
+                  }: FileTypeProps) => {
 
     const handleEditClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedRegion(region);
+        changeSelectedFileType(fileType);
         setShowEditModal(true)
     };
 
     const handleDeleteClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        changeSelectedRegion(region);
+        changeSelectedFileType(fileType);
         setShowDeleteModal(true);
     };
 
     return (
         <>
-            <tr key={region.id} className="border-1 hover:bg-gray-100">
+            <tr key={fileType.id} className="border-1 hover:bg-gray-100">
                 <td className="px-6 py-4 text-center">
                     {index}
                 </td>
                 <td className="px-6 py-4">
-                    {region.name}
+                    {fileType.name}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {region.code}
+                    {fileType.code}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {region.createdDate?.toLocaleString()}
+                    {fileType.createdDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
-                    {region.modifiedDate?.toLocaleString()}
+                    {fileType.modifiedDate?.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 text-center">
                     <button
@@ -80,4 +80,4 @@ const Region = ({
     );
 }
 
-export default Region;
+export default FileType;

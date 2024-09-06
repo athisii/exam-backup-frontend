@@ -57,6 +57,8 @@ export interface IFileType {
     id: number,
     name: string,
     code: string,
+    createdDate: string | null,
+    modifiedDate: string | null
 }
 
 export interface IRegion {

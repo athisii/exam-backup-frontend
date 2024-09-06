@@ -6,7 +6,7 @@ import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import {deleteRoleById, fetchRoleAsPage, saveRole} from "@/app/admin/role/actions";
+import {deleteRoleById, fetchRolesAsPage, saveRole} from "@/app/admin/role/actions";
 import Role from "@/components/admin/role";
 import AddAndEditModal from "@/components/add-and-edit-modal";
 
@@ -38,7 +38,7 @@ const RoleContainer = () => {
 
 
     const fetchRoles = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchRoleAsPage(page);
+        const apiResponse: ApiResponse = await fetchRolesAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
             throw new Error("Error fetching roles.");

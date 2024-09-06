@@ -1,8 +1,7 @@
 import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
-import {sendGetRequest} from "@/utils/api";
-import {ApiResponse} from "@/types/types";
+import FileTypeContainer from "@/components/admin/file-type-container";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -22,16 +21,12 @@ const Page = async () => {
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-    const token = idContext.token as string;
-    const fileTypesUrl = `${API_URL}/file-types`;
-
-    const fileTypesApiRes: ApiResponse = await sendGetRequest(fileTypesUrl, token);
-
     return (
         <>
             <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
                 <h1>File Type</h1>
             </div>
+            <FileTypeContainer/>
         </>
     );
 };

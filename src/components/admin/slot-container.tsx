@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
 import Slot from "@/components/admin/slot";
-import {deleteSlotById, fetchSlotAsPage, saveSlot} from "@/app/admin/slot/actions";
+import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/app/admin/slot/actions";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/delete-modal";
@@ -38,7 +38,7 @@ const SlotContainer = () => {
 
 
     const fetchSlots = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchSlotAsPage(page);
+        const apiResponse: ApiResponse = await fetchSlotsAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
             throw new Error("Error fetching slots.");
