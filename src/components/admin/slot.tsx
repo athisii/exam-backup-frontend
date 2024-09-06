@@ -54,7 +54,7 @@ const Slot = ({
                 <td className="px-6 py-4 text-center">
                     {slot.modifiedDate?.toLocaleString()}
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-9 py-4 text-center">
                     <button
                         className={`py-2 rounded-md text-white active:bg-green-300`}
                         onClick={handleEditClick}>
@@ -65,7 +65,7 @@ const Slot = ({
                         </svg>
                     </button>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-9 py-4">
                     {
                         <button
                             className={`py-2 px-3 text-white rounded-md active:bg-red-300`}

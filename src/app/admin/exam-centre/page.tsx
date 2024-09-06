@@ -1,8 +1,6 @@
 import React from 'react';
 import identityContext from "@/utils/session";
 import {redirect} from "next/navigation";
-import {sendGetRequest} from "@/utils/api";
-import {ApiResponse} from "@/types/types";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -21,10 +19,6 @@ const Page = async () => {
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }
-    const token = idContext.token as string;
-    const regionUrl = `${API_URL}/regions`;
-
-    const regionsApiRes: ApiResponse = await sendGetRequest(regionUrl, token);
 
     return (
         <>

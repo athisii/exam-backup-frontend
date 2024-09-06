@@ -217,10 +217,10 @@ const RoleContainer = () => {
                     <th scope="col" className="px-6 py-4">
                         Modified Date
                     </th>
-                    <th scope="col" className="px-6 py-4">
+                    <th scope="col" className="px-9 py-4">
                         Edit
                     </th>
-                    <th scope="col" className="px-6 py-4">
+                    <th scope="col" className="px-9 py-4">
                         Delete
                     </th>
                 </tr>
