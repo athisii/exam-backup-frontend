@@ -35,7 +35,6 @@ const DashboardExamCentres = ({region}: {
     };
 
     useEffect(() => {
-        // throw new Error("Error while searching.")
         if (debouncedSearchTerm) {
             if (uploadStatusFilter !== "DEFAULT") {
                 fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 1);

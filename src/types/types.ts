@@ -71,6 +71,11 @@ export interface IRegion {
     modifiedDate: string | null,
 }
 
+export interface IExamDateSlot {
+    examDateId: number,
+    slotIds: number[]
+}
+
 export interface IExamCentre {
     id: number,
     name: string,
@@ -78,7 +83,10 @@ export interface IExamCentre {
     regionName: string,
     region: IRegion,
     totalFileCount: number,
-    uploadedFileCount: number
+    uploadedFileCount: number,
+    createdDate: string | null,
+    modifiedDate: string | null,
+    examDateSlots: IExamDateSlot[]
 }
 
 export interface ISlot {
@@ -99,6 +107,12 @@ export interface IRole {
     modifiedDate: string | null,
     code: string,
     name: string
+}
+
+export interface IRegionExamDateSlotArray {
+    regions: IRegion[],
+    examDates: IExamDate[],
+    slots: ISlot[]
 }
 
 export type SortOrder = "ASC" | "DESC"

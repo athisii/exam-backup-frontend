@@ -59,8 +59,8 @@ const AddAndEditModal = ({
                             </div> :
                             <div className="flex flex-col justify-center items-center gap-3 p-2 mt-4">
                                 <label>Are you sure to delete <b>{type}</b>?</label>
-                                <p>Name: {name}</p>
-                                <p>Code: {code}</p>
+                                <p>Name: {<b>{name}</b>}</p>
+                                <p>Code: {<b>{code}</b>}</p>
                             </div>}
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white">
                             <button
