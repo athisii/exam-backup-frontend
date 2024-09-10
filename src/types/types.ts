@@ -86,6 +86,8 @@ export interface IExamCentre {
     uploadedFileCount: number,
     createdDate: string | null,
     modifiedDate: string | null,
+    email: string | null,
+    mobileNumber: string | null,
     examDateSlots: IExamDateSlot[]
 }
 

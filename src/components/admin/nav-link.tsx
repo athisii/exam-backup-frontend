@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import {usePathname} from "next/navigation";
+import {logout} from "@/utils/api";
 
 const dashboardRoute = "/admin";
 const slotRoute = "/admin/slot";
@@ -48,10 +49,15 @@ export default function NavLink() {
                 Exam Date
             </Link>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-blue-500 ${currentPath === examCentreRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center border-b-1 border-blue-500 ${currentPath === examCentreRoute && activeLinkColor}`}
                 href={examCentreRoute}>
                 Exam Centre
             </Link>
+            <button
+                onClick={() => logout()}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center`}>
+                Logout
+            </button>
         </>
     );
 }

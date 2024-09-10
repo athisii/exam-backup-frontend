@@ -29,6 +29,8 @@ const ExamCentreAddAndEditModal = ({
 }) => {
     const [name, setName] = useState(examCentre ? examCentre.name : "")
     const [code, setCode] = useState(examCentre ? examCentre.code : "")
+    const [email, setEmail] = useState<string>(examCentre && examCentre.email ? examCentre.email : "")
+    const [mobileNumber, setMobileNumber] = useState<string>(examCentre && examCentre.mobileNumber ? examCentre.mobileNumber : "")
     const [regionName, setRegionName] = useState<string>(examCentre ? examCentre.regionName : regionExamDateSlotArray.regions[0].name)
     const [selectedExamDates, setSelectedExamDates] = useState<IExamDate[]>(returnSelectedExamDates(regionExamDateSlotArray.examDates, examCentre ? examCentre.examDateSlots : []));
     const [selectedExamDatesSlots, setSelectedExamDatesSlots] = useState<IExamDateSlot[]>(examCentre ? examCentre.examDateSlots : []);
@@ -107,7 +109,7 @@ const ExamCentreAddAndEditModal = ({
     return (
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
             {isLoading ? <Loading/> :
-                <div className="sm:w-[70vw] sm:h-[90vh] bg-gray-100 flex flex-col shadow-lg rounded-lg">
+                <div className="sm:w-[70vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1 border-gray-500">
                         <h2 className="text-center text-medium text-gray-900 p-2">
                             {title}
@@ -154,10 +156,31 @@ const ExamCentreAddAndEditModal = ({
                             </div>
                         </div>
                         <div className="flex sm:w-full justify-center items-center mt-3 p-3">
-                            <div className="flex sm:w-[40%] justify-center items-center gap-3">
+                            <div className="flex sm:w-[35%] justify-start items-center gap-3">
+                                <label className="font-bold">Mobile Number:</label>
+                                <input
+                                    className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                    value={mobileNumber}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setMobileNumber(event.target.value);
+                                    }}/>
+                            </div>
+                            <div className="flex sm:w-[30%] justify-center items-center gap-3">
+                                <label className="font-bold">Email:</label>
+                                <input
+                                    type="email"
+                                    className="p-2 sm:w-[80%] rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                    value={email}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setEmail(event.target.value);
+                                    }}/>
+                            </div>
+                            <div className="flex sm:w-[30%] justify-center items-center gap-3">
                                 <label className="font-bold">Exam Date:</label>
                                 <MultiSelect
-                                    className="w-[50%] bg-gray-50"
+                                    className="w-[80%] bg-gray-50"
                                     dropDownName="Select"
                                     changeSelectedExamDates={setSelectedExamDates}
                                     selectedExamDates={selectedExamDates}
