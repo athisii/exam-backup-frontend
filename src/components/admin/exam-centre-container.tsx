@@ -112,7 +112,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
         }
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string, regionName: string, examDateSlots: IExamDateSlot[]) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string, regionName: string, mobileNumber: string, email: string, examDateSlots: IExamDateSlot[]) => {
         setIsLoading(true);
         if (!isValid(name, code, regionName)) {
             setIsLoading(false);
@@ -123,6 +123,8 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             code,
             name,
             regionName,
+            mobileNumber,
+            email,
             examDateSlots,
             modifiedDate: convertToLocalDateTime(new Date())
         } as IExamCentre;
@@ -193,13 +195,20 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string, regionName: string, examDateSlots: IExamDateSlot[]) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string, regionName: string, mobileNumber: string, email: string, examDateSlots: IExamDateSlot[]) => {
         setIsLoading(true);
         if (!isValid(name, code, regionName)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveExamCentre({code, name, regionName, examDateSlots} as IExamCentre);
+        const apiResponse: ApiResponse = await saveExamCentre({
+            code,
+            name,
+            regionName,
+            mobileNumber,
+            email,
+            examDateSlots
+        } as IExamCentre);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -210,6 +219,8 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             code,
             name,
             regionName,
+            mobileNumber,
+            email,
             examDateSlots,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),

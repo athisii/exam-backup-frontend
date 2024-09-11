@@ -24,7 +24,7 @@ const ExamCentreAddAndEditModal = ({
     examCentre?: IExamCentre,
     regionExamDateSlotArray: IRegionExamDateSlotArray,
     errorMessageHandler: Dispatch<SetStateAction<string>>,
-    saveClickHandler: (name: string, code: string, regionName: string, selectedExamDatesSlots: IExamDateSlot[]) => void,
+    saveClickHandler: (name: string, code: string, regionName: string, mobileNumber: string, email: string, selectedExamDatesSlots: IExamDateSlot[]) => void,
     cancelClickHandler: () => void
 }) => {
     const [name, setName] = useState(examCentre ? examCentre.name : "")
@@ -53,7 +53,7 @@ const ExamCentreAddAndEditModal = ({
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
-        saveClickHandler(name, code, regionName, selectedExamDatesSlots);
+        saveClickHandler(name, code, regionName, mobileNumber, email, selectedExamDatesSlots);
     };
 
     function handleCancelClick(event: React.MouseEvent<HTMLButtonElement>) {
