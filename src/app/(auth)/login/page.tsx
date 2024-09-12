@@ -59,11 +59,7 @@ const LoginPage = () => {
     };
 
     return (
-<<<<<<< HEAD
         <main className="bg-gray-100 font-poppins">
-=======
-        <main className="bg-gray-50 font-poppins">
->>>>>>> 52b8285af12cbf1ccb2c9bf28784bc839656571c
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <div className="w-full flex flex-col gap-6 justify-center items-center bg-white rounded-lg shadow-lg md:mt-0 xl:p-1 !w-[600px] h-[400px]">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8 w-[450px] h-[400px] font-poppins">
