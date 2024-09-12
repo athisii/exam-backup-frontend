@@ -12,7 +12,7 @@ import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
 import PieChart from "@/components/admin/pie-chart";
 
-const PAGE_SIZE = 11;
+const PAGE_SIZE = 8;
 
 const DashboardExamCentres = ({region}: {
     region: IRegion
@@ -117,9 +117,10 @@ const DashboardExamCentres = ({region}: {
                        value={searchTerm}
                        onChange={handleSearchChange}
                 />
-                <div className="text-gray-700 p-1 justify-center uppercase text-sm">
-                    <h3 className="inline">Filter: </h3>
-                    <select className="uppercase text-sm rounded" onChange={handleFilterChange}>
+                <div className="text--700 p-1 justify-center uppercase text-sm py-4">
+                    <h3 className="inline font-bold">Filter: </h3>
+                    <select className="uppercase text-sm rounded h-[35px]" 
+                    onChange={handleFilterChange}>
                         <option value="DEFAULT">Default</option>
                         <option value="UPLOADED">Uploaded</option>
                         <option value="NOT_UPLOADED">Not Uploaded</option>
@@ -128,7 +129,7 @@ const DashboardExamCentres = ({region}: {
             </div>
             <div className="shadow-md">
                 <table className="w-full text-sm text-left text-gray-500">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-l text-black uppercase bg-gray-50 font-bold">
                     <tr>
                         <th scope="col" className="px-8 py-3">
                             Serial Number
@@ -145,41 +146,48 @@ const DashboardExamCentres = ({region}: {
                     </tr>
                     </thead>
                     <tbody>
-                    {
+                      {
                         examCentres.map((examCentre, index) => (
-                            <tr key={examCentre.id}
-                                className="bg-white border-b hover:bg-gray-50">
-                                <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
-                                        {(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                    </Link>
+                          <tr key={examCentre.id} className="bg-white border-b hover:bg-gray-50">
+                            <td className="px-8 py-4 text-center">
+                              <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                {(pageNumber - 1) * PAGE_SIZE + index + 1}
+                              </Link>
+                            </td>
+                            <td className="px-8 py-4 text-center">
+                              <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                {examCentre.code}
+                              </Link>
+                            </td>
+                            <td className="px-8 py-4">
+                              <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                {examCentre.name}
+                              </Link>
+                            </td>
+                            <td className="px-8 py-4 text-center">
+                                  <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                    {
+                                      examCentre.totalFileCount > 0 ? (
+                                        <PieChart 
+                                          data={[
+                                            { name: "Not Uploaded", value: examCentre.totalFileCount - examCentre.uploadedFileCount },
+                                            { name: "Uploaded", value: examCentre.uploadedFileCount }
+                                          ]} 
+                                        />
+                                      ) : (
+                                        <div className="text-sm text-gray-500">
+                                          No exams available
+                                        </div>
+                                      )
+                                    }
+                                  </Link>
                                 </td>
-                                <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
-                                        {examCentre.code}
-                                    </Link>
-                                </td>
-                                <td className="px-8 py-4">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
-                                        {examCentre.name}
-                                    </Link>
-                                </td>
-                                <td className="px-8 py-4 text-center">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
-                                        <PieChart data={[
-                                            {
-                                                name: "Not Uploaded",
-                                                value: examCentre.totalFileCount - examCentre.uploadedFileCount
-                                            },
-                                            {name: "Uploaded", value: examCentre.uploadedFileCount}
-                                        ]}/>
-                                    </Link>
-
-                                </td>
-                            </tr>
+                                
+                          </tr>
                         ))
-                    }
+                      }
                     </tbody>
+
                 </table>
             </div>
             <div className="flex justify-center p-1">
