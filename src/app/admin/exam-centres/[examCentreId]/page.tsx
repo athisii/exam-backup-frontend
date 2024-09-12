@@ -50,7 +50,17 @@ export default async function Page({params}: Props) {
         throw new Error("Error fetching exam centre.");
     }
     if (!examDateApiRes.status) {
-        console.log(`error: status=${examDateApiRes.status}, message=${examDateApiRes.message}`);
+        console.log(`error: status=${examDateApiRes.status}, import React from 'react';
+
+        const ForgotPassword = () => {
+            return (
+                <div>
+                    <h2>Welcome to forgot password page</h2>
+                </div>
+            );
+        };
+        
+        export default ForgotPassword;message=${examDateApiRes.message}`);
         throw new Error("Error fetching exam dates.");
     }
 
