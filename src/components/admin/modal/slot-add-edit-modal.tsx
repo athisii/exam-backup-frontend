@@ -51,8 +51,8 @@ const SlotAddAndEditModal = ({
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
             {isLoading ? <Loading/> :
                 <div className="sm:w-[40vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
-                    <div className="border-b-1 border-gray-500">
-                        <h2 className="text-center text-medium text-gray-900 p-2">
+                    <div className="border-b-1 border-gray-500 ">
+                        <h2 className="text-center text-medium bg-blue-500 text-white rounded-lg p-2 font-bold ">
                             {title}
                         </h2>
                     </div>
@@ -62,10 +62,10 @@ const SlotAddAndEditModal = ({
                         </div>}
 
                         <div className="flex justify-center text-end items-center gap-3 p-2 mt-4">
-                            <label>Name:</label>
+                            <label className='font-bold'>Name:</label>
                             <input
                                 autoFocus
-                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={name}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -73,10 +73,10 @@ const SlotAddAndEditModal = ({
                                 }}/>
                         </div>
                         <div className="flex text-end justify-center items-center gap-3 p-2">
-                            <label>Code:</label>
+                            <label className='font-bold'>Code:</label>
                             <input
                                 type="number"
-                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={code}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -84,10 +84,10 @@ const SlotAddAndEditModal = ({
                                 }}/>
                         </div>
                         <div className="flex text-end justify-center items-center gap-3 p-2 mt-4">
-                            <label>Start Time:</label>
+                            <label className='font-bold'>Start Time:</label>
                             <input
                                 type="time"
-                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={startTime}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -95,24 +95,24 @@ const SlotAddAndEditModal = ({
                                 }}/>
                         </div>
                         <div className="flex text-end justify-center items-center gap-3 p-2">
-                            <label>End Time:</label>
+                            <label className='font-bold'>End Time:</label>
                             <input
                                 type="time"
-                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
+                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={endTime}
                                 onChange={event => {
                                     clearErrorMessage();
                                     setEndTime(event.target.value);
                                 }}/>
                         </div>
-                        <div className="flex justify-center gap-4 p-2 mt-8 text-white">
+                        <div className="flex justify-center gap-4 p-2 mt-8 text-white font-bold">
                             <button
                                 className={`sm:w-[20%] bg-green-500 py-2 px-4 rounded-md disabled:active:bg-green-500 active:bg-green-700`}
                                 onClick={handleSaveClick}>
                                 Save
                             </button>
                             <button
-                                className={`sm:w-[20%] bg-yellow-500 py-2 px-4 rounded-md disabled:active:bg-yellow-500`}
+                                className={`sm:w-[20%] bg-red-500 py-2 px-4 rounded-md disabled:active:bg-red-500`}
                                 onClick={handleCancelClick}>
                                 Cancel
                             </button>
