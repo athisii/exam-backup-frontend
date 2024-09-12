@@ -74,10 +74,10 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
 
     return (
         <>
-            <div className='flex justify-center items-center gap-3'>
+            <div className='flex justify-center items-center gap-5 py-4'>
                 <div>
-                    <label className="mr-2">Select Exam Date:</label>
-                    <select className="bg-blue-500 rounded text-white active:bg-white active:text-black"
+                    <label className="mr-4">Select Exam Date:</label>
+                    <select className="bg-green-500 rounded text-white active:bg-white active:text-black h-[40px]"
                             name="examDateDropdown"
                             onChange={handleExamDateDropdown}>
                         {examDates.map(examDate => (
@@ -85,8 +85,8 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
                     </select>
                 </div>
                 <div>
-                    <label className="mr-2">Select Slot:</label>
-                    <select className="bg-blue-500 rounded text-white active:bg-white active:text-black"
+                    <label className="mr-4">Select Slot:</label>
+                    <select className="bg-green-500 rounded text-white active:bg-white active:text-black h-[40px]"
                             name="slotDropdown"
                             onChange={handleSlopDropdown}>
                         {slots.map(slot => (<option key={slot.id + " " + examDate.id}> {slot.name}</option>))}
@@ -116,4 +116,4 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
     );
 }
 
-export default UserMainSection
+export default UserMainSection;
