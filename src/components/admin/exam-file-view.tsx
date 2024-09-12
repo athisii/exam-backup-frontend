@@ -54,7 +54,7 @@ const ExamFileView: React.FC<ExamFileProps> = ({
                     <td className="px-3 py-4">
                         <div className="col-span-1 flex items-center justify-center sm:col-span-2">
                             <button disabled
-                                    className="w-full rounded-md bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white disabled:bg-gray-200 disabled:text-black hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto"
+                                    className="w-full rounded-md bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white disabled:bg-gray-200 disabled:text-black hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto"
                             >Download
                             </button>
                         </div>
