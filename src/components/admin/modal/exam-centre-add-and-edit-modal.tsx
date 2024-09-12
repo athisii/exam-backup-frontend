@@ -111,7 +111,7 @@ const ExamCentreAddAndEditModal = ({
             {isLoading ? <Loading/> :
                 <div className="sm:w-[70vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1 border-gray-500">
-                        <h2 className="text-center text-medium text-gray-900 p-2">
+                        <h2 className="text-center text-medium text-white font-bold bg-blue-500 p-2 rounded-lg">
                             {title}
                         </h2>
                     </div>
@@ -119,78 +119,98 @@ const ExamCentreAddAndEditModal = ({
                         {errorMessage && <div className="text-red-500">
                             {errorMessage}
                         </div>}
-                        <div className="flex sm:w-full justify-between items-center mt-3 p-3">
-                            <div className="flex sm:w-[50%] justify-start items-center gap-3">
-                                <label className="font-bold">Name:</label>
-                                <textarea
-                                    autoFocus
-                                    className="sm:w-[80%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
-                                    value={name}
-                                    onChange={event => {
-                                        clearErrorMessage();
-                                        setName(event.target.value);
-                                    }}/>
-                            </div>
-                            <div className="flex sm:w-[20%] justify-center items-center gap-3">
-                                <label className="font-bold">Code:</label>
-                                <input
-                                    type="number"
-                                    className="p-2 sm:w-[70%] rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
-                                    value={code}
-                                    onChange={event => {
-                                        clearErrorMessage();
-                                        setCode(event.target.value);
-                                    }}/>
-                            </div>
-                            <div className="flex sm:w-[20%] justify-end items-center gap-3">
-                                <label className="font-bold">Region:</label>
-                                <select defaultValue={regionName}
-                                        className="rounded text-center sm:w-[80%] bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 cursor-pointer"
-                                        onChange={event => {
-                                            clearErrorMessage();
-                                            setRegionName(event.target.value);
-                                        }}>
-                                    {regionExamDateSlotArray.regions.map(region => (
-                                        <option key={region.id}>{region.name}</option>))}
-                                </select>
-                            </div>
+                        <div className="flex sm:w-full justify-between items-center mt-3 p-3 gap-4">
+                        
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold">Name:</label>
+                            <textarea
+                              autoFocus
+                              className="w-full h-10 p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              value={name}
+                              onChange={event => {
+                                clearErrorMessage();
+                                setName(event.target.value);
+                              }}
+                            />
+                          </div>
+                          
+                         
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold">Code:</label>
+                            <input
+                              type="number"
+                              className="p-2 w-full rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              value={code}
+                              onChange={event => {
+                                clearErrorMessage();
+                                setCode(event.target.value);
+                              }}
+                            />
+                          </div>
+                          
+                   
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold">Region:</label>
+                            <select
+                              defaultValue={regionName}
+                              className="w-full rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 cursor-pointer h-10 hover:border-black border"
+                              onChange={event => {
+                                clearErrorMessage();
+                                setRegionName(event.target.value);
+                              }}
+                            >
+                              {regionExamDateSlotArray.regions.map(region => (
+                                <option key={region.id}>{region.name}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                        <div className="flex sm:w-full justify-center items-center mt-3 p-3">
-                            <div className="flex sm:w-[35%] justify-start items-center gap-3">
-                                <label className="font-bold">Mobile Number:</label>
-                                <input
-                                    className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
-                                    value={mobileNumber}
-                                    onChange={event => {
-                                        clearErrorMessage();
-                                        setMobileNumber(event.target.value);
-                                    }}/>
-                            </div>
-                            <div className="flex sm:w-[30%] justify-center items-center gap-3">
-                                <label className="font-bold">Email:</label>
-                                <input
-                                    type="email"
-                                    className="p-2 sm:w-[80%] rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500"
-                                    value={email}
-                                    onChange={event => {
-                                        clearErrorMessage();
-                                        setEmail(event.target.value);
-                                    }}/>
-                            </div>
-                            <div className="flex sm:w-[30%] justify-center items-center gap-3">
-                                <label className="font-bold">Exam Date:</label>
-                                <MultiSelect
-                                    className="w-[80%] bg-gray-50"
-                                    dropDownName="Select"
-                                    changeSelectedExamDates={setSelectedExamDates}
-                                    selectedExamDates={selectedExamDates}
-                                    examDates={regionExamDateSlotArray.examDates}/>
-                            </div>
+
+                        <div className="flex sm:w-full justify-between items-center mt-3 p-3 gap-3">
+                        
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold whitespace-nowrap">Mobile Number:</label>
+                            <input
+                              className="w-[60%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              value={mobileNumber}
+                              onChange={event => {
+                                clearErrorMessage();
+                                setMobileNumber(event.target.value);
+                              }}
+                            />
+                          </div>
+                          
+                    
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold">Email:</label>
+                            <input
+                              type="email"
+                              className="w-[60%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              value={email}
+                              onChange={event => {
+                                clearErrorMessage();
+                                setEmail(event.target.value);
+                              }}
+                            />
+                          </div>
+                          
+                        
+                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                            <label className="font-bold whitespace-nowrap">Exam Date:</label>
+                            <MultiSelect
+                              className="w-[60%] bg-gray-50"
+                              dropDownName="Select"
+                              changeSelectedExamDates={setSelectedExamDates}
+                              selectedExamDates={selectedExamDates}
+                              examDates={regionExamDateSlotArray.examDates}
+                            />
+                          </div>
                         </div>
+
                         <div
-                            className="flex sm:w-full justify-between border-t-1 border-b-1 border-gray-500 items-center mt-3 p-3">
+                            className="flex sm:w-full justify-end border-t-1 border-b-1 border-gray-500 items-center mt-3 p-3">
                             <table className="w-full text-sm text-left text-gray-500">
-                                <thead className="text-xs text-gray-700 uppercase bg-blue-100">
+                                <thead className="text-xs text-black uppercase bg-blue-100 ">
                                 <tr>
                                     <th scope="col" className="px-8 py-3">
                                         Exam Date
@@ -270,14 +290,14 @@ const ExamCentreAddAndEditModal = ({
                                 </tbody>
                             </table>
                         </div>
-                        <div className="flex justify-center gap-4 p-2 mt-8 text-white">
+                        <div className="flex justify-center gap-4 p-2 mt-8 text-white font-bold">
                             <button
                                 className={`sm:w-[20%] bg-green-500 py-2 px-4 rounded-md disabled:active:bg-green-500 active:bg-green-700`}
                                 onClick={handleSaveClick}>
                                 Save
                             </button>
                             <button
-                                className={`sm:w-[20%] bg-yellow-500 py-2 px-4 rounded-md disabled:active:bg-yellow-500`}
+                                className={`sm:w-[20%] bg-red-500 py-2 px-4 rounded-md disabled:active:bg-red-500`}
                                 onClick={handleCancelClick}>
                                 Cancel
                             </button>

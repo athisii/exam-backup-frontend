@@ -17,7 +17,7 @@ import useDebounce from "@/hooks/useDebounce";
 import ExamCentreAddAndEditModal from "@/components/admin/modal/exam-centre-add-and-edit-modal";
 
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 6;
 
 const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArray: IRegionExamDateSlotArray }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -258,9 +258,9 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
     return (
         <div className="grid justify-center items-center">
             <Toaster position="top-right" richColors duration={3000}/>
-            <div className="mb-1 relative flex justify-between items-center">
+            <div className="mb-1 relative flex justify-between items-center px-0">
                 <div
-                    className="absolute inset-y-0 left-0 flex items-center ps-3 pointer-events-none">
+                    className="absolute inset-y-0 left-0 flex items-cmobilenter ps-3 pointer-events-none">
                     <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor"
                          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd"
@@ -277,7 +277,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             </div>
             <div className="shadow-md">
                 <table className="w-full text-sm text-left text-gray-500">
-                    <thead className="text-xs w-full text-gray-700 uppercase bg-gray-100">
+                    <thead className="text-xs w-full text-black uppercase bg-gray-100">
                     <tr>
                         <th scope="col" className="px-6 py-4">
                             Serial Number
@@ -319,7 +319,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-end p-3">
+            <div className="flex justify-center p-3 font-bold">
                 <button
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
