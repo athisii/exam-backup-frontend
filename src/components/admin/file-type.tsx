@@ -32,7 +32,7 @@ const FileType = ({
 
     return (
         <>
-            <tr key={fileType.id} className="border-1 hover:bg-gray-100">
+            <tr key={fileType.id} className="border-1 hover:bg-gray-100 ">
                 <td className="px-6 py-4 text-center">
                     {index}
                 </td>
