@@ -9,7 +9,7 @@ import {login} from '@/app/(auth)/login/actions'
 const LoginPage = () => {
     const [state, action] = useFormState(login, {message: ''});
     return (
-        <main className="bg-gray-50">
+        <main className="bg-gray-50 font-poppins">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <div
                     className="w-full bg-white rounded-lg shadow-lg  md:mt-0 sm:max-w-md xl:p-0 ">
