@@ -260,7 +260,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             <Toaster position="top-right" richColors duration={3000}/>
             <div className="mb-1 relative flex justify-between items-center px-0">
                 <div
-                    className="absolute inset-y-0 left-0 flex items-cmobilenter ps-3 pointer-events-none">
+                    className="absolute inset-y-3 left-0 flex items-cmobilenter ps-3 pointer-events-none">
                     <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor"
                          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd"
@@ -269,7 +269,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                     </svg>
                 </div>
                 <input type="text" id="search"
-                       className="flex-grow p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:outline-none focus:ring-primary-300"
+                       className="flex-grow p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-md bg-gray-50 focus:ring-3 focus:outline-none focus:ring-primary-300"
                        placeholder="Search by exam centre code or name"
                        value={searchTerm}
                        onChange={handleSearchChange}
