@@ -110,10 +110,11 @@ const ExamCentreAddAndEditModal = ({
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
             {isLoading ? <Loading/> :
                 <div className="sm:w-[70vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
-                    <div className="border-b-1 border-gray-500">
-                        <h2 className="text-center text-medium text-white font-bold bg-blue-500 p-2 rounded-lg">
-                            {title}
-                        </h2>
+                    <div className="border-b-1">
+                    <h2 className="text-center text-medium text-white font-bold bg-blue-500 p-2 rounded-md">
+                        {title}
+                    </h2>
+
                     </div>
                     <div className="sm:w-full flex flex-col justify-center text-center">
                         {errorMessage && <div className="text-red-500">
@@ -185,7 +186,7 @@ const ExamCentreAddAndEditModal = ({
                             <label className="font-bold">Email:</label>
                             <input
                               type="email"
-                              className="w-[60%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              className="w-[80%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                               value={email}
                               onChange={event => {
                                 clearErrorMessage();
@@ -198,7 +199,7 @@ const ExamCentreAddAndEditModal = ({
                           <div className="flex sm:w-1/3 justify-start items-center gap-3">
                             <label className="font-bold whitespace-nowrap">Exam Date:</label>
                             <MultiSelect
-                              className="w-[60%] bg-gray-50"
+                              className="w-[80%] bg-gray-50"
                               dropDownName="Select"
                               changeSelectedExamDates={setSelectedExamDates}
                               selectedExamDates={selectedExamDates}
