@@ -51,7 +51,7 @@ const SlotAddAndEditModal = ({
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
             {isLoading ? <Loading/> :
                 <div className="sm:w-[40vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
-                    <div className="border-b-1 border-gray-500 ">
+                    <div className="border-b-1 ">
                         <h2 className="text-center text-medium bg-blue-500 text-white rounded-lg p-2 font-bold ">
                             {title}
                         </h2>
