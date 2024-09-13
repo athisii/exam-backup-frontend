@@ -19,39 +19,39 @@ export default function NavLink() {
     return (
         <>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-200 hover:text-white w-full text-center border-b-1 border-blue-500  ${currentPath === dashboardRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-200 hover:text-white w-full text-center border-b-1  ${currentPath === dashboardRoute && activeLinkColor}`}
                 href={dashboardRoute}>
                 Dashboard
             </Link>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 font-poppins ${currentPath === slotRoute ? ' ' + activeLinkColor : ''}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 font-poppins ${currentPath === slotRoute ? ' ' + activeLinkColor : ''}`}
                 href={slotRoute}
             >
                 Slot
             </Link>
 
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 ${currentPath === roleRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1  ${currentPath === roleRoute && activeLinkColor}`}
                 href={roleRoute}>
                 Role
             </Link>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 ${currentPath === regionRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 ${currentPath === regionRoute && activeLinkColor}`}
                 href={regionRoute}>
                 Region
             </Link>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 ${currentPath === fileTypeRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 ${currentPath === fileTypeRoute && activeLinkColor}`}
                 href={fileTypeRoute}>
                 File Type
             </Link>
             <Link
-                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 ${currentPath === examDateRoute && activeLinkColor}`}
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 ${currentPath === examDateRoute && activeLinkColor}`}
                 href={examDateRoute}>
                 Exam Date
             </Link>
             <Link
-                className={`px-1 py-2 rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 border-yellow-500 ${currentPath === examCentreRoute && activeLinkColor}`}
+                className={`px-1 py-2 rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1  ${currentPath === examCentreRoute && activeLinkColor}`}
                 href={examCentreRoute}>
                 Exam Centre
             </Link>
