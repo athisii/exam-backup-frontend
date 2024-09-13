@@ -5,9 +5,6 @@ import { sendGetRequest } from "@/utils/api";
 import { ApiResponsePage, IExamCentre, IExamDate, IFileType } from "@/types/types";
 import UserMainSection from "@/components/user-main-section";
 import UserHeader from "@/components/user-header";
-import { handleLogout } from "@/components/admin/exam-centre-container";
-import { faBars, faUser, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const API_URL = process.env.API_URL as string;
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string;
@@ -94,17 +91,7 @@ export default async function Page() {
                         fileTypes={fileTypesApiRes.data as IFileType[]}
                         examDates={examDates.sort((a, b) => a.date.toLowerCase().localeCompare(b.date.toLowerCase()))}
                     />
-                )}
-                
-                {/* Logout Button */}
-                <div className="flex justify-center mt-8">
-                    <button
-                        className="bg-primary-700 hover:bg-primary-800 text-white border border-gray-300 rounded-lg focus:ring focus:outline-none focus:ring-primary-300 font-bold px-8 py-4 text-sm"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </button>
-                </div>
+                )}   
             </div>
         </div>
     );
