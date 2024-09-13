@@ -54,27 +54,8 @@ export default function Layout({
               <FontAwesomeIcon icon={faBars} />
             </button>
           )}
-        </div>
-        {/* Profile Icon with Dropdown */}
-        <div className="relative">
-          <button className="profile-icon flex items-center space-x-2" onClick={toggleDropdown}>
-            <FontAwesomeIcon icon={faUser} className="fa-2x rounded-lg" />
-            <FontAwesomeIcon icon={faChevronDown} className="fa-1x chevron-down-icon" />
-          </button>
-
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-50">
-              <ul>
-                <li className="p-2 hover:bg-gray-100">Profile</li>
-                <li className="p-2 hover:bg-gray-100">Settings</li>
-                <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>Logout</li>
-              </ul>
-            </div>
-          )}
-        </div>
+        </div>             
       </header>
-
       <div className="flex h-full">
         {/* Sidebar */}
         {isSidebarOpen && (
