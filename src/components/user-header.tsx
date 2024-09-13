@@ -18,7 +18,7 @@ const UserHeader: React.FC<HeaderProps> = ({examCentre: {regionName, name, code}
                 <h2 className="px-3">Code: {code}</h2>
                 <button
                     onClick={() => logout()}
-                    className={`px-2 py-1.5 rounded-lg bg-blue-600 hover:rounded hover:bg-cyan-600 hover:text-white w-full text-center`}>
+                    className={`px-2 py-1.5 rounded-lg bg-red-600 hover:rounded hover:bg-white hover:text-black w-full text-center`}>
                     Logout
                 </button>
             </div>
