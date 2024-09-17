@@ -1,60 +1,18 @@
 "use client";
 
 import React, { useState } from 'react';
-import Swal from 'sweetalert2';
 import { useFormState } from 'react-dom';
 import Link from "next/link";
 import { login } from '@/app/(auth)/login/actions';
 
+
 const LoginPage = () => {
-    const [state, action] = useFormState(login, { message: '' });
-    const [passwordVisible, setPasswordVisible] = useState(false);
+  const [state, action] = useFormState(login, { message: '' });
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-    const handleForgotPassword = async () => {
-        const { value: formValues } = await Swal.fire({
-            title: 'Forgot Password',
-            html: `
-                <input id="swal-input1" class="swal2-input" placeholder="Center Code">
-                <input id="swal-input2" class="swal2-input" type="tel" placeholder="Phone Number">
-            `,
-            focusConfirm: false,
-            preConfirm: () => {
-                const centerCode = Swal.getPopup().querySelector('#swal-input1').value;
-                const phoneNumber = Swal.getPopup().querySelector('#swal-input2').value;
-                if (!centerCode || !phoneNumber) {
-                    Swal.showValidationMessage('Please enter both center code and phone number');
-                }
-                return { centerCode, phoneNumber };
-            }
-        });
-
-        if (formValues) {
-            // Simulate a verification request
-            const isVerified = await verifyCredentials(formValues.centerCode, formValues.phoneNumber);
-
-            if (isVerified) {
-                Swal.fire({
-                    title: 'Verification Successful',
-                    text: `Center Code: ${formValues.centerCode}\nPassword: YourPassword123`,
-                    icon: 'success'
-                });
-            } else {
-                Swal.fire({
-                    title: 'Verification Failed',
-                    text: 'The center code or phone number is incorrect',
-                    icon: 'error'
-                });
-            }
-        }
-    };
-
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
-
-    const verifyCredentials = async (centerCode, phoneNumber) => {
-        return centerCode === '101' && phoneNumber === '7207676142'; 
-    };
+  const togglePasswordVisibility = () => {
+      setPasswordVisible(!passwordVisible);
+  };
 
     return (
         <main className="bg-gray-100 font-poppins">
@@ -143,7 +101,7 @@ const LoginPage = () => {
                               <path d="M24,18c-3.3,0-6,2.7-6,6s2.7,6,6,6s6-2.7,6-6S27.3,18,24,18z"/>
                                 
                                 
-                              <line x1="" y1="22" x2="600" y2="194" stroke="black" stroke-width="5"/>
+                              <line x1="" y1="22" x2="800" y2="194" stroke="black" stroke-width="5"/>
                             </svg>    
 
                                   )}
@@ -154,11 +112,11 @@ const LoginPage = () => {
                             
                             <div className="text-end">
                                 <a 
-                                    href="#"
-                                    onClick={(e) => {
-                                        e.preventDefault(); 
-                                        handleForgotPassword();
-                                    }}
+                                    href="/forgot-password"
+                                    // onClick={(e) => {
+                                    //     e.preventDefault(); 
+                                    //     // handleForgotPassword();
+                                    // }}
                                     className="text-sm font-medium text-primary-600 hover:underline">
                                     Forgot password?
                                 </a>
