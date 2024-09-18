@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react';
 import {useFormState} from "react-dom";
 import {changePassword} from "@/app/(auth)/change-password/actions";
 
-const ForgotPassword = () => {
+const ChangePasswordPage = () => {
     const [apiResState, action] = useFormState(changePassword, {message: ''});
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
@@ -93,4 +93,4 @@ const ForgotPassword = () => {
     );
 };
 
-export default ForgotPassword;
+export default ChangePasswordPage;

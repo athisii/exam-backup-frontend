@@ -4,6 +4,7 @@ import {redirect} from "next/navigation";
 import {ApiResponse} from "@/types/types";
 import {cookies} from "next/headers";
 import identityContext from "@/utils/session";
+import {sendPostRequest} from "@/utils/api";
 
 const API_URL = process.env.API_URL;
 if (!API_URL) {
@@ -25,37 +26,19 @@ export async function changePassword(state: { message: string }, formData: FormD
         redirect("/login")
     }
     const userId = idContext.tokenClaims?.sub as string;
+    const token = idContext.token as string
     let url = `${API_URL}/change-password`;
 
     // fetch might throw connection refused/timeout
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            userId,
-            oldPassword: formData.get("oldPassword"),
-            newPassword: formData.get("newPassword")
-        }),
-        cache: "no-store",
-    });
+    const apiResponse: ApiResponse = await sendPostRequest(url, token, {
+        userId,
+        oldPassword: formData.get("oldPassword"),
+        newPassword: formData.get("newPassword")
+    }, false);
 
-    if (!response.ok) {
-        console.log(`ServerAPIError:: Login API response status: ${response.status}`);
-        if (response.status === 401) {
-            return {
-                message: 'Incorrect username or password',
-            };
-        }
-        return {
-            message: 'Something went wrong',
-        };
-    }
-    const apiResponse: ApiResponse = await response.json();
     if (!apiResponse.status) {
         return {
-            message: 'Incorrect username or password',
+            message: apiResponse.message,
         };
     }
     const cookieStore = cookies()

@@ -5,6 +5,7 @@ import {ApiResponse} from "@/types/types";
 import {cookies} from "next/headers";
 import {encrypt, EncryptedData} from "@/utils/crypto";
 import {getClaims} from "@/utils/jwt";
+import {sendPostRequest} from "@/utils/api";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
@@ -28,34 +29,16 @@ export async function login(state: { message: string }, formData: FormData) {
 
     let url = `${API_URL}/login`;
     let firstTimeLogin = false;
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
 
     // fetch might throw connection refused/timeout
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({username, password}),
-        cache: "no-store",
-    });
+    const apiResponse: ApiResponse = await sendPostRequest(url, "", {
+        username: formData.get("username") as string,
+        password: formData.get("password") as string
+    }, false);
 
-    if (!response.ok) {
-        console.log(`API-${url} response status code: ${response.status}`);
-        if (response.status === 401) {
-            return {
-                message: 'Incorrect username or password',
-            };
-        }
-        return {
-            message: 'Something went wrong',
-        };
-    }
-    const apiResponse: ApiResponse = await response.json();
     if (!apiResponse.status) {
         return {
-            message: 'Incorrect username or password',
+            message: apiResponse.message,
         };
     }
     const {token, refreshToken, isFirstLogin} = apiResponse.data;
