@@ -72,10 +72,10 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
     }
     return (
         <>
-            <div className='flex justify-center items-center gap-3'>
+            <div className='flex justify-center items-center gap-5 py-4'>
                 <div>
-                    <label className="mr-2">Select Exam Date:</label>
-                    <select className="bg-blue-500 rounded text-white active:bg-white active:text-black"
+                    <label className="mr-2 font-bold">Select Exam Date:</label>
+                    <select className="bg-blue-500 rounded text-white active:bg-white active:text-black h-8 font-bold"
                             name="examDateDropdown"
                             onChange={handleExamDateDropdown}>
                         {examDates.map(examDate => (
@@ -83,8 +83,8 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
                     </select>
                 </div>
                 <div>
-                    <label className="mr-2">Select Slot:</label>
-                    <select className="bg-blue-500 rounded text-white active:bg-white active:text-black"
+                    <label className="mr-2 font-bold">Select Slot:</label>
+                    <select className="bg-blue-500 rounded text-white active:bg-white h-8 active:text-black font-bold"
                             name="slotDropdown"
                             onChange={handleSlopDropdown}>
                         {slots.map(slot => (<option key={slot.id + " " + examDate.id}> {slot.name}</option>))}
@@ -101,8 +101,8 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
                     :
                     < Suspense fallback={<p>Loading....</p>}>
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-600">
+                                <thead className="text-l text-black uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" className="p-3">
                                         File Type Name

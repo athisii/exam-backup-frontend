@@ -23,8 +23,8 @@ const Page = async () => {
 
     return (
         <>
-            <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                <h1>Exam Date</h1>
+            <div className='flex bg-[#0056b3] w-full justify-center p-2 text-white rounded-lg'>
+                <h1 className='font-bold'>Exam Date</h1>
             </div>
             <ExamDateContainer/>
         </>

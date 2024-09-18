@@ -22,8 +22,8 @@ const Page = async () => {
     }
     return (
         <>
-            <div className='flex bg-blue-500 w-full justify-center p-2 text-white'>
-                <h2>SLOT</h2>
+            <div className='flex bg-[#0056b3] w-full justify-center p-2 text-white rounded-lg '>
+                <h2 className='font-bold'>SLOT</h2>
             </div>
             <SlotContainer/>
         </>

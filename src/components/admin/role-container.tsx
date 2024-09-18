@@ -197,10 +197,10 @@ const RoleContainer = () => {
     }
 
     return (
-        <div className="shadow-md sm:rounded-lg">
+        <div className="shadow-md sm:rounded-lg py-4">
             <Toaster position="top-right" richColors duration={3000}/>
             <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs w-full text-gray-700 uppercase bg-gray-100">
+                <thead className="text-xs w-full text-black uppercase bg-gray-100 ">
                 <tr>
                     <th scope="col" className="px-6 py-4">
                         Serial Number
@@ -241,7 +241,7 @@ const RoleContainer = () => {
                 }
                 </tbody>
             </table>
-            <div className="flex justify-end p-3">
+            <div className="flex justify-center p-3 font-bold">
                 <button
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {

@@ -240,7 +240,7 @@ const RegionContainer = () => {
                 }
                 </tbody>
             </table>
-            <div className="flex justify-end p-3">
+            <div className="flex justify-center p-3">
                 <button
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
