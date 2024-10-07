@@ -117,7 +117,7 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
                                         File Size (MB)
                                     </th>
                                     <th scope="col" className="p-3">
-                                        File Path
+                                        Download
                                     </th>
                                 </tr>
                                 </thead>
