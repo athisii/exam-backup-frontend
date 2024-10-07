@@ -76,6 +76,12 @@ export interface IExamDateSlot {
     slotIds: number[]
 }
 
+export interface ICenter {
+    id: number;
+    code: string;
+    name: string;
+}
+
 export interface IExamCentre {
     id: number,
     name: string,
