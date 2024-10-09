@@ -6,7 +6,7 @@ import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import AddAndEditModal from "@/components/admin/modal/add-and-edit-modal";
+import AddAndEditModal from "@/components/admin/modal/filetype-add-edit";
 import FileType from "@/components/admin/file-type";
 import {deleteFileTypeById, fetchFileTypesAsPage, saveFileType} from "@/app/admin/file-type/actions";
 
@@ -16,7 +16,7 @@ const FileTypeContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedFileType, setSelectedFileType] = useState<IFileType>({code: "", name: ""} as IFileType);
+    const [selectedFileType, setSelectedFileType] = useState<IFileType>({code: "", name: "", fileExtensionId: ""} as IFileType);
     const [fileTypes, setFileTypes] = useState<IFileType[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
@@ -67,7 +67,7 @@ const FileTypeContainer = () => {
         return true;
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: string) => {
         setIsLoading(true);
         if (!isValid(name, code)) {
             setIsLoading(false);
@@ -77,6 +77,7 @@ const FileTypeContainer = () => {
             ...selectedFileType,
             code,
             name,
+            fileExtensionId,
             modifiedDate: convertToLocalDateTime(new Date())
         } as IFileType;
 
@@ -102,7 +103,7 @@ const FileTypeContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
@@ -142,17 +143,17 @@ const FileTypeContainer = () => {
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: string) => {
         setIsLoading(true);
         if (!isValid(name, code)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveFileType({code, name} as IFileType);
+        const apiResponse: ApiResponse = await saveFileType({code, name, fileExtensionId} as IFileType);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -162,6 +163,7 @@ const FileTypeContainer = () => {
         const newFileType: IFileType = {
             code,
             name,
+            fileExtensionId,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id
@@ -191,7 +193,7 @@ const FileTypeContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
         setShowAddModal(false);
     }
 
