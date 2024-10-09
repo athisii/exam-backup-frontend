@@ -128,12 +128,13 @@ const MappingContainer = () => {
         }
     
         const examCentreIds: string[] = [];
+        const examCentreCodes: string[] = []; // New array for center codes
         const examDateIds: string[] = [];
         const slotIds: string[] = [];
     
-      
         selectedCenters.forEach(center => {
-            examCentreIds.push(center.id.toString()); 
+            examCentreIds.push(center.id.toString());
+            examCentreCodes.push(center.code); // Push the center code
         });
     
         selectedDates.forEach(date => {
@@ -144,7 +145,6 @@ const MappingContainer = () => {
             slotIds.push(slot.id.toString()); 
         });
     
-        
         try {
             const response = await saveExamCentre(examCentreIds, examDateIds, slotIds);
     
@@ -152,7 +152,7 @@ const MappingContainer = () => {
                 await Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: `Successfully updated the exam slots for the selected centers!`
+                    text: `Successfully updated the exam slots for the centers: ${examCentreCodes.join(', ')}` 
                 });
                 handleReset(); 
             } else {
@@ -242,15 +242,24 @@ const MappingContainer = () => {
                 </div>
             </div>
 
-            {/* Submit and Reset Buttons */}
+           {/* Submit and Reset Buttons */}
             <div className="flex justify-center gap-4">
-                <button className="bg-green-500 text-white font-bold px-4 py-2 rounded-lg" onClick={handleSubmit}>
-                    Submit
+                <button 
+                    className={`text-white font-bold px-4 py-2 rounded-lg ${isLoading ? 'bg-blue-500' : 'bg-green-500'}`} 
+                    onClick={handleSubmit}
+                    disabled={isLoading} 
+                >
+                    {isLoading ? 'Submitting...' : 'Submit'}
                 </button>
-                <button className="bg-red-500 text-white font-bold px-4 py-2 rounded-lg" onClick={handleReset}>
+                <button 
+                    className="bg-red-500 text-white font-bold px-4 py-2 rounded-lg" 
+                    onClick={handleReset}
+                    disabled={isLoading} 
+                >
                     Reset
                 </button>
             </div>
+
         </div>
     );
 };
