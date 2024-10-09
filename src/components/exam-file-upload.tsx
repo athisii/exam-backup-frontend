@@ -1,10 +1,9 @@
-"use client";
-
-import React, { useRef, useState } from "react";
-import { uploadFile } from "@/app/actions";
-import { ApiResponse } from "@/types/types";
-import Loading from "./admin/loading"; // Import the Loading component
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import React, { useEffect, useRef, useState } from "react";
+import { uploadFile } from "@/app/actions"; 
+import { ApiResponse, IFileType } from "@/types/types";
+import Loading from "./admin/loading"; 
+import Swal from 'sweetalert2';
+import { fetchFileTypeDetails } from "@/app/actions";
 
 interface ExamFileProps {
   examCentreId: number;
@@ -27,10 +26,47 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
 }) => {
   const [status, setStatus] = useState(false);
   const [userSelectedFilename, setUserSelectedFilename] = useState("");
+  const [uploadedFilename, setUploadedFilename] = useState<string | null>(null); // New state for uploaded filename
   const [disabledBtn, setDisabledBtn] = useState(true);
-  const [loading, setLoading] = useState(false); // State for loading
+  const [loading, setLoading] = useState(false);
+  const [allowedFileExtensions, setAllowedFileExtensions] = useState<string[]>([]);
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const userUploadedFilenameRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const getFileTypeDetails = async () => {
+      try {
+        
+        const apiResponse: ApiResponse = await fetchFileTypeDetails(fileTypeId);
+        
+  
+        if (!apiResponse || !apiResponse.data) {
+          throw new Error("Invalid response structure: API response is undefined or lacks data.");
+        }
+  
+        if (apiResponse.status) {
+          const fileType: IFileType = apiResponse.data;        
+  
+          if (fileType.fileExtension) {
+            setAllowedFileExtensions([fileType.fileExtension.name.toLowerCase()]);
+          } else {           
+            setAllowedFileExtensions([]);
+          }
+        } else {
+          throw new Error("Failed to fetch file type details.");
+        }
+      } catch (error: unknown) {        
+        const errorMessage = error instanceof Error ? error.message : 'Could not fetch file type details.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Fetch Error',
+          text: errorMessage,
+        });
+      }
+    };
+  
+    getFileTypeDetails();
+  }, [fileTypeId]);
+  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -38,37 +74,18 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
       const file = files[0];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-      // Validate file types based on fileTypeName
-      if (fileTypeName === "ATTENDANCE SHEET") {
-        // Allow only PDF for scanned attendance
-        if (fileExtension === 'pdf') {
-          setUserSelectedFilename(file.name);
-          setDisabledBtn(false);
-          setStatus(false);
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid file type',
-            text: 'Only .pdf files are allowed for attendance sheets.',
-          });
-          setDisabledBtn(true);
-          event.target.value = ""; // Reset file input
-        }
+      if (allowedFileExtensions.includes(fileExtension || "")) {
+        setUserSelectedFilename(file.name);
+        setDisabledBtn(false);
+        setStatus(false);
       } else {
-        // Allow only ZIP files for other file types
-        if (fileExtension === 'zip') {
-          setUserSelectedFilename(file.name);
-          setDisabledBtn(false);
-          setStatus(false);
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid file type',
-            text: 'Only .zip files are allowed for this file type.',
-          });
-          setDisabledBtn(true);
-          event.target.value = ""; // Reset file input
-        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid file type',
+          text: `Only ${allowedFileExtensions.join(', ')} files are allowed.`,
+        });
+        setDisabledBtn(true);
+        event.target.value = ""; 
       }
     } else {
       setDisabledBtn(true);
@@ -87,45 +104,38 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
       formData.append("slotId", slotId.toString());
       formData.append("fileTypeId", fileTypeId.toString());
 
-      setLoading(true); // Start loading
+      setLoading(true);
 
       try {
         const apiResponse: ApiResponse = await uploadFile(formData);
-        if (!apiResponse.status) {
-          console.error(
-            `Error: status=${apiResponse.status}, message=${apiResponse.message}`
-          );
+        if (!apiResponse.status) {         
           throw new Error("Error uploading exam file.");
         }
         setStatus(apiResponse.status);
-        userUploadedFilenameRef.current = userSelectedFilename;
+        setUploadedFilename(file.name); 
         setDisabledBtn(true);
         if (inputFileRef.current) {
           inputFileRef.current.value = "";
         }
       } catch (error) {
-        console.error(error);
         Swal.fire({
           icon: 'error',
           title: 'Upload failed',
           text: 'There was an error uploading the exam file.',
         });
       } finally {
-        setLoading(false); // Stop loading when done
+        setLoading(false);
       }
     }
   };
 
   return (
     <div className="relative w-full p-2 border-b-2 border-gray-300">
-      {/* Overlay and Loading Spinner */}
       {loading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-100">
-          <Loading /> {/* Center the loading component */}
+          <Loading />
         </div>
       )}
-
-      {/* Form content, which gets blurred when loading */}
       <div className={loading ? "blur-sm pointer-events-none" : ""}>
         <form onSubmit={handleSubmit} className="grid w-full grid-cols-3 gap-1 sm:grid-cols-12">
           <div className="col-span-1 flex items-center justify-center sm:col-span-3">
@@ -151,9 +161,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
           </div>
           <div className="col-span-2 flex items-center justify-center sm:col-span-3">
             <p className="w-full rounded text-gray-500 overflow-hidden">
-              {uploaded && userUploadedFilenameRef.current === null
-                ? userUploadedFilename
-                : userUploadedFilenameRef.current}
+              {uploaded ? userUploadedFilename : uploadedFilename || userSelectedFilename}
             </p>
           </div>
           <div className="col-span-2 flex items-center justify-center sm:col-span-1">
@@ -169,9 +177,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
                   fill="none"
                 />
               </svg>
-            ) : (
-              ""
-            )}
+            ) : null}
           </div>
           <input type="hidden" name="examCentreId" value={examCentreId} readOnly />
           <input type="hidden" name="examDateId" value={examDateId} readOnly />
