@@ -54,11 +54,21 @@ export interface IExamDate {
     createdDate: string | null,
     modifiedDate: string | null
 }
+export interface IFileExtension {
+    id: number;
+    active: boolean;
+    createdDate: string | null;
+    modifiedDate: string | null;
+    code: string;
+    name: string;
+}
 
 export interface IFileType {
     id: number,
     name: string,
     code: string,
+    fileExtensionId: string,
+    fileExtension?: IFileExtension;
     createdDate: string | null,
     modifiedDate: string | null
 }
