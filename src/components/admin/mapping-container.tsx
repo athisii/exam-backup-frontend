@@ -7,16 +7,28 @@ import { IExamDate } from "@/types/types";
 import { ICenter } from './multi-select';
 import MultiSelect from './multi-select'; 
 import Swal from 'sweetalert2';
+import { Dispatch } from 'react';
+import { SetStateAction } from 'react';
+
+interface MultiSelectProps {
+    dropDownName: string;
+    examDates: (IExamDate | ICenter)[];
+    selectedExamDates: (IExamDate | ICenter)[];
+    changeSelectedExamDates: Dispatch<SetStateAction<(IExamDate | ICenter)[]>>;
+    isCenterCodes?: boolean;
+}
+
 
 const MappingContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRegions, setSelectedRegions] = useState<(IExamDate | ICenter)[]>([]);
-    const [selectedCenters, setSelectedCenters] = useState<(IExamDate | ICenter)[]>([]);
-    const [selectedSlots, setSelectedSlots] = useState<(IExamDate | ICenter)[]>([]);
-    const [selectedDates, setSelectedDates] = useState<(IExamDate | ICenter)[]>([]);
+    const [selectedCenters, setSelectedCenters] = useState<ICenter[]>([]); 
+    const [selectedDates, setSelectedDates] = useState<ICenter[]>([]);
+    const [selectedSlots, setSelectedSlots] = useState<IExamDate[]>([]); 
+    
 
     const [regionsOptions, setRegionsOptions] = useState<IExamDate[]>([]);
-    const [centersOptions, setCentersOptions] = useState<ICenter[]>([]); // Ensure this uses the correct type
+    const [centersOptions, setCentersOptions] = useState<ICenter[]>([]); 
     const [slotsOptions, setSlotsOptions] = useState<IExamDate[]>([]);
     const [datesOptions, setDatesOptions] = useState<IExamDate[]>([]);
 
@@ -93,7 +105,7 @@ const MappingContainer = () => {
     
 
     const handleSubmit = async () => {
-        setIsLoading(true); // Set loading to true when submit is initiated
+        setIsLoading(true); 
     
         if (selectedCenters.length === 0) {
             await Swal.fire({
@@ -101,99 +113,67 @@ const MappingContainer = () => {
                 title: 'Error',
                 text: 'Please select at least one exam center.'
             });
-            setIsLoading(false); // Set loading to false before returning
+            setIsLoading(false);
             return;
         }
-        
+    
         if (selectedDates.length === 0 || selectedSlots.length === 0) {
             await Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: 'Please select at least one date and one slot.'
             });
-            setIsLoading(false); // Set loading to false before returning
+            setIsLoading(false);
             return;
         }
-        
-        const submissionPromises = selectedCenters.map(async (center) => {
-            const selectedCode = center.code; 
     
-            if (selectedCode === undefined) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Selected code is undefined for one of the centers.'
-                });
-                return null; 
-            }
+        const examCentreIds: string[] = [];
+        const examDateIds: string[] = [];
+        const slotIds: string[] = [];
     
-            const searchResponse = await constructSearchUrl(selectedCode);
-            const searchData = await searchResponse;           
-    
-            if (searchData.status && searchData.data && Array.isArray(searchData.data.items) && searchData.data.items.length > 0) {
-                const examCentre = searchData.data.items[0];    
-                const payload: IExamCentre = {
-                    id: examCentre.id,
-                    code: examCentre.code,
-                    name: examCentre.name,
-                    regionName: examCentre.regionName,
-                    mobileNumber: examCentre.mobileNumber,
-                    email: examCentre.email,
-                    examDateSlots: selectedDates.map(date => ({
-                        examDateId: date.id,
-                        slotIds: selectedSlots.map(slot => slot.id)
-                    })),
-                    region: examCentre.region || 'Unknown', 
-                    totalFileCount: examCentre.totalFileCount || 0, 
-                    uploadedFileCount: examCentre.uploadedFileCount || 0, 
-                    createdDate: examCentre.createdDate || new Date().toISOString(), 
-                    modifiedDate: examCentre.modifiedDate || new Date().toISOString() 
-                };
-    
-                const response = await saveExamCentre(payload);
-    
-                if (response.status && response.message === "Your data has been saved successfully.") {
-                    return examCentre.code; 
-                } else {                    
-                    return null; 
-                }
-            } else {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No exam centre details found or unexpected response structure from API for selected center.'
-                });
-                return null; 
-            }
+      
+        selectedCenters.forEach(center => {
+            examCentreIds.push(center.id.toString()); 
         });
     
-        try {           
-            const results = await Promise.all(submissionPromises);
-            const successfulCenters = results.filter(center => center !== null); 
-            if (successfulCenters.length > 0) {
+        selectedDates.forEach(date => {
+            examDateIds.push(date.id.toString()); 
+        });
+    
+        selectedSlots.forEach(slot => {
+            slotIds.push(slot.id.toString()); 
+        });
+    
+        
+        try {
+            const response = await saveExamCentre(examCentreIds, examDateIds, slotIds);
+    
+            if (response.status && response.message === "Your data has been saved successfully.") {
                 await Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: `Successfully Slot Added for the following centers: ${successfulCenters.join(', ')}!`
+                    text: `Successfully updated the exam slots for the selected centers!`
                 });
-                handleReset();
+                handleReset(); 
             } else {
                 await Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No centers were submitted successfully.'
+                    text: 'Failed to save exam centers.'
                 });
             }
-        } catch (error) {          
+        } catch (error) {
             await Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to submit one or more forms'
+                text: 'Failed to submit the form.'
             });
         } finally {
             setIsLoading(false); 
         }
     };
+    
+    
     
     useEffect(() => {
         if (selectedRegions.length > 0) {
@@ -217,12 +197,12 @@ const MappingContainer = () => {
                 {/* Exam Regions */}
                 <div className="flex items-center mb-8 gap-6">
                     <label htmlFor="regions" className="text-m font-bold text-black-700 w-1/3">Exam Regions</label>
-                    <MultiSelect
+                    <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Regions"
                         examDates={regionsOptions}
-                        selectedExamDates={selectedRegions }
-                        changeSelectedExamDates={setSelectedRegions }
+                        selectedExamDates={selectedRegions}
+                        changeSelectedExamDates={setSelectedRegions}
                     />
                 </div>
                 {/* Exam Centers */}
@@ -240,7 +220,7 @@ const MappingContainer = () => {
                 {/* Exam Slots */}
                 <div className="flex items-center mb-8 gap-4">
                     <label htmlFor="slots" className="text-m font-bold text-black-700 w-1/3">Exam Slots</label>
-                    <MultiSelect
+                    <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Slots"
                         examDates={slotsOptions}
@@ -251,7 +231,7 @@ const MappingContainer = () => {
                 {/* Exam Dates */}
                 <div className="flex items-center mb-8 gap-4">
                     <label htmlFor="dates" className="text-m font-bold text-black-700 w-1/3">Exam Dates</label>
-                    <MultiSelect
+                    <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Dates"
                         examDates={datesOptions}
@@ -276,3 +256,5 @@ const MappingContainer = () => {
 };
 
 export default MappingContainer;
+
+
