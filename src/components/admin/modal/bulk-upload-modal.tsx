@@ -25,9 +25,9 @@ const BulkUploadModal: React.FC<BulkUploadModalProps> = ({ onClose, onSubmit }) 
     }
     setIsSubmitting(true);
     try {
-      await onSubmit(selectedFile); // Pass the file to the parent component
-      toast.success('File uploaded successfully!');
-      onClose(); // Close the modal on successful upload
+      await onSubmit(selectedFile); 
+      // toast.success('File uploaded successfully!');
+      onClose(); 
     } catch (error) {
       toast.error('File upload failed. Please try again.');
     } finally {
