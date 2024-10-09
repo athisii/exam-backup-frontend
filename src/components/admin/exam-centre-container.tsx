@@ -113,136 +113,44 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
         return true;
     };
 
-    const bulkUploadHandler = async (bulkData: File) => {
+    const bulkUploadHandler = async (file: File) => {
         setIsLoading(true);
-        const createdCenters: string[] = []; 
-        const uploadErrors: string[] = [];   
     
         try {
-            const fileContent = await readFileContent(bulkData);
-            const { results: parsedData, errors } = parseCSV(fileContent);    
-       
-            if (errors.length > 0) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'CSV Parsing Errors',
-                    html: errors.join('<br>'),
-                    confirmButtonText: 'OK',
-                });
-                return;
-            }
+           
     
-            if (!parsedData || parsedData.length === 0) {
-                await Swal.fire({
-                    icon: 'error',
-                    text: 'No valid data found in the uploaded file.',
-                    confirmButtonText: 'OK',
-                });
-                return;
-            }
-               
-            for (const item of parsedData) {
-                const apiResponse: ApiResponse = await uploadExamCentre(item);
-                if (apiResponse.status) {
-                    createdCenters.push(item.code); // Push successful upload center code
-                } else {
-                    uploadErrors.push(`Error uploading ${item.code}: ${apiResponse.message}`);
-                }
-            }    
-       
-            if (createdCenters.length > 0) {
+            const formData = new FormData();
+            formData.append('file', file);   
+            const apiResponse = await uploadExamCentre(formData);
+            console.log("API Response:", apiResponse);
+            if (apiResponse.status) {
                 await Swal.fire({
                     icon: 'success',
-                    text: `Bulk upload successful. Created centers: ${createdCenters.join(', ')}`,
+                    text: 'Bulk upload successful!',
                     confirmButtonText: 'OK',
                 });
+            } else {
+                throw new Error(apiResponse.message || "Unknown error occurred");
+            }   
+           
+            await fetchExamCentres(pageNumber);
+            setShowBulkModal(false);
+        } catch (error: unknown) {
+            console.error("Upload Error:", error);
+            let errorMessage = "An unknown error occurred"; 
+    
+            if (error instanceof Error) {
+                errorMessage = error.message; 
             }
     
-            if (uploadErrors.length > 0) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Upload Errors',
-                    html: uploadErrors.join('<br>'),
-                    confirmButtonText: 'OK',
-                });
-            }  
-            fetchExamCentres(pageNumber);
-            setShowBulkModal(false);
-        } catch (error) {
             await Swal.fire({
                 icon: 'error',
-                text: 'An error occurred during the bulk upload.',
+                text: `An error occurred during the bulk upload: ${errorMessage}`,
                 confirmButtonText: 'OK',
             });
         } finally {
             setIsLoading(false);
         }
-    };
-      
-       
-
-    const readFileContent = async (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    resolve(event.target.result as string);
-                }
-            };
-            reader.onerror = (error) => reject(error);
-            reader.readAsText(file);
-        });
-    };
-       
-    
-    const parseCSV = (csvContent: string) => {
-        const results: any[] = [];
-        const errors: string[] = []; 
-        const rows = csvContent.split('\n'); 
-        const headers = rows[0].split(',').map(header => header.trim().toLowerCase()); 
-    
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i].split(',').map(field => field.trim());
-    
-            if (row.length === headers.length) {
-                const rowData: any = {};
-                let isValid = true;
-                let missingFields: string[] = []; 
-    
-                headers.forEach((header, index) => {
-                    rowData[header] = row[index];
-                    
-                    // Check if any field is empty
-                    if (!row[index]) {
-                        missingFields.push(header); 
-                        isValid = false;
-                    }
-                });
-    
-                if (!isValid) {
-                    errors.push(`Error: Missing ${missingFields.join(', ')} for center code: ${rowData['center_code']}`);
-                }
-    
-                if (isValid) {
-                    results.push({
-                        code: rowData['center_code'], 
-                        name: rowData['name'],
-                        regionName: rowData['region'],
-                        mobileNumber: rowData['mobile'],
-                        email: rowData['email'],
-                    });
-                }
-            } else {               
-                null;
-            }
-        }
-    
-        if (errors.length > 0) {
-            console.error("CSV Parsing Errors:", errors);
-            return { results, errors }; 
-        }
-    
-        return { results, errors: [] }; 
     };
     
     
@@ -253,56 +161,12 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
         }
     };
 
-    // const editHandlerModalSaveHandler = async (name: string, code: string, regionName: string, mobileNumber: string, email: string, examDateSlots: IExamDateSlot[]) => {
-    //     setIsLoading(true);
-    //     if (!isValid(name, code, regionName)) {
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //     const updatedExamCentre: IExamCentre = {
-    //         ...selectedExamCentre,
-    //         code,
-    //         name,
-    //         regionName,
-    //         mobileNumber,
-    //         email,
-    //         examDateSlots,
-    //         modifiedDate: convertToLocalDateTime(new Date())
-    //     } as IExamCentre;
-
-    //     const apiResponse: ApiResponse = await saveExamCentre(updatedExamCentre);
-    //     if (!apiResponse.status) {
-    //         setErrorMessage(apiResponse.message)
-    //         setIsLoading(false);
-    //         return
-    //     }
-    //     setExamCentres(prevState => {
-    //         const filteredExamCentres = prevState.filter(examCentre => examCentre.id != selectedExamCentre.id);
-    //         const newExamCentres = [...filteredExamCentres, updatedExamCentre]
-    //         newExamCentres.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
-    //         return newExamCentres;
-    //     })
-    //     postSuccess("Exam Centre updated successfully.")
-    //     setShowEditModal(false);
-    // };
-
     const editHandlerModalSaveHandler = async (name: string, code: string, regionName: string, mobileNumber: string, email: string, examDateSlots: IExamDateSlot[]) => {
         setIsLoading(true);
-    
-        // Update examDateSlots with proper 'deleted' status
-        const updatedExamDateSlots = examDateSlots.map(slot => ({
-            ...slot,
-            // If no slotIds, set deleted to true, otherwise set it to false
-            deleted: slot.slotIds.length === 0 ? true : false
-        }));
-    
-        console.log("Updated Exam Date Slots with deleted status:", updatedExamDateSlots); // Debugging purposes
-    
         if (!isValid(name, code, regionName)) {
             setIsLoading(false);
             return;
         }
-    
         const updatedExamCentre: IExamCentre = {
             ...selectedExamCentre,
             code,
@@ -310,30 +174,26 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             regionName,
             mobileNumber,
             email,
-            examDateSlots: updatedExamDateSlots,  // Use updated exam slots
+            examDateSlots,
             modifiedDate: convertToLocalDateTime(new Date())
         } as IExamCentre;
-    
+
         const apiResponse: ApiResponse = await saveExamCentre(updatedExamCentre);
-        console.log("API Response:", apiResponse); // Debugging purposes
-    
         if (!apiResponse.status) {
-            setErrorMessage(apiResponse.message);
+            setErrorMessage(apiResponse.message)
             setIsLoading(false);
-            return;
+            return
         }
-    
         setExamCentres(prevState => {
-            const filteredExamCentres = prevState.filter(examCentre => examCentre.id !== selectedExamCentre.id);
-            const newExamCentres = [...filteredExamCentres, updatedExamCentre];
-            newExamCentres.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code));
+            const filteredExamCentres = prevState.filter(examCentre => examCentre.id != selectedExamCentre.id);
+            const newExamCentres = [...filteredExamCentres, updatedExamCentre]
+            newExamCentres.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
             return newExamCentres;
-        });
-    
-        postSuccess("Exam Centre updated successfully.");
+        })
+        postSuccess("Exam Centre updated successfully.")
         setShowEditModal(false);
     };
-    
+
     const postSuccess = (message: string) => {
         setIsLoading(false); // de-initialize modal state.
         toast.success(message);

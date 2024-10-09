@@ -62,3 +62,19 @@ export async function deleteFileTypeById(id: number): Promise<ApiResponse> {
     // fetch might throw connection refused/timeout
     return await sendPostRequest(url, token, {});
 }
+
+export async function getFileExtension(): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login")
+    }
+    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
+        redirect("/")
+    }
+
+    let url = `${API_URL}/file-extensions`;
+    const token = idContext.token as string;
+
+    // fetch might throw connection refused/timeout
+    return await sendGetRequest(url, token);
+}

@@ -1,41 +1,41 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-// import { IExamDate } from "@/types/types";
 
 export interface ICenter {
     id: number;
     code: string;
     name: string;
-    date?: string;
+    date: string;
 }
 
 export interface IExamDate {
     id: number;
-    date?: string; 
-    code?: string; 
-    name?: string; 
+    date: string; 
+    code: string; 
+    name: string; 
 }
 
-interface MultiSelectProps {
+interface MultiSelectProps<T extends IExamDate | ICenter> {
     className?: string;
     dropDownName: string;
-    examDates: (IExamDate | ICenter)[];
-    selectedExamDates: (IExamDate | ICenter)[];
-    changeSelectedExamDates: Dispatch<SetStateAction<(IExamDate | ICenter)[]>>;
-    isCenterCodes?: boolean; 
+    examDates: T[];
+    selectedExamDates: T[];
+    changeSelectedExamDates: Dispatch<SetStateAction<T[]>>;
+    isCenterCodes?: boolean;
 }
 
-const MultiSelect: React.FC<MultiSelectProps> = ({
+
+const MultiSelect = <T extends IExamDate | ICenter>({
     className,
     dropDownName,
     examDates,
     selectedExamDates,
     changeSelectedExamDates,
-    isCenterCodes = false // Default to false
-}) => {
+    isCenterCodes = false
+}: MultiSelectProps<T>) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const toggleOption = (examDate: IExamDate | ICenter) => {
+    const toggleOption = (examDate: T) => {
         if (selectedExamDates.includes(examDate)) {
             changeSelectedExamDates(selectedExamDates.filter((o) => o !== examDate));
         } else {
@@ -68,6 +68,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             <div
                 className="rounded-md p-2 cursor-pointer hover:ring-2 hover:outline-none border border-black hover:ring-green-400 hover:border-white"
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
+                role="button"
+                aria-haspopup="true"
+                aria-expanded={isDropdownOpen}
             >
                 {selectedExamDates.length === 0 ? dropDownName : `${selectedExamDates.length} item(s) selected`}
                 <svg
@@ -104,11 +107,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                             }`}
                             onClick={() => toggleOption(examDate)}
                         >
-                            {/* Display differently based on isCenterCodes */}
-                            {isCenterCodes 
-                                ? `${examDate.code}` 
-                                : `${examDate.date || ''}`
-                            }
+                            {isCenterCodes ? examDate.code : examDate.date}
                         </div>
                     ))}
                 </div>
