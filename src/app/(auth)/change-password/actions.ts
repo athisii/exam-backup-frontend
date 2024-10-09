@@ -44,5 +44,5 @@ export async function changePassword(state: { message: string }, formData: FormD
     const cookieStore = cookies()
     cookieStore.delete("token")
     cookieStore.delete("refreshToken")
-    redirect("/login"); // throws error internally so cant used in try-catch block
+    redirect("/login"); 
 }
