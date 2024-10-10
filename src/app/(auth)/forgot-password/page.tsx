@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from "next/link";
 import {confirmForgotPassword, initiateForgotPassword} from "@/app/(auth)/forgot-password/actions";
 import {ApiResponse} from "@/types/types";
@@ -19,9 +19,22 @@ const ForgotPasswordPage = () => {
     const [otp, setOtp] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
-
+    const [disableBtn, setDisabledBtn] = useState<boolean>(true);
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
+    useEffect(() => {
+        setErrorMessage("");
+        if (!otp) {
+            setDisabledBtn(true);
+        }
+        if (newPassword && confirmNewPassword && confirmNewPassword !== newPassword) {
+            setErrorMessage("New password and confirmation password do not matched.");
+            setDisabledBtn(true);
+        } else if (newPassword && confirmNewPassword && otp) {
+            setErrorMessage("");
+            setDisabledBtn(false);
+        }
+    }, [otp, newPassword, confirmNewPassword])
 
     const handleContinue = async () => {
         if (!username) {
@@ -176,9 +189,9 @@ const ForgotPasswordPage = () => {
                                               className="w-full bg-red-500 hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                             Cancel
                                         </Link>
-                                        <button
-                                            className="w-full text-white bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                            onClick={() => handleSubmit()}>
+                                        <button disabled={disableBtn}
+                                                className="w-full text-white disabled:bg-primary-100 disabled:text-black bg-primary-700 hover:bg-primary-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                onClick={() => handleSubmit()}>
                                             Submit
                                         </button>
 
