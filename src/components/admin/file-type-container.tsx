@@ -16,7 +16,7 @@ const FileTypeContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedFileType, setSelectedFileType] = useState<IFileType>({code: "", name: "", fileExtensionId: ""} as IFileType);
+    const [selectedFileType, setSelectedFileType] = useState<IFileType>({code: "", name: ""} as IFileType);
     const [fileTypes, setFileTypes] = useState<IFileType[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
@@ -103,7 +103,7 @@ const FileTypeContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
+        setSelectedFileType({code: "", name: ""} as IFileType)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
@@ -143,7 +143,7 @@ const FileTypeContainer = () => {
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
+        setSelectedFileType({code: "", name: ""} as IFileType)
         setShowDeleteModal(false);
     }
 
@@ -193,7 +193,7 @@ const FileTypeContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: "", fileExtensionId: ""} as IFileType)
+        setSelectedFileType({code: "", name: ""} as IFileType)
         setShowAddModal(false);
     }
 

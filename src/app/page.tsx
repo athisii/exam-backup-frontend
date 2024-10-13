@@ -1,8 +1,8 @@
 import identityContext from "@/utils/session";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import React from "react";
-import { sendGetRequest } from "@/utils/api";
-import { ApiResponsePage, IExamCentre, IExamDate, IFileType } from "@/types/types";
+import {sendGetRequest} from "@/utils/api";
+import {ApiResponsePage, IExamCentre, IExamDate, IFileExtension, IFileType} from "@/types/types";
 import UserMainSection from "@/components/user-main-section";
 import UserHeader from "@/components/user-header";
 
@@ -13,10 +13,6 @@ if (!API_URL) {
 }
 if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
-}
-
-function isEmpty(fileTypes: IFileType[]) {
-    return fileTypes.length === 0;
 }
 
 export default async function Page() {
@@ -33,21 +29,27 @@ export default async function Page() {
     const token = idContext.token as string;
 
     const examCentreUrl = `${API_URL}/exam-centres/query?code=${examCentreCode}`;
-    const fileTypesUrl = `${API_URL}/file-types`;
+    const fileTypesUrl = `${API_URL}/file-types/page?page=0&size=100&sort=id`;
+    const fileExtensionUrl = `${API_URL}/file-extensions/page?page=0&size=100&sort=id`;
 
     // Fetch data
-    const [examCentreApiRes, fileTypesApiRes] = await Promise.all([
+    const [examCentreApiRes, fileTypesApiRes, fileExtensionsApiRes] = await Promise.all([
         sendGetRequest(examCentreUrl, token),
         sendGetRequest(fileTypesUrl, token),
+        sendGetRequest(fileExtensionUrl, token),
     ]);
 
     if (!examCentreApiRes.status) {
         console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
         throw new Error("Error fetching exam centres.");
     }
-    if (!fileTypesApiRes.status || isEmpty(fileTypesApiRes.data as IFileType[])) {
+    if (!fileTypesApiRes.status || fileTypesApiRes.data.numberOfElements <= 0) {
         console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
         throw new Error("Error fetching file types or no file types available.");
+    }
+    if (!fileExtensionsApiRes.status || fileExtensionsApiRes.data.numberOfElements <= 0) {
+        console.log(`error: status=${fileExtensionsApiRes.status}, message=${fileExtensionsApiRes.message}`);
+        throw new Error("Error fetching file extensions or no file extensions available.");
     }
 
     const examCentreApiResponsePage = examCentreApiRes.data as ApiResponsePage;
@@ -71,14 +73,15 @@ export default async function Page() {
             <header className="w-full bg-[#0056b3] p-4 text-white flex items-center justify-between sticky top-0 ">
                 <div className="flex items-center space-x-4">
                     <h1 className="text-xl font-bold">EXAM BACKUP</h1>
-                </div>               
+                </div>
             </header>
 
             {/* Content Box */}
-            <div className="flex flex-col w-full bg-white shadow-lg font-bold rounded-lg p-4 mt-4" style={{ width: '80vw', height: '40vw' }}>
+            <div className="flex flex-col w-full bg-white shadow-lg font-bold rounded-lg p-4 mt-4"
+                 style={{width: '80vw', height: '40vw'}}>
 
-                <UserHeader examCentre={examCentre} />
-                
+                <UserHeader examCentre={examCentre}/>
+
                 {/* Main Content */}
                 {examDates.length === 0 ? (
                     <div className="text-large font-bold text-center m-auto ">
@@ -88,10 +91,11 @@ export default async function Page() {
                 ) : (
                     <UserMainSection
                         examCentre={examCentre}
-                        fileTypes={fileTypesApiRes.data as IFileType[]}
+                        fileTypes={fileTypesApiRes.data.items as IFileType[]}
+                        fileExtensions={fileExtensionsApiRes.data.items as IFileExtension[]}
                         examDates={examDates.sort((a, b) => a.date.toLowerCase().localeCompare(b.date.toLowerCase()))}
                     />
-                )}   
+                )}
             </div>
         </div>
     );

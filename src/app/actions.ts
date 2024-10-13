@@ -40,12 +40,3 @@ export async function fetchSlotsForExam(examCentreId: number, examDateId: number
     const token = idContext.token as string;
     return await sendGetRequest(`${API_URL}/slots/query?examCentreId=${examCentreId}&examDateId=${examDateId}&page=${pageNumber}&size=${pageSize}`, token);
 }
-
-export async function fetchFileTypeDetails(fileTypeId: number): Promise<ApiResponse> {
-    const idContext = identityContext();
-    if (!idContext.authenticated) {
-        redirect("/login")
-    }
-    const token = idContext.token as string;
-    return await sendGetRequest(`${API_URL}/file-types/${fileTypeId}`, token);
-}

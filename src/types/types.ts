@@ -67,8 +67,7 @@ export interface IFileType {
     id: number,
     name: string,
     code: string,
-    fileExtensionId: string,
-    fileExtension?: IFileExtension;
+    fileExtensionId: number,
     createdDate: string | null,
     modifiedDate: string | null
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import {IExamFile, IFileType} from "@/types/types";
+import {IExamFile, IFileExtension, IFileType} from "@/types/types";
 import ExamFileUpload from "@/components/exam-file-upload";
 import React from "react";
 
@@ -9,7 +9,8 @@ interface ExamFileContainerProps {
     examDateId: number,
     slotId: number,
     fileTypes: IFileType[],
-    examFiles: IExamFile[]
+    examFiles: IExamFile[],
+    fileExtensions: IFileExtension[]
 }
 
 const ExamFileUploadContainer: React.FC<ExamFileContainerProps> = ({
@@ -17,20 +18,26 @@ const ExamFileUploadContainer: React.FC<ExamFileContainerProps> = ({
                                                                        examDateId,
                                                                        slotId,
                                                                        fileTypes,
-                                                                       examFiles
+                                                                       examFiles,
+                                                                       fileExtensions
                                                                    }) => {
     return (
         <>
             {
                 fileTypes.map(fileType => {
-                    let alreadyUploadedExamFile = examFiles.find(examFile => examFile.fileType.id === fileType.id);
+                    const fileExtension = fileExtensions.find(fileExtension => fileExtension.id === fileType.fileExtensionId);
+                    if (!fileExtension) {
+                        console.log(`fileExtension with id: ${fileType.fileExtensionId} not found.`);
+                        throw new Error(`Could not find fileExtension with id: ${fileType.fileExtensionId} for fileType id: ${fileType.id}.`);
+                    }
+                    const alreadyUploadedExamFile = examFiles.find(examFile => examFile.fileType.id === fileType.id);
                     if (alreadyUploadedExamFile) {
                         return <ExamFileUpload key={fileType.id + " " + examDateId + " " + slotId}
                                                examCentreId={examCentreId}
                                                examDateId={examDateId}
                                                slotId={slotId}
-                                               fileTypeId={fileType.id}
-                                               fileTypeName={fileType.name}
+                                               fileType={fileType}
+                                               fileExtension={fileExtension}
                                                uploaded={true}
                                                userUploadedFilename={alreadyUploadedExamFile.userUploadedFilename}
                         />;
@@ -39,8 +46,8 @@ const ExamFileUploadContainer: React.FC<ExamFileContainerProps> = ({
                                            examCentreId={examCentreId}
                                            examDateId={examDateId}
                                            slotId={slotId}
-                                           fileTypeId={fileType.id}
-                                           fileTypeName={fileType.name}
+                                           fileType={fileType}
+                                           fileExtension={fileExtension}
                                            uploaded={false}
                                            userUploadedFilename={null}
                     />;

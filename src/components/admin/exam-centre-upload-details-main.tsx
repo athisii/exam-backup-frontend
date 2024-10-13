@@ -61,7 +61,7 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         const fetchedSlots: ISlot[] = apiResponsePage.items as ISlot[];
-        setSlots(() => fetchedSlots.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+        setSlots(() => fetchedSlots.sort((x, y) => x.name.toLowerCase().localeCompare(y.name.toLowerCase())));
         if (fetchedSlots.length == 0) {
             setSlot(() => {
                 return {id: 0, name: "", code: ""} as ISlot

@@ -1,19 +1,29 @@
 "use client"
 
 import React, {Suspense, useEffect, useState} from "react";
-import {ApiResponse, ApiResponsePage, IExamCentre, IExamDate, IExamFile, IFileType, ISlot} from "@/types/types";
+import {
+    ApiResponse,
+    ApiResponsePage,
+    IExamCentre,
+    IExamDate,
+    IExamFile,
+    IFileExtension,
+    IFileType,
+    ISlot
+} from "@/types/types";
 import {fetchExamFiles, fetchSlotsForExam} from "@/app/actions";
 import ExamFileUploadContainer from "@/components/exam-file-upload-container";
 
 
 interface CompProp {
-    examCentre: IExamCentre;
-    examDates: IExamDate[];
-    fileTypes: IFileType[]
+    examCentre: IExamCentre,
+    examDates: IExamDate[],
+    fileTypes: IFileType[],
+    fileExtensions: IFileExtension[]
 }
 
 
-const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates}) => {
+const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates, fileExtensions}) => {
     const [examDate, setExamDate] = useState<IExamDate>(examDates[0]);
     const [slot, setSlot] = useState<ISlot>({id: 0, name: "", code: ""} as ISlot);
     const [slots, setSlots] = useState<ISlot[]>([]);
@@ -46,13 +56,13 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
     }
 
     const fetchSlotAsync = async () => {
-        const apiResponse: ApiResponse = await fetchSlotsForExam(examCentre.id, examDate.id);
-        if (!apiResponse.status) {
-            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+        const slotsApiResponse: ApiResponse = await fetchSlotsForExam(examCentre.id, examDate.id);
+        if (!slotsApiResponse.status) {
+            console.log(`error: status=${slotsApiResponse.status}, message=${slotsApiResponse.message}`);
             throw new Error("Error fetching slots.");
         }
-        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        const fetchedSlots: ISlot[] = apiResponsePage.items as ISlot[];
+        const slotsApiResponsePage: ApiResponsePage = slotsApiResponse.data as ApiResponsePage;
+        const fetchedSlots: ISlot[] = slotsApiResponsePage.items as ISlot[];
         setSlots(() => fetchedSlots.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
         if (fetchedSlots.length == 0) {
             setSlot(() => {
@@ -108,6 +118,7 @@ const UserMainSection: React.FC<CompProp> = ({examCentre, fileTypes, examDates})
                                 slotId={slot.id}
                                 fileTypes={fileTypes}
                                 examFiles={examFiles}
+                                fileExtensions={fileExtensions}
                             />
                         </div>
                     </Suspense>
