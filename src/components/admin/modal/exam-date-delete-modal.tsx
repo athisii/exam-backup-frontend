@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction} from 'react';
 import Loading from "@/components/admin/loading";
 
 
-const AddAndEditModal = ({
+const ExamDateAddAndEditModal = ({
                              title,
                              type,
                              isLoading,
@@ -77,4 +77,4 @@ const AddAndEditModal = ({
     );
 };
 
-export default AddAndEditModal;
+export default ExamDateAddAndEditModal;

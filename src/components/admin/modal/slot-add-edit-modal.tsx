@@ -65,7 +65,7 @@ const SlotAddAndEditModal = ({
                             <label className='font-bold'>Name:</label>
                             <input
                                 autoFocus
-                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="w-[50%] p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={name}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -76,7 +76,7 @@ const SlotAddAndEditModal = ({
                             <label className='font-bold'>Code:</label>
                             <input
                                 type="number"
-                                className="w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="w-[50%] p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={code}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -87,7 +87,7 @@ const SlotAddAndEditModal = ({
                             <label className='font-bold'>Start Time:</label>
                             <input
                                 type="time"
-                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={startTime}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -98,7 +98,7 @@ const SlotAddAndEditModal = ({
                             <label className='font-bold'>End Time:</label>
                             <input
                                 type="time"
-                                className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={endTime}
                                 onChange={event => {
                                     clearErrorMessage();

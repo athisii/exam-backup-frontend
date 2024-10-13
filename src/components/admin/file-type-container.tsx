@@ -1,22 +1,30 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, IFileType} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IFileExtension, IFileType} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import AddAndEditModal from "@/components/admin/modal/filetype-add-edit";
+import FileTypeAddAndEditModal from "@/components/admin/modal/file-type-add-edit";
 import FileType from "@/components/admin/file-type";
 import {deleteFileTypeById, fetchFileTypesAsPage, saveFileType} from "@/app/admin/file-type/actions";
 
 const PAGE_SIZE = 8;
 
-const FileTypeContainer = () => {
+interface FileTypeContainerProps {
+    fileExtensions: IFileExtension[]
+}
+
+const FileTypeContainer = ({fileExtensions}: FileTypeContainerProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedFileType, setSelectedFileType] = useState<IFileType>({code: "", name: ""} as IFileType);
+    const [selectedFileType, setSelectedFileType] = useState<IFileType>({
+        code: "",
+        name: "",
+        fileExtensionId: 0
+    } as IFileType);
     const [fileTypes, setFileTypes] = useState<IFileType[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
@@ -67,7 +75,7 @@ const FileTypeContainer = () => {
         return true;
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: string) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: number) => {
         setIsLoading(true);
         if (!isValid(name, code)) {
             setIsLoading(false);
@@ -103,7 +111,7 @@ const FileTypeContainer = () => {
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: 0} as IFileType)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
@@ -143,11 +151,11 @@ const FileTypeContainer = () => {
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: 0} as IFileType)
         setShowDeleteModal(false);
     }
 
-    const addHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: string) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string, fileExtensionId: number) => {
         setIsLoading(true);
         if (!isValid(name, code)) {
             setIsLoading(false);
@@ -193,7 +201,7 @@ const FileTypeContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedFileType({code: "", name: ""} as IFileType)
+        setSelectedFileType({code: "", name: "", fileExtensionId: 0} as IFileType)
         setShowAddModal(false);
     }
 
@@ -247,7 +255,7 @@ const FileTypeContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedFileType({code: "", name: ""} as IFileType);
+                        setSelectedFileType({code: "", name: "", fileExtensionId: 0} as IFileType);
                         setShowAddModal(true);
                     }}>
                     Add File Type
@@ -270,15 +278,15 @@ const FileTypeContainer = () => {
             </div>
 
             {
-                showEditModal && <AddAndEditModal key={selectedFileType.code + "1"}
-                                                  title="Update File Type"
-                                                  isLoading={isLoading}
-                                                  initialName={selectedFileType.name}
-                                                  initialCode={selectedFileType.code}
-                                                  errorMessage={errorMessage}
-                                                  errorMessageHandler={setErrorMessage}
-                                                  saveClickHandler={editHandlerModalSaveHandler}
-                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <FileTypeAddAndEditModal key={selectedFileType.code + "1"}
+                                                          title="Update File Type"
+                                                          isLoading={isLoading}
+                                                          fileType={selectedFileType}
+                                                          fileExtensions={fileExtensions}
+                                                          errorMessage={errorMessage}
+                                                          errorMessageHandler={setErrorMessage}
+                                                          saveClickHandler={editHandlerModalSaveHandler}
+                                                          cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {
@@ -294,13 +302,15 @@ const FileTypeContainer = () => {
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <AddAndEditModal key={selectedFileType.code + "1"}
-                                              title="Add New File Type"
-                                              isLoading={isLoading}
-                                              errorMessage={errorMessage}
-                                              errorMessageHandler={setErrorMessage}
-                                              saveClickHandler={addHandlerModalSaveHandler}
-                                              cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <FileTypeAddAndEditModal key={selectedFileType.code + "1"}
+                                                      title="Add New File Type"
+                                                      isLoading={isLoading}
+                                                      fileType={selectedFileType}
+                                                      fileExtensions={fileExtensions}
+                                                      errorMessage={errorMessage}
+                                                      errorMessageHandler={setErrorMessage}
+                                                      saveClickHandler={addHandlerModalSaveHandler}
+                                                      cancelClickHandler={addHandlerModalCancelHandler}/>
             }
         </div>
     );

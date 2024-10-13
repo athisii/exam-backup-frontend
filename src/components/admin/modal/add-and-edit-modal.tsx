@@ -46,7 +46,7 @@ const AddAndEditModal = ({
             {isLoading ? <Loading/> :
                 <div className="sm:w-[40vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1 ">
-                        <h2 className="text-center text-white font-bold text-gray-900 p-2 rounded-md bg-blue-500">
+                        <h2 className="text-center text-white font-bold p-2 rounded-md bg-blue-500">
                             {title}
                         </h2>
                     </div>
@@ -59,7 +59,7 @@ const AddAndEditModal = ({
                             <label className='font-bold'>Name:</label>
                             <input
                                 autoFocus
-                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={name}
                                 onChange={event => {
                                     clearErrorMessage();
@@ -70,7 +70,7 @@ const AddAndEditModal = ({
                             <label className='font-bold'>Code:</label>
                             <input
                                 type="number"
-                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="sm:w-[50%] p-2 rounded bg-gray-50  focus:border-nonefocus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={code}
                                 onChange={event => {
                                     clearErrorMessage();

@@ -57,7 +57,7 @@ const ExamDateAddAndEditModal = ({
                             <input
                                 type="date"
                                 autoFocus
-                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                className="sm:w-[50%] p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                                 value={date}
                                 onChange={event => {
                                     clearErrorMessage();

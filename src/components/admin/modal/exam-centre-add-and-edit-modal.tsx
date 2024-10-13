@@ -126,7 +126,7 @@ const ExamCentreAddAndEditModal = ({
                             <label className="font-bold">Name:</label>
                             <textarea
                               autoFocus
-                              className="w-full h-10 p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              className="w-full h-10 p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                               value={name}
                               onChange={event => {
                                 clearErrorMessage();
@@ -140,7 +140,7 @@ const ExamCentreAddAndEditModal = ({
                             <label className="font-bold">Code:</label>
                             <input
                               type="number"
-                              className="p-2 w-full rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              className="p-2 w-full rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                               value={code}
                               onChange={event => {
                                 clearErrorMessage();
@@ -172,7 +172,7 @@ const ExamCentreAddAndEditModal = ({
                           <div className="flex sm:w-1/3 justify-start items-center gap-3">
                             <label className="font-bold whitespace-nowrap">Mobile Number:</label>
                             <input
-                              className="w-[60%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              className="w-[60%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                               value={mobileNumber}
                               onChange={event => {
                                 clearErrorMessage();
@@ -186,7 +186,7 @@ const ExamCentreAddAndEditModal = ({
                             <label className="font-bold">Email:</label>
                             <input
                               type="email"
-                              className="w-[80%] p-1 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                              className="w-[80%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
                               value={email}
                               onChange={event => {
                                 clearErrorMessage();
