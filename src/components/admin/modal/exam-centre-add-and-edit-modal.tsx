@@ -1,11 +1,12 @@
 import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import Loading from "@/components/admin/loading";
-import {IExamCentre, IExamDate, IExamDateSlot, IRegionExamDateSlotArray, ISlot} from "@/types/types";
+import {IExamCentre, IExamDate, IExamDateSlot, IMultiSelect, IRegionExamDateSlotArray, ISlot} from "@/types/types";
 import MultiSelect from "@/components/admin/multi-select";
 
 
-function returnSelectedExamDates(examDates: IExamDate[], examDateSlots: IExamDateSlot[]): IExamDate[] {
-    return examDates.filter(examDate => examDateSlots.some(examDateSlot => examDateSlot.examDateId == examDate.id));
+function returnSelectedExamDates(examDates: IExamDate[], examDateSlots: IExamDateSlot[]): IMultiSelect[] {
+    const initialSelectedExamDates = examDates.filter(examDate => examDateSlots.some(examDateSlot => examDateSlot.examDateId == examDate.id));
+    return initialSelectedExamDates.map(examDate => ({id: examDate.id, value: examDate.date}))
 }
 
 const ExamCentreAddAndEditModal = ({
@@ -32,7 +33,7 @@ const ExamCentreAddAndEditModal = ({
     const [email, setEmail] = useState<string>(examCentre && examCentre.email ? examCentre.email : "")
     const [mobileNumber, setMobileNumber] = useState<string>(examCentre && examCentre.mobileNumber ? examCentre.mobileNumber : "")
     const [regionName, setRegionName] = useState<string>(examCentre ? examCentre.regionName : regionExamDateSlotArray.regions[0].name)
-    const [selectedExamDates, setSelectedExamDates] = useState<IExamDate[]>(returnSelectedExamDates(regionExamDateSlotArray.examDates, examCentre ? examCentre.examDateSlots : []));
+    const [selectedExamDates, setSelectedExamDates] = useState<IMultiSelect[]>(returnSelectedExamDates(regionExamDateSlotArray.examDates, examCentre ? examCentre.examDateSlots : []));
     const [selectedExamDatesSlots, setSelectedExamDatesSlots] = useState<IExamDateSlot[]>(examCentre ? examCentre.examDateSlots : []);
 
     useEffect(() => {
@@ -41,11 +42,11 @@ const ExamCentreAddAndEditModal = ({
             const prevStateMap = new Map(prevState.map(item => [item.examDateId, item]));
             const filteredExamDateSlots = selectedExamDates.flatMap(examDate => {
                 if (prevStateMap.has(examDate.id)) {
-                    return [] // skip it
+                    return [prevStateMap.get(examDate.id) as IExamDateSlot] // skip it
                 }
                 return [{examDateId: examDate.id, slotIds: []}]
             });
-            return [...prevState, ...filteredExamDateSlots]
+            return [...filteredExamDateSlots];
         });
     }, [selectedExamDates]);
 
@@ -53,6 +54,7 @@ const ExamCentreAddAndEditModal = ({
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
+        console.log("selectedExamDatesSlots(On saved)", selectedExamDatesSlots);
         saveClickHandler(name, code, regionName, mobileNumber, email, selectedExamDatesSlots);
     };
 
@@ -67,7 +69,7 @@ const ExamCentreAddAndEditModal = ({
         }
     };
 
-    function handleSlotClick(examDate: IExamDate, slot: ISlot) {
+    function handleSlotClick(examDate: IMultiSelect, slot: ISlot) {
         const examDateSlotIndex = selectedExamDatesSlots.findIndex(examDateSlot => examDateSlot.examDateId === examDate.id);
         if (examDateSlotIndex !== -1) {
             // avoid direct mutation, should always create new object to be detected by React
@@ -89,7 +91,7 @@ const ExamCentreAddAndEditModal = ({
 
     const examDateSlotMap = new Map(selectedExamDatesSlots.map(item => [item.examDateId, item]));
 
-    function toggleSelectAll(examDate: IExamDate) {
+    function toggleSelectAll(examDate: IMultiSelect) {
         const selectedExamDateIndex = selectedExamDatesSlots.findIndex(examDateSlot => examDateSlot.examDateId === examDate.id);
         if (selectedExamDateIndex !== -1) {
             const newState = [...selectedExamDatesSlots];
@@ -111,101 +113,96 @@ const ExamCentreAddAndEditModal = ({
             {isLoading ? <Loading/> :
                 <div className="sm:w-[70vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1">
-                    <h2 className="text-center text-medium text-white font-bold bg-blue-500 p-2 rounded-md">
-                        {title}
-                    </h2>
-
+                        <h2 className="text-center text-medium text-white font-bold bg-blue-500 p-2 rounded-md">
+                            {title}
+                        </h2>
                     </div>
                     <div className="sm:w-full flex flex-col justify-center text-center">
                         {errorMessage && <div className="text-red-500">
                             {errorMessage}
                         </div>}
                         <div className="flex sm:w-full justify-between items-center mt-3 p-3 gap-4">
-                        
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold">Name:</label>
-                            <textarea
-                              autoFocus
-                              className="w-full h-10 p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                              value={name}
-                              onChange={event => {
-                                clearErrorMessage();
-                                setName(event.target.value);
-                              }}
-                            />
-                          </div>
-                          
-                         
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold">Code:</label>
-                            <input
-                              type="number"
-                              className="p-2 w-full rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                              value={code}
-                              onChange={event => {
-                                clearErrorMessage();
-                                setCode(event.target.value);
-                              }}
-                            />
-                          </div>
-                          
-                   
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold">Region:</label>
-                            <select
-                              defaultValue={regionName}
-                              className="w-full rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 cursor-pointer h-10 hover:border-black border"
-                              onChange={event => {
-                                clearErrorMessage();
-                                setRegionName(event.target.value);
-                              }}
-                            >
-                              {regionExamDateSlotArray.regions.map(region => (
-                                <option key={region.id}>{region.name}</option>
-                              ))}
-                            </select>
-                          </div>
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold">Name:</label>
+                                <textarea
+                                    autoFocus
+                                    className="w-full h-10 p-2 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                    value={name}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setName(event.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold">Code:</label>
+                                <input
+                                    type="number"
+                                    className="p-2 w-full rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                    value={code}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setCode(event.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold">Region:</label>
+                                <select
+                                    defaultValue={regionName}
+                                    className="w-full rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 cursor-pointer h-10 hover:border-black border"
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setRegionName(event.target.value);
+                                    }}
+                                >
+                                    {regionExamDateSlotArray.regions.map(region => (
+                                        <option key={region.id}>{region.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         <div className="flex sm:w-full justify-between items-center mt-3 p-3 gap-3">
-                        
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold whitespace-nowrap">Mobile Number:</label>
-                            <input
-                              className="w-[60%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                              value={mobileNumber}
-                              onChange={event => {
-                                clearErrorMessage();
-                                setMobileNumber(event.target.value);
-                              }}
-                            />
-                          </div>
-                          
-                    
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold">Email:</label>
-                            <input
-                              type="email"
-                              className="w-[80%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                              value={email}
-                              onChange={event => {
-                                clearErrorMessage();
-                                setEmail(event.target.value);
-                              }}
-                            />
-                          </div>
-                          
-                        
-                          <div className="flex sm:w-1/3 justify-start items-center gap-3">
-                            <label className="font-bold whitespace-nowrap">Exam Date:</label>
-                            <MultiSelect
-                              className="w-[80%] bg-gray-50"
-                              dropDownName="Select"
-                              changeSelectedExamDates={setSelectedExamDates}
-                              selectedExamDates={selectedExamDates}
-                              examDates={regionExamDateSlotArray.examDates}
-                            />
-                          </div>
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold whitespace-nowrap">Mobile Number:</label>
+                                <input
+                                    className="w-[60%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                    value={mobileNumber}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setMobileNumber(event.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold">Email:</label>
+                                <input
+                                    type="email"
+                                    className="w-[80%] p-1 rounded bg-gray-50 focus:border-none focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
+                                    value={email}
+                                    onChange={event => {
+                                        clearErrorMessage();
+                                        setEmail(event.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex sm:w-1/3 justify-start items-center gap-3">
+                                <label className="font-bold whitespace-nowrap">Exam Date:</label>
+                                <MultiSelect
+                                    className="w-[80%] bg-gray-50"
+                                    dropDownName="Select"
+                                    changeSelectedOptions={setSelectedExamDates}
+                                    selectedOptions={selectedExamDates}
+                                    options={regionExamDateSlotArray.examDates.map(examDate => ({
+                                        id: examDate.id,
+                                        value: examDate.date
+                                    }))}
+                                />
+                            </div>
                         </div>
 
                         <div
@@ -227,13 +224,13 @@ const ExamCentreAddAndEditModal = ({
                                 </thead>
                                 <tbody>
                                 {
-                                    selectedExamDates.map(examDate => {
+                                    selectedExamDates.sort((a, b) => a.id - b.id).map(examDate => {
                                             const examDateSlot = examDateSlotMap.get(examDate.id);
                                             return (
                                                 <tr key={examDate.id}
                                                     className="bg-white border-b hover:bg-gray-50">
                                                     <td scope="col" className="px-8 py-4">
-                                                        {examDate.date}
+                                                        {examDate.value}
                                                     </td>
                                                     {regionExamDateSlotArray.slots.map(slot => {
                                                         return (

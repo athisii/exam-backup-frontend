@@ -51,27 +51,22 @@ const Page = async () => {
     const regionsApiResponsePage = regionsApiRes.data as ApiResponsePage;
     const examDatesApiResponsePage = examDatesApiRes.data as ApiResponsePage;
     const slotsApiResponsePage = slotsApiRes.data as ApiResponsePage;
-    // let errorMessage = '';
-    // if (regionsApiResponsePage.numberOfElements === 0) {
-    //     errorMessage += 'No regions are available. ';
-    // }
-    // if (examDatesApiResponsePage.numberOfElements === 0) {
-    //     errorMessage += 'No exam dates are available. ';
-    // }
-    // if (slotsApiResponsePage.numberOfElements === 0) {
-    //     errorMessage += 'No slots available. ';
-    // }
+    let errorMessage = '';
+    if (regionsApiResponsePage.numberOfElements === 0) {
+        errorMessage += 'No regions are available. ';
+    }
+
     return (
         <>
             <div className='flex bg-[#0056b3] w-full justify-center p-2 text-white rounded-lg'>
                 <h1 className='font-bold'>Exam Centre</h1>
             </div>
-            {/* {errorMessage ?
+            {errorMessage ?
                 <div>
                     <p>{errorMessage}</p>
                     <p>Please contact the admin to add it.</p>
                 </div>
-                : */}
+                :
                 <ExamCentreContainer
                     regionExamDateSlotArray={{
                         regions: regionsApiResponsePage.items as IRegion[],
@@ -79,7 +74,7 @@ const Page = async () => {
                         slots: slotsApiResponsePage.items as ISlot[]
                     } as IRegionExamDateSlotArray}
                 />
-            {/* } */}
+            }
         </>
     );
 };

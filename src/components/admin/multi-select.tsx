@@ -1,53 +1,37 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
+import {IMultiSelect} from "@/types/types";
 
-export interface ICenter {
-    id: number;
-    code: string;
-    name: string;
-    date: string;
+interface MultiSelectProps {
+    className?: string,
+    dropDownName: string,
+    options: IMultiSelect[],
+    selectedOptions: IMultiSelect[],
+    changeSelectedOptions: Dispatch<SetStateAction<IMultiSelect[]>>
 }
 
-export interface IExamDate {
-    id: number;
-    date: string; 
-    code: string; 
-    name: string; 
-}
-
-interface MultiSelectProps<T extends IExamDate | ICenter> {
-    className?: string;
-    dropDownName: string;
-    examDates: T[];
-    selectedExamDates: T[];
-    changeSelectedExamDates: Dispatch<SetStateAction<T[]>>;
-    isCenterCodes?: boolean;
-}
-
-
-const MultiSelect = <T extends IExamDate | ICenter>({
-    className,
-    dropDownName,
-    examDates,
-    selectedExamDates,
-    changeSelectedExamDates,
-    isCenterCodes = false
-}: MultiSelectProps<T>) => {
+const MultiSelect: React.FC<MultiSelectProps> = ({
+                                                     className,
+                                                     dropDownName,
+                                                     options,
+                                                     selectedOptions,
+                                                     changeSelectedOptions
+                                                 }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const toggleOption = (examDate: T) => {
-        if (selectedExamDates.includes(examDate)) {
-            changeSelectedExamDates(selectedExamDates.filter((o) => o !== examDate));
+    const toggleOption = (option: IMultiSelect) => {
+        if (selectedOptions.find(selectedOption => selectedOption.id === option.id)) {
+            changeSelectedOptions(prevState=> prevState.filter((o) => o.id !== option.id));
         } else {
-            changeSelectedExamDates([...selectedExamDates, examDate]);
+            changeSelectedOptions([...selectedOptions, option]);
         }
     };
 
     const selectAllOptions = () => {
-        if (selectedExamDates.length === examDates.length) {
-            changeSelectedExamDates([]); // Deselect all if all are selected
+        if (selectedOptions.length === options.length) {
+            changeSelectedOptions([]); // Deselect all if all are already selected
         } else {
-            changeSelectedExamDates(examDates); // Select all
+            changeSelectedOptions(options); // Select all
         }
     };
 
@@ -65,49 +49,37 @@ const MultiSelect = <T extends IExamDate | ICenter>({
 
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
-            <div
-                className="rounded-md p-2 cursor-pointer hover:ring-2 hover:outline-none border border-black hover:ring-green-400 hover:border-white"
-                onClick={() => setIsDropdownOpen((prev) => !prev)}
-                role="button"
-                aria-haspopup="true"
-                aria-expanded={isDropdownOpen}
-            >
-                {selectedExamDates.length === 0 ? dropDownName : `${selectedExamDates.length} item(s) selected`}
-                <svg
-                    className="hs-dropdown-open:rotate-180 size-5 inline"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <path d="m6 9 6 6 6-6" />
+            <div className="rounded-md p-2 cursor-pointer hover:ring-2 hover:outline-none hover:ring-green-500"
+                 onClick={() => setIsDropdownOpen((prev) => !prev)}>
+                {
+                    selectedOptions.length === 0 ? dropDownName : selectedOptions.length + " item(s) selected"
+                }
+                <svg className="hs-dropdown-open:rotate-180 size-5 inline" width="24"
+                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                     strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
                 </svg>
             </div>
 
             {isDropdownOpen && (
-                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
                     <div
                         className={`cursor-pointer p-2 hover:bg-blue-500 hover:text-white ${
-                            selectedExamDates.length === examDates.length ? "bg-gray-100" : ""
+                            selectedOptions.length === options.length ? "bg-gray-100" : ""
                         }`}
                         onClick={selectAllOptions}
                     >
-                        {selectedExamDates.length === examDates.length ? "Deselect All" : "Select All"}
+                        {selectedOptions.length === options.length ? "Deselect All" : "Select All"}
                     </div>
 
-                    {examDates.map((examDate) => (
+                    {options.map(option => (
                         <div
-                            key={examDate.id}
-                            className={`cursor-pointer p-2 border-t border-gray-500 hover:text-white hover:bg-blue-500 ${
-                                selectedExamDates.includes(examDate) ? "bg-green-500 text-white border-white" : ""
+                            key={option.id}
+                            className={`cursor-pointer p-2 border-t-1 border-gray-500 hover:text-white hover:bg-blue-500 ${
+                                selectedOptions.find(selectedOption => selectedOption.id === option.id) ? "bg-green-500 text-white border-white" : ""
                             }`}
-                            onClick={() => toggleOption(examDate)}
-                        >
-                            {isCenterCodes ? examDate.code : examDate.date}
+                            onClick={() => toggleOption(option)}>
+                            {option.value}
                         </div>
                     ))}
                 </div>

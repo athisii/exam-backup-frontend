@@ -17,10 +17,9 @@ import {
 import ExamCentre from "@/components/admin/exam-centre";
 import useDebounce from "@/hooks/useDebounce";
 import ExamCentreAddAndEditModal from "@/components/admin/modal/exam-centre-add-and-edit-modal";
-import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal"; 
+import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
 import {uploadExamCentre} from "@/app/admin/exam-mapping/actions";
-
-
+import ManageExamSlotModal from "@/components/admin/modal/manage-exam-slot-modal";
 
 
 const PAGE_SIZE = 6;
@@ -41,9 +40,10 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
     const [totalPages, setTotalPages] = useState(1)
 
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showBulkModal, setShowBulkModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showBulkModal, setShowBulkModal] = useState(false);
+    const [showManageExamSlotModal, setShowManageExamSlotModal] = useState(false);
 
     useEffect(() => {
         fetchExamCentres(pageNumber);
@@ -115,12 +115,12 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
 
     const bulkUploadHandler = async (file: File) => {
         setIsLoading(true);
-    
+
         try {
-           
-    
+
+
             const formData = new FormData();
-            formData.append('file', file);   
+            formData.append('file', file);
             const apiResponse = await uploadExamCentre(formData);
             console.log("API Response:", apiResponse);
             if (apiResponse.status) {
@@ -131,18 +131,18 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                 });
             } else {
                 throw new Error(apiResponse.message || "Unknown error occurred");
-            }   
-           
+            }
+
             await fetchExamCentres(pageNumber);
             setShowBulkModal(false);
         } catch (error: unknown) {
             console.error("Upload Error:", error);
-            let errorMessage = "An unknown error occurred"; 
-    
+            let errorMessage = "An unknown error occurred";
+
             if (error instanceof Error) {
-                errorMessage = error.message; 
+                errorMessage = error.message;
             }
-    
+
             await Swal.fire({
                 icon: 'error',
                 text: `An error occurred during the bulk upload: ${errorMessage}`,
@@ -152,8 +152,6 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             setIsLoading(false);
         }
     };
-    
-    
 
     const clearErrorMessage = () => {
         if (errorMessage) {
@@ -370,7 +368,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             </div>
             <div className="flex justify-center p-3 font-bold gap-4">
                 <button
-                    className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
+                    className={`border-1 hover:bg-green-600 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
                         setSelectedExamCentre({code: "", name: ""} as IExamCentre);
@@ -380,15 +378,23 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                 </button>
                 <button
                     onClick={() => setShowBulkModal(true)} // Open bulk modal
-                    className="p-2 ml-4 bg-blue-500 text-white rounded"
+                    className="p-2 px-4 hover:bg-green-600 bg-green-500 text-white rounded-md active:bg-green-700"
                 >
                     Bulk Upload
-                </button>                
+                </button>
+
+                <button
+                    onClick={() => setShowManageExamSlotModal(true)}
+                    className="p-2 px-4 hover:bg-green-600 bg-green-500 text-white rounded-md active:bg-green-700"
+                >
+                    Manage Exam Slot
+                </button>
             </div>
             <div className="flex justify-center p-1">
                 {
                     examCentres.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
+                        className="z-0"
                         showControls
                         color="success"
                         page={pageNumber}
@@ -441,6 +447,14 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                 <BulkUploadModal
                     onClose={() => setShowBulkModal(false)}
                     onSubmit={bulkUploadHandler}
+                />
+            )}
+
+            {showManageExamSlotModal && (
+                <ManageExamSlotModal
+                    title="Mange Exam Slot"
+                    regionExamDateSlotArray={regionExamDateSlotArray}
+                    cancelClickHandler={() => setShowManageExamSlotModal(false)}
                 />
             )}
         </div>

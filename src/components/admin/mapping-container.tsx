@@ -1,14 +1,22 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { toast } from "sonner";
-import { fetchRegions, fetchExamCentresByRegions, fetchSlots, fetchExamDates, constructSearchUrl, saveExamCentre, IExamCentre } from '@/app/admin/exam-mapping/actions';
-import { IExamDate } from "@/types/types";
-import { ICenter } from './multi-select';
-import MultiSelect from './multi-select'; 
+
+interface ICenter {
+
+}
+
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import {toast} from "sonner";
+import {
+    fetchExamCentresByRegions,
+    fetchExamDates,
+    fetchRegions,
+    fetchSlots,
+    saveExamCentre
+} from '@/app/admin/exam-mapping/actions';
+import {IExamDate} from "@/types/types";
+import MultiSelect from './multi-select';
 import Swal from 'sweetalert2';
-import { Dispatch } from 'react';
-import { SetStateAction } from 'react';
 
 interface MultiSelectProps {
     dropDownName: string;
@@ -22,13 +30,13 @@ interface MultiSelectProps {
 const MappingContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRegions, setSelectedRegions] = useState<(IExamDate | ICenter)[]>([]);
-    const [selectedCenters, setSelectedCenters] = useState<ICenter[]>([]); 
+    const [selectedCenters, setSelectedCenters] = useState<ICenter[]>([]);
     const [selectedDates, setSelectedDates] = useState<ICenter[]>([]);
-    const [selectedSlots, setSelectedSlots] = useState<IExamDate[]>([]); 
-    
+    const [selectedSlots, setSelectedSlots] = useState<IExamDate[]>([]);
+
 
     const [regionsOptions, setRegionsOptions] = useState<IExamDate[]>([]);
-    const [centersOptions, setCentersOptions] = useState<ICenter[]>([]); 
+    const [centersOptions, setCentersOptions] = useState<ICenter[]>([]);
     const [slotsOptions, setSlotsOptions] = useState<IExamDate[]>([]);
     const [datesOptions, setDatesOptions] = useState<IExamDate[]>([]);
 
@@ -43,7 +51,10 @@ const MappingContainer = () => {
         try {
             const apiResponse = await fetchRegions();
             if (apiResponse.status) {
-                const regions = apiResponse.data.map((region: { id: any; name: any; }) => ({ id: region.id, date: region.name }));
+                const regions = apiResponse.data.map((region: { id: any; name: any; }) => ({
+                    id: region.id,
+                    date: region.name
+                }));
                 setRegionsOptions(regions);
             } else {
                 throw new Error(apiResponse.message);
@@ -60,7 +71,7 @@ const MappingContainer = () => {
         try {
             const apiResponse = await fetchSlots();
             if (apiResponse.status) {
-                const slots = apiResponse.data.map((slot: { id: any; name: any; }) => ({ id: slot.id, date: slot.name }));
+                const slots = apiResponse.data.map((slot: { id: any; name: any; }) => ({id: slot.id, date: slot.name}));
                 setSlotsOptions(slots);
             } else {
                 throw new Error(apiResponse.message);
@@ -77,7 +88,7 @@ const MappingContainer = () => {
         try {
             const apiResponse = await fetchExamDates();
             if (apiResponse.status) {
-                const dates = apiResponse.data.map((date: { id: any; date: any; }) => ({ id: date.id, date: date.date }));
+                const dates = apiResponse.data.map((date: { id: any; date: any; }) => ({id: date.id, date: date.date}));
                 setDatesOptions(dates);
             } else {
                 throw new Error(apiResponse.message);
@@ -94,19 +105,18 @@ const MappingContainer = () => {
         try {
             const selectedRegionIds = selectedRegions.map(region => region.id);
             const centers = await fetchExamCentresByRegions(selectedRegionIds);
-            setCentersOptions(centers); 
+            setCentersOptions(centers);
         } catch (error) {
             toast.error(`Failed to fetch centers`);
         } finally {
             setIsLoading(false);
         }
     };
-    
-    
+
 
     const handleSubmit = async () => {
-        setIsLoading(true); 
-    
+        setIsLoading(true);
+
         if (selectedCenters.length === 0) {
             await Swal.fire({
                 icon: 'error',
@@ -116,7 +126,7 @@ const MappingContainer = () => {
             setIsLoading(false);
             return;
         }
-    
+
         if (selectedDates.length === 0 || selectedSlots.length === 0) {
             await Swal.fire({
                 icon: 'error',
@@ -126,35 +136,35 @@ const MappingContainer = () => {
             setIsLoading(false);
             return;
         }
-    
+
         const examCentreIds: string[] = [];
         const examCentreCodes: string[] = []; // New array for center codes
         const examDateIds: string[] = [];
         const slotIds: string[] = [];
-    
+
         selectedCenters.forEach(center => {
             examCentreIds.push(center.id.toString());
             examCentreCodes.push(center.code); // Push the center code
         });
-    
+
         selectedDates.forEach(date => {
-            examDateIds.push(date.id.toString()); 
+            examDateIds.push(date.id.toString());
         });
-    
+
         selectedSlots.forEach(slot => {
-            slotIds.push(slot.id.toString()); 
+            slotIds.push(slot.id.toString());
         });
-    
+
         try {
             const response = await saveExamCentre(examCentreIds, examDateIds, slotIds);
-    
+
             if (response.status && response.message === "Your data has been saved successfully.") {
                 await Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: `Successfully updated the exam slots for the centers: ${examCentreCodes.join(', ')}` 
+                    text: `Successfully updated the exam slots for the centers: ${examCentreCodes.join(', ')}`
                 });
-                handleReset(); 
+                handleReset();
             } else {
                 await Swal.fire({
                     icon: 'error',
@@ -169,12 +179,11 @@ const MappingContainer = () => {
                 text: 'Failed to submit the form.'
             });
         } finally {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
     };
-    
-    
-    
+
+
     useEffect(() => {
         if (selectedRegions.length > 0) {
             fetchCentersData(selectedRegions as IExamDate[]);
@@ -200,9 +209,9 @@ const MappingContainer = () => {
                     <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Regions"
-                        examDates={regionsOptions}
-                        selectedExamDates={selectedRegions}
-                        changeSelectedExamDates={setSelectedRegions}
+                        options={regionsOptions}
+                        selectedOptions={selectedRegions}
+                        changeSelectedOptions={setSelectedRegions}
                     />
                 </div>
                 {/* Exam Centers */}
@@ -211,9 +220,9 @@ const MappingContainer = () => {
                     <MultiSelect
                         className="w-2/3 text-center"
                         dropDownName="Select Centers"
-                        examDates={centersOptions}
-                        selectedExamDates={selectedCenters}
-                        changeSelectedExamDates={setSelectedCenters}
+                        options={centersOptions}
+                        selectedOptions={selectedCenters}
+                        changeSelectedOptions={setSelectedCenters}
                         isCenterCodes={true}
                     />
                 </div>
@@ -223,9 +232,9 @@ const MappingContainer = () => {
                     <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Slots"
-                        examDates={slotsOptions}
-                        selectedExamDates={selectedSlots}
-                        changeSelectedExamDates={setSelectedSlots}
+                        options={slotsOptions}
+                        selectedOptions={selectedSlots}
+                        changeSelectedOptions={setSelectedSlots}
                     />
                 </div>
                 {/* Exam Dates */}
@@ -234,27 +243,27 @@ const MappingContainer = () => {
                     <MultiSelect<IExamDate>
                         className="w-2/3 text-center"
                         dropDownName="Select Dates"
-                        examDates={datesOptions}
-                        selectedExamDates={selectedDates}
-                        changeSelectedExamDates={setSelectedDates}
+                        options={datesOptions}
+                        selectedOptions={selectedDates}
+                        changeSelectedOptions={setSelectedDates}
                         isCenterCodes={false}
                     />
                 </div>
             </div>
 
-           {/* Submit and Reset Buttons */}
+            {/* Submit and Reset Buttons */}
             <div className="flex justify-center gap-4">
-                <button 
-                    className={`text-white font-bold px-4 py-2 rounded-lg ${isLoading ? 'bg-blue-500' : 'bg-green-500'}`} 
+                <button
+                    className={`text-white font-bold px-4 py-2 rounded-lg ${isLoading ? 'bg-blue-500' : 'bg-green-500'}`}
                     onClick={handleSubmit}
-                    disabled={isLoading} 
+                    disabled={isLoading}
                 >
                     {isLoading ? 'Submitting...' : 'Submit'}
                 </button>
-                <button 
-                    className="bg-red-500 text-white font-bold px-4 py-2 rounded-lg" 
+                <button
+                    className="bg-red-500 text-white font-bold px-4 py-2 rounded-lg"
                     onClick={handleReset}
-                    disabled={isLoading} 
+                    disabled={isLoading}
                 >
                     Reset
                 </button>

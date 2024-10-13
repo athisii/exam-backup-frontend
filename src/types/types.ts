@@ -54,6 +54,7 @@ export interface IExamDate {
     createdDate: string | null,
     modifiedDate: string | null
 }
+
 export interface IFileExtension {
     id: number;
     active: boolean;
@@ -124,6 +125,12 @@ export interface IRole {
     modifiedDate: string | null,
     code: string,
     name: string
+}
+
+//TODO: fix bug in exam-centre exam date update.
+export interface IMultiSelect {
+    id: number,
+    value: string
 }
 
 export interface IRegionExamDateSlotArray {
