@@ -12,6 +12,7 @@ import {
     fetchExamCentresAsPage,
     saveExamCentre,
     searchExamCentres,
+    updateOnlySlot,
     uploadCsvFile
 } from "@/app/admin/exam-centre/actions";
 import ExamCentre from "@/components/admin/exam-centre";
@@ -262,26 +263,38 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
     }
 
     const bulkUploadModalUploadHandler = async (formData: FormData) => {
-        const file: File = formData.get("file") as File;
-        if (!file.name || file.size <= 0) {
-            setErrorMessage("Please select a valid and non-empty CSV file.");
-            return;
-        }
         setIsLoading(true);
+        // to reflect loading animation.
+        const uploadFileAsync = async (formData: FormData) => {
+            const apiResponse: ApiResponse = await uploadCsvFile(formData);
+            if (!apiResponse.status) {
+                setErrorMessage(apiResponse.message)
+                setIsLoading(false);
+                return;
+            }
+            fetchExamCentres(0);
+            postSuccess("Exam Centre added successfully.");
+            setShowBulkUploadModal(false);
+        }
         uploadFileAsync(formData);
     };
 
-    const uploadFileAsync = async (formData: FormData) => {
-        const apiResponse: ApiResponse = await uploadCsvFile(formData);
-        if (!apiResponse.status) {
-            setErrorMessage(apiResponse.message)
-            setIsLoading(false);
-            return;
+    const manageExamSlotModalSaveHandler = async (examCentreIds: number[], examDateIds: number[], slotIds: number[]) => {
+        setIsLoading(true);
+        const updateOnlySlotAsync = async (examCentreIds: number[], examDateIds: number[], slotIds: number[]) => {
+            const apiResponse: ApiResponse = await updateOnlySlot(examCentreIds, examDateIds, slotIds);
+            if (!apiResponse.status) {
+                console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
+                setErrorMessage(apiResponse.message);
+                setIsLoading(false);
+                return;
+            }
+            postSuccess("Exam Slot added successfully.");
+            setShowManageExamSlotModal(false);
+            fetchExamCentres(0);
         }
-        fetchExamCentres(0);
-        postSuccess("Exam Centre added successfully.");
-        setShowBulkUploadModal(false);
-    }
+        updateOnlySlotAsync(examCentreIds, examDateIds, slotIds);
+    };
 
 
     return (
@@ -427,6 +440,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             }
             {showBulkModal && (
                 <BulkUploadModal
+                    title="Upload CSV File"
                     isLoading={isLoading}
                     errorMessage={errorMessage}
                     errorMessageHandler={setErrorMessage}
@@ -438,7 +452,12 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             {showManageExamSlotModal && (
                 <ManageExamSlotModal
                     title="Manage Exam Slot"
+                    isLoading={isLoading}
+                    loadingHandler={setIsLoading}
+                    errorMessage={errorMessage}
+                    errorMessageHandler={setErrorMessage}
                     regionExamDateSlotArray={regionExamDateSlotArray}
+                    saveClickHandler={manageExamSlotModalSaveHandler}
                     cancelClickHandler={() => setShowManageExamSlotModal(false)}
                 />
             )}

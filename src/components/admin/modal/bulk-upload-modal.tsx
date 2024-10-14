@@ -3,12 +3,14 @@ import Loading from "@/components/admin/loading";
 
 
 const BulkUploadModal = ({
+                             title,
                              isLoading,
                              errorMessage,
                              errorMessageHandler,
                              uploadClickHandler,
                              cancelClickHandler
                          }: {
+    title: string,
     isLoading: boolean,
     errorMessage: string,
     errorMessageHandler: Dispatch<SetStateAction<string>>,
@@ -18,13 +20,19 @@ const BulkUploadModal = ({
 
     const handleSubmit = async (formData: FormData) => {
         errorMessageHandler("");
+        const file: File = formData.get("file") as File;
+        if (!file.name || file.size <= 0) {
+            errorMessageHandler("Please select a valid and non-empty CSV file.");
+            return;
+        }
         uploadClickHandler(formData);
     };
 
     const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+        errorMessageHandler("");
         event.preventDefault();
         cancelClickHandler();
-    }
+    };
 
     return (
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
@@ -32,7 +40,7 @@ const BulkUploadModal = ({
                 <div className="sm:w-[40vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1">
                         <h2 className="text-center text-medium text-white p-2 font-bold bg-blue-500 rounded-md">
-                            Upload CSV File
+                            {title}
                         </h2>
                     </div>
                     <div className="m-3 p-2 text-center">

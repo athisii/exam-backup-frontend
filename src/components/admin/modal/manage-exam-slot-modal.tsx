@@ -1,28 +1,34 @@
 'use client'
 
-import React, {useEffect, useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import Loading from "@/components/admin/loading";
 import MultiSelect from "@/components/admin/multi-select";
 import {ApiResponse, IExamCentre, IMultiSelect, IRegionExamDateSlotArray} from "@/types/types";
-import {fetchExamCentresByRegions, updateOnlySlot} from "@/app/admin/exam-centre/actions";
-import {toast, Toaster} from "sonner";
-import {useRouter} from "next/navigation";
+import {fetchExamCentresByRegions} from "@/app/admin/exam-centre/actions";
 
 
 const ManageExamSlotModal = ({
                                  title,
+                                 isLoading,
+                                 loadingHandler,
+                                 errorMessage,
+                                 errorMessageHandler,
                                  regionExamDateSlotArray,
+                                 saveClickHandler,
                                  cancelClickHandler
                              }: {
     title: string,
-    regionExamDateSlotArray: IRegionExamDateSlotArray
+    isLoading: boolean,
+    loadingHandler: Dispatch<SetStateAction<boolean>>,
+    errorMessage: string,
+    errorMessageHandler: Dispatch<SetStateAction<string>>,
+    regionExamDateSlotArray: IRegionExamDateSlotArray,
+    saveClickHandler: (examCentreIds: number[], examDateIds: number[], slotIds: number[]) => void,
     cancelClickHandler: () => void
 }) => {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
     const [selectedExamCentres, setSelectedExamCentres] = useState<IMultiSelect[]>([]);
-    const [errorMessage, setErrorMessage] = useState("")
     const [selectedRegions, setSelectedRegions] = useState<IMultiSelect[]>([]);
     const [selectedExamDates, setSelectedExamDates] = useState<IMultiSelect[]>([]);
     const [selectedSlots, setSelectedSlots] = useState<IMultiSelect[]>([]);
@@ -30,23 +36,22 @@ const ManageExamSlotModal = ({
     const handleSaveClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         if (selectedRegions.length === 0) {
-            setErrorMessage("Select at least one region.");
+            errorMessageHandler("Select at least one region.");
             return;
         }
         if (selectedExamCentres.length === 0) {
-            setErrorMessage("Select at least one exam centre.");
+            errorMessageHandler("Select at least one exam centre.");
             return;
         }
         if (selectedSlots.length === 0) {
-            setErrorMessage("Select at least one slot.");
+            errorMessageHandler("Select at least one slot.");
             return;
         }
         if (selectedExamDates.length === 0) {
-            setErrorMessage("Select at least one exam date.");
+            errorMessageHandler("Select at least one exam date.");
             return;
         }
-        setIsLoading(true)
-        updateCentresAsync(selectedExamCentres.map(examCentre => examCentre.id), selectedExamDates.map(examDate => examDate.id), selectedSlots.map(slot => slot.id));
+        saveClickHandler(selectedExamCentres.map(examCentre => examCentre.id), selectedExamDates.map(examDate => examDate.id), selectedSlots.map(slot => slot.id));
     };
 
     function handleCancelClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -56,26 +61,26 @@ const ManageExamSlotModal = ({
 
     const clearErrorMessage = () => {
         if (errorMessage) {
-            setErrorMessage("");
+            errorMessageHandler("");
         }
     };
 
     useEffect(() => {
-        setErrorMessage("");
-        setIsLoading(true);
+        errorMessageHandler("");
+        loadingHandler(true);
         fetchExamCentresAsync();
     }, [selectedRegions]);
 
     useEffect(() => {
-        setErrorMessage("");
+        errorMessageHandler("");
     }, [selectedExamCentres, selectedExamDates, selectedSlots]);
 
     const fetchExamCentresAsync = async () => {
         const apiResponse: ApiResponse = await fetchExamCentresByRegions(selectedRegions.map(region => region.id));
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            setErrorMessage(apiResponse.message);
-            setIsLoading(false);
+            errorMessageHandler(apiResponse.message);
+            loadingHandler(false);
             return;
         }
         setExamCentres(() => {
@@ -83,25 +88,11 @@ const ManageExamSlotModal = ({
             setSelectedExamCentres(prevState => prevState.filter(selectedExamCentre => examCentres.some(examCentre => selectedExamCentre.id === examCentre.id)));
             return examCentres;
         });
-        setIsLoading(false);
-    }
-    const updateCentresAsync = async (examCentreIds: number[], examDateIds: number[], slotIds: number[]) => {
-        const apiResponse: ApiResponse = await updateOnlySlot(examCentreIds, examDateIds, slotIds);
-        if (!apiResponse.status) {
-            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            setErrorMessage(apiResponse.message);
-            setIsLoading(false);
-            return;
-        }
-        setIsLoading(false);
-        toast.success("Exam Slot added successfully.");
-        cancelClickHandler();
-        router.refresh();
+        loadingHandler(false);
     }
 
     return (
         <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
-            <Toaster position="top-right" richColors duration={4000}/>
             {isLoading ? <Loading/> :
                 <div className="sm:w-[50vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
                     <div className="border-b-1 ">
