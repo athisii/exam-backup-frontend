@@ -31,7 +31,7 @@ export async function fetchExamCentresAsPage(pageNumber: number, pageSize: numbe
     return await sendGetRequest(url, token);
 }
 
-export async function saveExamCentre(fileType: IExamCentre): Promise<ApiResponse> {
+export async function saveExamCentre(examCentre: IExamCentre): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -44,7 +44,7 @@ export async function saveExamCentre(fileType: IExamCentre): Promise<ApiResponse
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
-    return await sendPostRequest(url, token, fileType);
+    return await sendPostRequest(url, token, examCentre);
 }
 
 export async function deleteExamCentreById(id: number): Promise<ApiResponse> {
@@ -77,4 +77,68 @@ export async function searchExamCentres(searchTerm: string, pageNumber: number, 
 
     // fetch might throw connection refused/timeout
     return await sendGetRequest(url, token);
+}
+
+export async function fetchExamCentresByRegions(regionIds: number[]): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login");
+    }
+    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE.toString())) {
+        redirect("/");
+    }
+    const token = idContext.token as string;
+    const url = `${API_URL}/exam-centres/all-by-region-ids`;
+    return await sendPostRequest(url, token, regionIds);
+}
+
+
+export async function updateOnlySlot(examCentreIds: number[], examDateIds: number[], slotIds: number[]): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login");
+    }
+    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
+        redirect("/");
+    }
+    const url = `${API_URL}/exam-centres/update-only-slot`;
+    const token = idContext.token as string;
+    return await sendPostRequest(url, token, {examCentreIds, examDateIds, slotIds});
+}
+
+export async function uploadExamCentre(formData: FormData): Promise<ApiResponse> {
+    const idContext = identityContext();
+
+    if (!idContext.authenticated) {
+        redirect("/login");
+    }
+
+    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
+        redirect("/");
+    }
+
+    const url = `${API_URL}/exam-centres/create-from-csv-file`;
+    const token = idContext.token as string;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                // Content-Type should not be set
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("API Error Response:", errorData);
+            throw new Error(`Error: ${errorData.message || "Unknown error"}. Status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Upload Error:", error);
+        throw new Error("Unable to upload exam center data.");
+    }
 }

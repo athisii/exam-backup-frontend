@@ -12,7 +12,6 @@ const regionRoute = "/admin/region";
 const fileTypeRoute = "/admin/file-type";
 const examDateRoute = "/admin/exam-date";
 const examCentreRoute = "/admin/exam-centre";
-const examCentreMappingRoute = "/admin/exam-mapping"
 const activeLinkColor = "bg-[#159ac2] text-white rounded-lg";
 
 export default function NavLink() {
@@ -55,11 +54,6 @@ export default function NavLink() {
                 className={`px-1 py-2 rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1  ${currentPath === examCentreRoute && activeLinkColor}`}
                 href={examCentreRoute}>
                 Exam Centre
-            </Link>
-            <Link
-                className={`px-1 py-2 rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1  ${currentPath === examCentreMappingRoute && activeLinkColor}`}
-                href={examCentreMappingRoute}>
-                Exam Slot Enable
             </Link>
             <button
                 onClick={() => logout()}

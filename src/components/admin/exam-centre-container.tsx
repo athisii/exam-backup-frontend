@@ -452,7 +452,7 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
 
             {showManageExamSlotModal && (
                 <ManageExamSlotModal
-                    title="Mange Exam Slot"
+                    title="Manage Exam Slot"
                     regionExamDateSlotArray={regionExamDateSlotArray}
                     cancelClickHandler={() => setShowManageExamSlotModal(false)}
                 />
