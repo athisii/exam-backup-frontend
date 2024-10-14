@@ -39,14 +39,14 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
             const file: File = files[0];
             const typeSplit = file.type.split("/");
             // enable/disable button based on file selection/de-selection
-            if (file.size > 0 && typeSplit.length && typeSplit[1].toLowerCase().trim() === fileExtension.name.toLowerCase().trim()) {
+            if (file.size > 0 && typeSplit.length == 2 && typeSplit[1].toLowerCase().trim() === fileExtension.name.toLowerCase().trim()) {
                 setUserSelectedFilename(file.name);
                 setDisabledBtn(false)
                 setStatus(false);
             } else {
                 setDisabledBtn(true)
                 setStatus(false);
-                toast.error(`Please select a non-empty file with the expected file extension.`)
+                toast.error(`Please select a non-empty ${fileExtension.name.toUpperCase()} file`)
                 if (inputFileRef.current) {
                     inputFileRef.current.value = '';
                 }
@@ -82,7 +82,7 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
 
     return (
         <div className="w-full p-2 border-b-2 border-gray-300">
-            <Toaster position="top-right" richColors duration={3000}/>
+            <Toaster position="top-right" richColors duration={4000}/>
             {uploading ?
                 <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
                     <Loading/>
@@ -93,7 +93,9 @@ const ExamFileUpload: React.FC<ExamFileProps> = ({
                     <label>{fileType.name}</label>
                 </div>
                 <div className="col-span-2 flex gap-2 items-center justify-center sm:col-span-3">
-                    <input name="file" type="file" onChange={handleFileChange} ref={inputFileRef}
+                    <input name="file" type="file" accept={"." + fileExtension.name}
+                           onChange={handleFileChange}
+                           ref={inputFileRef}
                            className="w-full cursor-pointer rounded bg-gray-100 text-gray-500 file:mr-4 file:cursor-pointer file:border-0 file:bg-blue-500 file:py-1 file:text-white file:hover:bg-gray-700"/>
                     <label className="text-red-500">.{fileExtension.name}</label>
                 </div>

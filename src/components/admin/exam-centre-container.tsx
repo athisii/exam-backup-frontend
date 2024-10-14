@@ -272,7 +272,8 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
                 setIsLoading(false);
                 return;
             }
-            fetchExamCentres(0);
+            setPageNumber(1);
+            fetchExamCentres(1);
             postSuccess("Exam Centre added successfully.");
             setShowBulkUploadModal(false);
         }
@@ -291,7 +292,8 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             }
             postSuccess("Exam Slot added successfully.");
             setShowManageExamSlotModal(false);
-            fetchExamCentres(0);
+            setPageNumber(1);
+            fetchExamCentres(1);
         }
         updateOnlySlotAsync(examCentreIds, examDateIds, slotIds);
     };
