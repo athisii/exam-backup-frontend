@@ -1,78 +1,72 @@
-import React, { useState, ChangeEvent } from 'react';
-import { toast } from 'sonner';
+import React, {Dispatch, SetStateAction} from 'react';
+import Loading from "@/components/admin/loading";
 
-interface BulkUploadModalProps {
-  onClose: () => void;
-  onSubmit: (bulkData: File) => Promise<void>; // onSubmit expects a file to be processed
-}
 
-const BulkUploadModal: React.FC<BulkUploadModalProps> = ({ onClose, onSubmit }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const BulkUploadModal = ({
+                             isLoading,
+                             errorMessage,
+                             errorMessageHandler,
+                             uploadClickHandler,
+                             cancelClickHandler
+                         }: {
+    isLoading: boolean,
+    errorMessage: string,
+    errorMessageHandler: Dispatch<SetStateAction<string>>,
+    uploadClickHandler: (formData: FormData) => void,
+    cancelClickHandler: () => void
+}) => {
 
-  // Handle file selection
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+    const handleSubmit = async (formData: FormData) => {
+        errorMessageHandler("");
+        uploadClickHandler(formData);
+    };
+
+    const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        cancelClickHandler();
     }
-  };
 
-  // Handle form submission for bulk upload
-  const handleSubmit = async () => {
-    if (!selectedFile) {
-      toast.error('Please select a file to upload.');
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await onSubmit(selectedFile); 
-      // toast.success('File uploaded successfully!');
-      onClose(); 
-    } catch (error) {
-      toast.error('File upload failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <>
-      {/* Modal Background */}
-      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
-      
-      {/* Modal Content */}
-      <div className="fixed inset-1/4 bg-white rounded-lg overflow-hidden shadow-lg z-10">
-        <div className="p-4 ">
-          <div className="mb-4 text-center">
-            <label className="block text-m font-bold text-gray-700 ">Upload CSV File</label>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="mt-2 p-2 border rounded w-full"
-            />
-          </div>
-
-          <div className="flex justify-center space-x-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-red-500 text-white font-bold rounded-lg"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-              disabled={isSubmitting || !selectedFile}
-            >
-              {isSubmitting ? 'Uploading...' : 'Upload'}
-            </button>
-          </div>
+    return (
+        <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-md flex justify-center items-center">
+            {isLoading ? <Loading/> :
+                <div className="sm:w-[40vw] bg-gray-100 flex flex-col shadow-lg rounded-lg">
+                    <div className="border-b-1">
+                        <h2 className="text-center text-medium text-white p-2 font-bold bg-blue-500 rounded-md">
+                            Upload CSV File
+                        </h2>
+                    </div>
+                    <div className="m-3 p-2 text-center">
+                        <div className="text-red-500">
+                            {errorMessage}
+                        </div>
+                        <div className="flex flex-col justify-center items-center gap-3 p-2 mt-4">
+                            <form action={handleSubmit} className="flex gap-8 flex-col justify-center items-center">
+                                <div>
+                                    <input
+                                        type="file"
+                                        name="file"
+                                        accept=".csv"
+                                        onChange={event => errorMessageHandler("")}
+                                        className="w-full cursor-pointer rounded bg-gray-300 text-gray-500 file:mr-4 file:cursor-pointer file:border-0 file:bg-blue-500 file:py-1 file:text-white file:hover:bg-gray-700"/>
+                                </div>
+                                <div className="flex justify-center gap-8 text-white">
+                                    <button type="submit"
+                                            className={`bg-green-500 py-2 px-4 rounded-md disabled:active:bg-green-500 active:bg-green-700 font-bold`}>
+                                        Upload
+                                    </button>
+                                    <button
+                                        className={`bg-red-500 py-2 px-4 rounded-md disabled:active:bg-red-500 font-bold`}
+                                        onClick={event => handleCancel(event)}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-      </div>
-    </>
-  );
+    );
 };
 
 export default BulkUploadModal;

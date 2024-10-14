@@ -5,14 +5,14 @@ import React from "react";
 import {usePathname} from "next/navigation";
 import {logout} from "@/utils/api";
 
-const dashboardRoute = "/admin";
-const slotRoute = "/admin/slot";
-const roleRoute = "/admin/role";
-const regionRoute = "/admin/region";
-const fileTypeRoute = "/admin/file-type";
-const examDateRoute = "/admin/exam-date";
-const examCentreRoute = "/admin/exam-centre";
-const activeLinkColor = "bg-[#159ac2] text-white rounded-lg";
+export const dashboardRoute = "/admin";
+export const slotRoute = "/admin/slot";
+export const roleRoute = "/admin/role";
+export const regionRoute = "/admin/region";
+export const fileTypeRoute = "/admin/file-type";
+export const examDateRoute = "/admin/exam-date";
+export const examCentreRoute = "/admin/exam-centre";
+export const activeLinkColor = "bg-[#159ac2] text-white rounded-lg";
 
 export default function NavLink() {
     let currentPath = usePathname();

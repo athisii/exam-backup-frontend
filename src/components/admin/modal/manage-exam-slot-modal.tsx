@@ -95,7 +95,8 @@ const ManageExamSlotModal = ({
         }
         setIsLoading(false);
         toast.success("Exam Slot added successfully.");
-        router.refresh()
+        cancelClickHandler();
+        router.refresh();
     }
 
     return (

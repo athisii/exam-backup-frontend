@@ -106,39 +106,15 @@ export async function updateOnlySlot(examCentreIds: number[], examDateIds: numbe
     return await sendPostRequest(url, token, {examCentreIds, examDateIds, slotIds});
 }
 
-export async function uploadExamCentre(formData: FormData): Promise<ApiResponse> {
+export async function uploadCsvFile(formData: FormData): Promise<ApiResponse> {
     const idContext = identityContext();
-
     if (!idContext.authenticated) {
         redirect("/login");
     }
-
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/");
     }
-
     const url = `${API_URL}/exam-centres/create-from-csv-file`;
     const token = idContext.token as string;
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                // Content-Type should not be set
-            },
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("API Error Response:", errorData);
-            throw new Error(`Error: ${errorData.message || "Unknown error"}. Status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Upload Error:", error);
-        throw new Error("Unable to upload exam center data.");
-    }
+    return await sendPostRequest(url, token, formData, true);
 }
