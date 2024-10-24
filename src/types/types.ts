@@ -141,3 +141,18 @@ export interface IRegionExamDateSlotArray {
 
 export type SortOrder = "ASC" | "DESC"
 export type UploadStatusFilterType = "DEFAULT" | "UPLOADED" | "NOT_UPLOADED"
+
+
+export interface IRHData{
+    id: number,
+    active: boolean,
+    createdDate: string | null,
+    modifiedDate: string | null,
+    code: string,
+    name: string,
+    mobile : number,
+    email: string,
+    designation: string
+    employeeId : string
+
+}

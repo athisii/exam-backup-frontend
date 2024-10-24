@@ -12,6 +12,7 @@ export const regionRoute = "/admin/region";
 export const fileTypeRoute = "/admin/file-type";
 export const examDateRoute = "/admin/exam-date";
 export const examCentreRoute = "/admin/exam-centre";
+const examRhUsersRoute = "/admin/rh-user"
 export const activeLinkColor = "bg-[#159ac2] text-white rounded-lg";
 
 export default function NavLink() {
@@ -54,6 +55,11 @@ export default function NavLink() {
                 className={`px-1 py-2 rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1  ${currentPath === examCentreRoute && activeLinkColor}`}
                 href={examCentreRoute}>
                 Exam Centre
+            </Link>
+            <Link
+                className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 ${currentPath === examRhUsersRoute && activeLinkColor}`}
+                href={examRhUsersRoute}>
+                RH Users
             </Link>
             <button
                 onClick={() => logout()}
