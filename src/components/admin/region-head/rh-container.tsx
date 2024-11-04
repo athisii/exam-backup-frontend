@@ -7,6 +7,9 @@ import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
 import {deleteRegionHeadById, fetchRegHeadsAsPage, saveRH} from "@/app/admin/rh-user/actions";
+import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
+
+import {bulkUploadModalUploadHandler} from "@/components/admin/exam-centre-container";
 // import Role from "@/components/admin/role";
 import AddRHContainer from "./rh-add-edit";
 
@@ -27,6 +30,7 @@ const RHContainer = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showBulkModal, setShowBulkUploadModal] = useState(false);
 
     useEffect(() => {
         fetchRHData(pageNumber);
@@ -55,6 +59,7 @@ const RHContainer = () => {
             setErrorMessage("");
         }
     };
+    
 
     const isValid = (name: string, code: string, mobile: number, email: string, employeeId: string, designation: string): boolean => {
         if (name.trim().length === 0) {
@@ -277,7 +282,7 @@ const RHContainer = () => {
                 }
                 </tbody>
             </table>
-            <div className="flex justify-center p-3 font-bold">
+            <div className="flex justify-center p-3 font-bold gap-4">
                 <button
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
@@ -286,6 +291,12 @@ const RHContainer = () => {
                         setShowAddModal(true);
                     }}>
                     Add RH User
+                </button>
+                <button
+                    onClick={() => setShowBulkUploadModal(true)} // Open bulk modal
+                    className="p-2 px-4 hover:bg-green-600 bg-green-500 text-white rounded-md active:bg-green-700"
+                >
+                    Bulk Upload
                 </button>
             </div>
             <div className="flex justify-center p-1">
@@ -337,6 +348,17 @@ const RHContainer = () => {
                                               saveClickHandler={addHandlerModalSaveHandler}
                                               cancelClickHandler={addHandlerModalCancelHandler}/>
             }
+            {showBulkModal && (
+                <BulkUploadModal
+                    title="Upload CSV File"
+                    isLoading={isLoading}
+                    errorMessage={errorMessage}
+                    errorMessageHandler={setErrorMessage}
+                    uploadClickHandler={bulkUploadModalUploadHandler}
+                    cancelClickHandler={() => setShowBulkUploadModal(false)}
+                />
+            )}
+
         </div>
     );
 }
