@@ -63,20 +63,6 @@ export async function deleteUserById(id: number): Promise<ApiResponse> {
     return await sendPostRequest(url, token, {});
 }
 
-export async function fetchRegions(): Promise<ApiResponse> {
-    const idContext = identityContext();
-    if (!idContext.authenticated) {
-        redirect("/login")
-    }
-    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
-        redirect("/")
-    }
-
-    let url = `${API_URL}/regions`;
-    const token = idContext.token as string;
-    return await sendGetRequest(url, token);
-}
-
 export async function uploadCsvFile(formData: FormData): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {

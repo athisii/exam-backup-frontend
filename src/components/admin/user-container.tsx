@@ -79,7 +79,7 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
             setPageNumber(1);
             // fetchExamCentres(1);
             fetchUsers(1);
-            postSuccess("Exam Centre added successfully.");
+            postSuccess("Users added successfully.");
             setShowBulkUploadModal(false);
         }
         uploadFileAsync(formData);
@@ -299,6 +299,7 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
                 {
                     users.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
+                        className="z-0"
                         showControls
                         color="success"
                         page={pageNumber}
