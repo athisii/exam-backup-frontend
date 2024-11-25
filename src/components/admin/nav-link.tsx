@@ -59,7 +59,7 @@ export default function NavLink() {
             <Link
                 className={`px-1 py-2 hover:rounded hover:bg-cyan-300 hover:text-white w-full text-center border-b-1 ${currentPath === examRhUsersRoute && activeLinkColor}`}
                 href={examRhUsersRoute}>
-                RH Users
+                Users
             </Link>
             <button
                 onClick={() => logout()}

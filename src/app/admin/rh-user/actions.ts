@@ -14,7 +14,7 @@ if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
 }
 
-export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number = 6, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number = 6, sortBy: string = "id", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")

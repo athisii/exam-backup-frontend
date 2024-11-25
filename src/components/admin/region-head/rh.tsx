@@ -1,18 +1,18 @@
 'use client'
 
 import React, {Dispatch, SetStateAction} from 'react';
-import {IRole} from "@/types/types";
+import {IRole, IRHData} from "@/types/types";
 
 
 interface RoleProps {
-    role: IRole,
+    role: IRHData,
     index: number
     setShowEditModal: Dispatch<SetStateAction<boolean>>
     setShowDeleteModal: Dispatch<SetStateAction<boolean>>
-    changeSelectedRole: Dispatch<SetStateAction<IRole>>
+    changeSelectedRole: Dispatch<SetStateAction<IRHData>>
 }
 
-const RH = ({
+const RegionHead = ({
                   role,
                   index,
                   changeSelectedRole,
@@ -41,6 +41,12 @@ const RH = ({
                 </td>
                 <td className="px-6 py-4 text-center">
                     {role.code}
+                </td>
+                <td className="px-6 py-4 text-center">
+                    {role.role?.name}
+                </td>
+                <td className="px-6 py-4 text-center">
+                    {role.region?.name}
                 </td>
                 <td className="px-6 py-4 text-center">
                     {role.createdDate?.toLocaleString()}
@@ -80,4 +86,4 @@ const RH = ({
     );
 }
 
-export default RH;
+export default RegionHead;

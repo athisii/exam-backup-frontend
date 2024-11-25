@@ -18,14 +18,14 @@ const AddRHModal = ({
     isLoading: boolean;
     errorMessage: string;
     errorMessageHandler: Dispatch<SetStateAction<string>>;
-    saveClickHandler: (name: string, code: string, empMail: string, phn: string, designation: string, region: string | null) => void;
+    saveClickHandler: (name: string, code: string, empMail: string, phn: string, region: string | null) => void;
     cancelClickHandler: () => void;
 }) => {
     const [name, setName] = useState('');
     const [empCode, setEmpCode] = useState('');
     const [empMail, setEmpMail] = useState('');
     const [phn, setPhn] = useState('');
-    const [designation, setDesignation] = useState('');
+   
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [regionsOptions, setRegionsOptions] = useState<{ id: string, name: string }[]>([]);
 
@@ -51,7 +51,7 @@ const AddRHModal = ({
     };
 
     const handleSaveClick = () => {
-        if (!name || !selectedRegion || !empCode || !empMail || !phn || !designation) {
+        if (!name || !selectedRegion || !empCode || !empMail || !phn ) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -64,8 +64,7 @@ const AddRHModal = ({
             EmployeeId: empCode,
             name: name,
             email: empMail,
-            mobile: phn,
-            designation: designation,
+            mobile: phn,          
             region_id: selectedRegion
         };
     
@@ -73,8 +72,7 @@ const AddRHModal = ({
             transformedData.EmployeeId,
             transformedData.name,
             transformedData.email,
-            transformedData.mobile,
-            transformedData.designation,
+            transformedData.mobile,           
             transformedData.region_id
         );
     };
@@ -90,7 +88,6 @@ const AddRHModal = ({
         setEmpCode('');
         setEmpMail('');
         setPhn('');
-        setDesignation('');
         setSelectedRegion(null);
         errorMessageHandler(""); // Clear any error message
     };
@@ -157,7 +154,7 @@ const AddRHModal = ({
                                     onChange={(e) => setPhn(e.target.value)}
                                 />
                             </div>
-                            <div className="flex flex-col mb-4">
+                            {/* <div className="flex flex-col mb-4">
                                 <label className='font-bold text-left'>Designation:</label>
                                 <input
                                     type="text"
@@ -165,7 +162,7 @@ const AddRHModal = ({
                                     value={designation}
                                     onChange={(e) => setDesignation(e.target.value)}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white font-bold">
                             <button

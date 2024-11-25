@@ -8,8 +8,9 @@ import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
 import {deleteRegionHeadById, fetchRegHeadsAsPage, saveRH} from "@/app/admin/rh-user/actions";
 import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
+import RegionHead from './rh';
 
-import {bulkUploadModalUploadHandler} from "@/components/admin/exam-centre-container";
+// import {bulkUploadModalUploadHandler} from "@/components/admin/exam-centre-container";
 // import Role from "@/components/admin/role";
 import AddRHContainer from "./rh-add-edit";
 
@@ -20,7 +21,7 @@ const RHContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
 
-    const [selectedRH, setSelectedRH] = useState<IRHData>({ code: "", name: "", mobile: "", email: "", employeeId: "", designation: "" } as unknown as IRHData);
+    const [selectedRH, setSelectedRH] = useState<IRHData>({ code: "", name: "", mobile: "", email: "", employeeId: ""} as unknown as IRHData);
     const [rhData, setRHData] = useState<IRHData[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
@@ -47,7 +48,7 @@ const RHContainer = () => {
         const apiResponse: ApiResponse = await fetchRegHeadsAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching roles.");
+            throw new Error("Error fetching Users.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
         setRHData(() => apiResponsePage.items);
@@ -63,7 +64,7 @@ const RHContainer = () => {
     };
     
 
-    const isValid = (name: string, code: string, mobile: number, email: string, employeeId: string, designation: string): boolean => {
+    const isValid = (name: string, code: string, mobile: number, email: string, employeeId: string): boolean => {
         if (name.trim().length === 0) {
             setErrorMessage("'Name' should not be empty.");
             return false;
@@ -80,17 +81,14 @@ const RHContainer = () => {
             setErrorMessage("'Code' should be a non-negative number.");
             return false;
         }
-        if (designation.trim().length === 0) {
-            setErrorMessage("'designation' should not be empty.");
-            return false;
-        }
+      
         
         return true;
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string, designation: string) => {
+    const editHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, mobile, email, employeeId, designation)) {
+        if (!isValid(name, code, mobile, email, employeeId)) {
             setIsLoading(false);
             return;
         }
@@ -100,8 +98,7 @@ const RHContainer = () => {
             name,
             mobile, 
             email, 
-            employeeId, 
-            designation,
+            employeeId,
             modifiedDate: convertToLocalDateTime(new Date())
         } as IRHData;
 
@@ -160,7 +157,7 @@ const RHContainer = () => {
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
-            // delete in between, then reload current page.
+          
             fetchRHData(pageNumber);
         }
         postSuccess("Role deleted successfully.");
@@ -171,25 +168,16 @@ const RHContainer = () => {
         setShowDeleteModal(false);
     }
 
-    // id: number,
-    // active: boolean,
-    // createdDate: string | null,
-    // modifiedDate: string | null,
-    // code: string,
-    // name: string, 
-    // mobile : number,
-    // email: string,
-    // designation: string
-    // employeeId : string
+ 
 
 
-    const addHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string, designation: string) => {
+    const addHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, mobile, email, employeeId, designation)) {
+        if (!isValid(name, code, mobile, email, employeeId)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveRH({code, name, mobile, email, employeeId, designation} as IRHData);
+        const apiResponse: ApiResponse = await saveRH({code, name, mobile, email, employeeId} as IRHData);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
@@ -201,8 +189,7 @@ const RHContainer = () => {
             name,
             mobile,
             email,
-            employeeId, 
-            designation,
+            employeeId,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id
@@ -232,7 +219,7 @@ const RHContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedRH({ code: "", name: "", mobile: "", email: "", employeeId: "", designation: "" } as unknown as IRHData)
+        setSelectedRH({ code: "", name: "", mobile: "", email: "", employeeId: ""} as unknown as IRHData)
         setShowAddModal(false);
     }
 
@@ -252,6 +239,9 @@ const RHContainer = () => {
                         Employee Id
                     </th>
                     <th scope="col" className="px-6 py-4">
+                        Role
+                    </th>
+                    <th scope="col" className="px-6 py-4">
                         Region
                     </th>
                     <th scope="col" className="px-6 py-4">
@@ -268,11 +258,11 @@ const RHContainer = () => {
                     </th>
                 </tr>
                 </thead>
-                <tbody>
+                {/* <tbody>
                 {
                     rhData.map((role, index) => {
                         return (
-                            <Role key={role.id}
+                            <RegionHead key={role.id}
                                   role={role}
                                   index={(pageNumber - 1) * PAGE_SIZE + index + 1}
                                   changeSelectedRole={setSelectedRH}
@@ -282,7 +272,49 @@ const RHContainer = () => {
                         );
                     })
                 }
-                </tbody>
+                </tbody> */}
+
+<tbody>
+  {rhData.map((role, index) => {
+    const roleName = role.isRegionHead ? 'Region Head' : 'Admin';
+    const regionName = role.region?.name || 'No Region'; // Use region name directly, fallback to 'No Region'
+    const createdDate = role.createdDate ? new Date(role.createdDate).toLocaleDateString() : 'N/A';
+    const modifiedDate = role.modifiedDate ? new Date(role.modifiedDate).toLocaleDateString() : 'N/A';
+
+    return (
+      <tr key={role.id} className="border-b">
+        <td className="px-6 py-4">{(pageNumber - 1) * PAGE_SIZE + index + 1}</td>
+        <td className="px-6 py-4">{role.name || 'N/A'}</td>
+        <td className="px-6 py-4">{role.userId}</td>
+        <td className="px-6 py-4">{roleName}</td>
+        <td className="px-6 py-4">{regionName}</td>
+        <td className="px-6 py-4">{createdDate}</td>
+        <td className="px-6 py-4">{modifiedDate}</td>
+        
+        <td className="px-6 py-4">
+          <button 
+            className="text-blue-600 hover:underline" 
+            onClick={() => { setSelectedRH(role); setShowEditModal(true); }}
+          >
+            Edit
+          </button>
+        </td>
+        <td className="px-6 py-4">
+          <button 
+            className="text-red-600 hover:underline" 
+            onClick={() => { setSelectedRH(role); setShowDeleteModal(true); }}
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
+
+
+
+
             </table>
             <div className="flex justify-center p-3 font-bold gap-4">
                 <button
@@ -292,7 +324,7 @@ const RHContainer = () => {
                         setSelectedRH({code: "", name: ""} as IRHData);
                         setShowAddModal(true);
                     }}>
-                    Add RH User
+                    Add User
                 </button>
                 <button
                     onClick={() => setShowBulkUploadModal(true)} // Open bulk modal

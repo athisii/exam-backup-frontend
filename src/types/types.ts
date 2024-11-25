@@ -143,16 +143,19 @@ export type SortOrder = "ASC" | "DESC"
 export type UploadStatusFilterType = "DEFAULT" | "UPLOADED" | "NOT_UPLOADED"
 
 
-export interface IRHData{
-    id: number,
-    active: boolean,
-    createdDate: string | null,
-    modifiedDate: string | null,
-    code: string,
-    name: string,
-    mobile : number,
-    email: string,
-    designation: string
-    employeeId : string
-
+export interface IRHData {
+    isRegionHead: any;
+    userId: string;
+    role: IRole;
+    id: number;
+    active: boolean;
+    createdDate: string | null;
+    modifiedDate: string | null;
+    code: string;
+    region: IRegion; 
+    name: string;
+    mobile: number;
+    email: string;
+    employeeId: string;
 }
+
