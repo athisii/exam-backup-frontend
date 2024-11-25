@@ -56,7 +56,7 @@ export async function deleteRegionHeadById(id: number): Promise<ApiResponse> {
         redirect("/")
     }
 
-    let url = `${API_URL}/region-head/soft-delete/${id}`;
+    let url = `${API_URL}/app-users/soft-delete/${id}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
