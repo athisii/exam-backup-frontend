@@ -2,7 +2,7 @@
 
 import {redirect} from "next/navigation";
 import identityContext from "@/utils/session";
-import {ApiResponse, IRHData, SortOrder} from "@/types/types";
+import {ApiResponse, IUser, SortOrder} from "@/types/types";
 import {sendGetRequest, sendPostRequest} from "@/utils/api";
 
 const API_URL = process.env.API_URL as string
@@ -14,7 +14,7 @@ if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
 }
 
-export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number = 6, sortBy: string = "id", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+export async function fetchUsersAsPage(pageNumber: number, pageSize: number = 6, sortBy: string = "id", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -31,7 +31,7 @@ export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number =
     return await sendGetRequest(url, token);
 }
 
-export async function saveRH(role: IRHData): Promise<ApiResponse> {
+export async function saveUser(role: IUser): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -47,7 +47,7 @@ export async function saveRH(role: IRHData): Promise<ApiResponse> {
     return await sendPostRequest(url, token, role);
 }
 
-export async function deleteRegionHeadById(id: number): Promise<ApiResponse> {
+export async function deleteUserById(id: number): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")

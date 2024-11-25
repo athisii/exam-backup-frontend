@@ -36,7 +36,7 @@ export default function Layout({
                     </button>
                 </div>
                 <div
-                    className={`w-full items-center gap-6 font-semibold ${isMenuOpen ? "flex flex-col" : "hidden"}`}>
+                    className={`w-full lg:hidden items-center gap-6 font-semibold ${isMenuOpen ? "flex flex-col" : "hidden"}`}>
                     <NavLink/>
                 </div>
             </header>

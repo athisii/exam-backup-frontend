@@ -1,31 +1,23 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {ApiResponse, ApiResponsePage, IRHData} from "@/types/types";
+import {ApiResponse, ApiResponsePage, IRegion, IRole, IUser} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import {
-    deleteRegionHeadById, 
-    fetchRegHeadsAsPage, 
-    saveRH, 
-    uploadCsvFile } from "@/app/admin/rh-user/actions";
-
+import {deleteUserById, fetchUsersAsPage, saveUser, uploadCsvFile} from "@/app/admin/user/actions";
 import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
-import RegionHead from './rh';
-
-import AddRHContainer from "./rh-add-edit";
+import User from './user';
+import UserAddEditModal from "./modal/user-add-edit";
 
 const PAGE_SIZE = 8;
 
-const RHContainer = () => {
-
+const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("")
-
-    const [selectedRH, setSelectedRH] = useState<IRHData>({ code: "", name: "", mobile: "", email: "", employeeId: ""} as unknown as IRHData);
-    const [rhData, setRHData] = useState<IRHData[]>([]);
+    const [selectedUser, setSelectedUser] = useState<IUser>({name: ""} as IUser);
+    const [users, setUsers] = useState<IUser[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -37,24 +29,21 @@ const RHContainer = () => {
     const [showBulkModal, setShowBulkUploadModal] = useState(false);
 
     useEffect(() => {
-        fetchRHData(pageNumber);
+        fetchUsers(pageNumber);
     }, []);
 
     useEffect(() => {
         setErrorMessage("");
-    }, [selectedRH]);
+    }, [selectedUser]);
 
-
-    
-
-    const fetchRHData = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchRegHeadsAsPage(page);
+    const fetchUsers = async (page: number) => {
+        const apiResponse: ApiResponse = await fetchUsersAsPage(page);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching Users.");
+            throw new Error("Error fetching users.");
         }
         const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setRHData(() => apiResponsePage.items);
+        setUsers(() => apiResponsePage.items);
         setNumberOfElements(() => apiResponsePage.numberOfElements);
         setTotalElements(() => apiResponsePage.totalElements);
         setTotalPages(() => apiResponsePage.totalPages);
@@ -65,27 +54,16 @@ const RHContainer = () => {
             setErrorMessage("");
         }
     };
-    
 
-    const isValid = (name: string, code: string, mobile: number, email: string, employeeId: string): boolean => {
+    const isValid = (name: string, userId: string): boolean => {
         if (name.trim().length === 0) {
             setErrorMessage("'Name' should not be empty.");
             return false;
         }
-        if (code.trim().length === 0 || Number.parseInt(code) <= 0) {
-            setErrorMessage("'Code' should be a non-negative number.");
-            return false;
-        }        
-        if (email.trim().length === 0) {
-            setErrorMessage("'email' should not be empty.");
-            return false;
-        }
-        if (employeeId.trim().length === 0 || Number.parseInt(employeeId) <= 0) {
+        if (userId.trim().length === 0 || Number.parseInt(userId) <= 0) {
             setErrorMessage("'Code' should be a non-negative number.");
             return false;
         }
-      
-        
         return true;
     };
     const bulkUploadModalUploadHandler = async (formData: FormData) => {
@@ -100,73 +78,75 @@ const RHContainer = () => {
             }
             setPageNumber(1);
             // fetchExamCentres(1);
-            fetchRHData(1);
+            fetchUsers(1);
             postSuccess("Exam Centre added successfully.");
             setShowBulkUploadModal(false);
         }
         uploadFileAsync(formData);
     };
 
-    const editHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string) => {
+    const editHandlerModalSaveHandler = async (name: string, userId: string, roleId: number, regionId: number, isRegionHead: boolean, mobileNumber: string, email: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, mobile, email, employeeId)) {
+        if (!isValid(name, userId)) {
             setIsLoading(false);
             return;
         }
-        const updatedRole: IRHData = {
-            ...selectedRH,
-            code,
+        const updatedUser: IUser = {
+            ...selectedUser,
             name,
-            mobile, 
-            email, 
-            employeeId,
+            userId,
+            roleId,
+            regionId: isRegionHead ? regionId : null,
+            isRegionHead,
+            mobileNumber,
+            email,
             modifiedDate: convertToLocalDateTime(new Date())
-        } as IRHData;
+        } as IUser;
 
-        const apiResponse: ApiResponse = await saveRH(updatedRole);
+        const apiResponse: ApiResponse = await saveUser(updatedUser);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        setRHData(prevState => {
-            const filteredRoles = prevState.filter(role => role.id != selectedRH.id);
-            const newRoles = [...filteredRoles, updatedRole]
-            newRoles.sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code))
-            return newRoles;
+        setUsers(prevState => {
+            const filteredRoles = prevState.filter(role => role.id != selectedUser.id);
+            const newUsers = [...filteredRoles, updatedUser]
+            newUsers.sort((a, b) => a.name.localeCompare(b.name));
+            return newUsers;
         })
-        postSuccess("Region Head Data updated successfully.")
+        postSuccess("User updated successfully.")
         setShowEditModal(false);
     };
 
     const postSuccess = (message: string) => {
-        setIsLoading(false); 
+        setIsLoading(false);
         toast.success(message);
     }
 
     const editHandlerModalCancelHandler = () => {
-        setSelectedRH({code: "", name: ""} as IRHData)
+        setSelectedUser({name: ""} as IUser)
         setShowEditModal(false);
     }
     const deleteHandlerModalDeleteHandler = async (id: number) => {
         setIsLoading(true);
-        const apiResponse: ApiResponse = await deleteRegionHeadById(id);
+        const apiResponse: ApiResponse = await deleteUserById(id);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
-        const filteredRoles = rhData.filter(role => role.id != id);
+        const filteredRoles = users.filter(role => role.id != id);
 
         if ((numberOfElements - 1) == 0 && pageNumber == totalPages) {
             // last page and last element, has prev page
             if (pageNumber > 1) {
-                fetchRHData(pageNumber - 1); // go back one page as current page has no element left.
+                fetchUsers(pageNumber - 1); // go back one page as current page has no element left.
                 setTotalPages(totalPages - 1);
                 setPageNumber(pageNumber - 1);
             } else {
                 // last page and last element, doesn't have prev
-                setRHData([]);
+                setUsers([]);
                 setPageNumber(0);
                 setNumberOfElements(0);
                 setTotalElements(0);
@@ -174,64 +154,64 @@ const RHContainer = () => {
             }
         } else if (numberOfElements > 1 && pageNumber == totalPages) {
             // last page and more element left, don't reload
-            setRHData(filteredRoles)
+            setUsers(filteredRoles)
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
-          
-            fetchRHData(pageNumber);
+
+            fetchUsers(pageNumber);
         }
-        postSuccess("Role deleted successfully.");
+        postSuccess("User deleted successfully.");
         setShowDeleteModal(false);
     };
     const deleteHandlerModalCancelHandler = () => {
-        setSelectedRH({code: "", name: ""} as IRHData)
+        setSelectedUser({name: ""} as IUser)
         setShowDeleteModal(false);
     }
 
- 
 
-
-    const addHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string) => {
+    const addHandlerModalSaveHandler = async (name: string, userId: string, roleId: number, regionId: number, isRegionHead: boolean, mobileNumber: string, email: string) => {
         setIsLoading(true);
-        if (!isValid(name, code, mobile, email, employeeId)) {
+        if (!isValid(name, userId)) {
             setIsLoading(false);
             return;
         }
-        const apiResponse: ApiResponse = await saveRH({code, name, mobile, email, employeeId} as IRHData);
+        const user = {
+            name,
+            userId,
+            roleId,
+            regionId: isRegionHead ? regionId : null,
+            isRegionHead,
+            mobileNumber,
+            email
+        } as IUser;
+        const apiResponse: ApiResponse = await saveUser(user);
         if (!apiResponse.status) {
             setErrorMessage(apiResponse.message)
             setIsLoading(false);
             return
         }
         const date = new Date();
-        const newRole: IRHData = {
-            code,
-            name,
-            mobile,
-            email,
-            employeeId,
-            createdDate: convertToLocalDateTime(date),
-            modifiedDate: convertToLocalDateTime(date),
-            id: apiResponse.data.id
-        } as IRHData;
+        user.id = apiResponse.data.id;
+        user.createdDate = convertToLocalDateTime(date);
+        user.modifiedDate = convertToLocalDateTime(date);
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
-            setRHData([...rhData, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setUsers([...users, user].sort((a, b) => a.name.localeCompare(b.name)));
             setPageNumber(1);
             setNumberOfElements(1)
             setTotalElements(1);
             setTotalPages(1);
-        } else if (rhData.length < PAGE_SIZE && pageNumber == totalPages) {
+        } else if (users.length < PAGE_SIZE && pageNumber == totalPages) {
             // current page is not filled, and it's the last page, then add here, not needed to re-fetch from the server.
-            setRHData([...rhData, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setUsers([...users, user].sort((a, b) => a.name.localeCompare(b.name)));
             setNumberOfElements(numberOfElements + 1);
             setTotalElements(totalElements + 1);
         } else {
             //go to last page after adding and re-fetch from the server.
             let currentTotalPages = Math.max(Math.ceil((totalElements + 1) / PAGE_SIZE), totalPages);
-            fetchRHData(currentTotalPages);
+            fetchUsers(currentTotalPages);
             setTotalPages(currentTotalPages);
             setPageNumber(currentTotalPages);
         }
@@ -240,7 +220,7 @@ const RHContainer = () => {
     };
 
     const addHandlerModalCancelHandler = () => {
-        setSelectedRH({ code: "", name: "", mobile: "", email: "", employeeId: ""} as unknown as IRHData)
+        setSelectedUser({name: ""} as IUser)
         setShowAddModal(false);
     }
 
@@ -279,21 +259,22 @@ const RHContainer = () => {
                     </th>
                 </tr>
                 </thead>
-            
+
                 <tbody>
-                  {rhData.map((role, index) => { 
-                
+                {users.map((user, index) => {
                     return (
-                      <RegionHead
-                        key={role.id}
-                        role={role}
-                        index={(pageNumber - 1) * PAGE_SIZE + index + 1}
-                        changeSelectedRole={setSelectedRH}
-                        setShowEditModal={setShowEditModal}
-                        setShowDeleteModal={setShowDeleteModal}
-                      />
+                        <User
+                            key={user.id}
+                            user={user}
+                            index={(pageNumber - 1) * PAGE_SIZE + index + 1}
+                            changeSelectedRole={setSelectedUser}
+                            setShowEditModal={setShowEditModal}
+                            setShowDeleteModal={setShowDeleteModal}
+                            regions={regions}
+                            roles={roles}
+                        />
                     );
-                  })}
+                })}
                 </tbody>
 
             </table>
@@ -302,7 +283,7 @@ const RHContainer = () => {
                     className={`border-1 disabled:bg-gray-400 bg-green-500 py-2 px-4 rounded-md text-white active:bg-green-700`}
                     onClick={() => {
                         clearErrorMessage();
-                        setSelectedRH({code: "", name: ""} as IRHData);
+                        setSelectedUser({name: ""} as IUser);
                         setShowAddModal(true);
                     }}>
                     Add User
@@ -316,7 +297,7 @@ const RHContainer = () => {
             </div>
             <div className="flex justify-center p-1">
                 {
-                    rhData.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    users.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
                         showControls
                         color="success"
@@ -325,43 +306,47 @@ const RHContainer = () => {
                         initialPage={1}
                         onChange={page => {
                             setPageNumber(() => page);
-                            fetchRHData(page);
+                            fetchUsers(page);
                         }}/>
                 }
             </div>
 
             {
-                showEditModal && <AddRHContainer key={selectedRH.code + "1"}
-                                                  title="Update User Data"
-                                                  isLoading={isLoading}
-                                                  initialName={selectedRH.name}
-                                                  initialCode={selectedRH.code}
-                                                  errorMessage={errorMessage}
-                                                  errorMessageHandler={setErrorMessage}
-                                                  saveClickHandler={editHandlerModalSaveHandler}
-                                                  cancelClickHandler={editHandlerModalCancelHandler}/>
+                showEditModal && <UserAddEditModal key={selectedUser.id + "1"}
+                                                   title="Update User"
+                                                   isLoading={isLoading}
+                                                   errorMessage={errorMessage}
+                                                   errorMessageHandler={setErrorMessage}
+                                                   user={selectedUser}
+                                                   roles={roles}
+                                                   regions={regions}
+                                                   saveClickHandler={editHandlerModalSaveHandler}
+                                                   cancelClickHandler={editHandlerModalCancelHandler}/>
             }
 
             {
-                showDeleteModal && <DeleteModal key={selectedRH.code + "1"}
-                                                title="Delete User Data"
+                showDeleteModal && <DeleteModal key={selectedUser.id + "1"}
+                                                title="Delete User"
                                                 type=" User"
                                                 isLoading={isLoading}
-                                                idToDelete={selectedRH.id}
-                                                name={selectedRH.name}
-                                                code={selectedRH.code}
+                                                idToDelete={selectedUser.id}
+                                                name={selectedUser.name}
+                                                code={selectedUser.userId}
                                                 errorMessage={errorMessage}
                                                 errorMessageHandler={setErrorMessage}
                                                 deleteClickHandler={deleteHandlerModalDeleteHandler}
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
-            {showAddModal && <AddRHContainer key={selectedRH.code + "1"}
-                                              title="Add New User Profile"
-                                              isLoading={isLoading}
-                                              errorMessage={errorMessage}
-                                              errorMessageHandler={setErrorMessage}
-                                              saveClickHandler={addHandlerModalSaveHandler}
-                                              cancelClickHandler={addHandlerModalCancelHandler}/>
+            {showAddModal && <UserAddEditModal key={selectedUser.id + "1"}
+                                               title="Add New User"
+                                               isLoading={isLoading}
+                                               errorMessage={errorMessage}
+                                               errorMessageHandler={setErrorMessage}
+                                               user={selectedUser}
+                                               roles={roles}
+                                               regions={regions}
+                                               saveClickHandler={addHandlerModalSaveHandler}
+                                               cancelClickHandler={addHandlerModalCancelHandler}/>
             }
             {showBulkModal && (
                 <BulkUploadModal
@@ -378,4 +363,4 @@ const RHContainer = () => {
     );
 }
 
-export default RHContainer;
+export default UserContainer;
