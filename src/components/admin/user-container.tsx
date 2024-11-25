@@ -55,13 +55,21 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
         }
     };
 
-    const isValid = (name: string, userId: string): boolean => {
+    const isValid = (name: string, userId: string, email: string, mobileNumber: string): boolean => {
         if (name.trim().length === 0) {
             setErrorMessage("'Name' should not be empty.");
             return false;
         }
-        if (userId.trim().length === 0 || Number.parseInt(userId) <= 0) {
-            setErrorMessage("'Code' should be a non-negative number.");
+        if (mobileNumber.trim().length === 0) {
+            setErrorMessage("'Mobile Number' should not be empty.");
+            return false;
+        }
+        if (email.trim().length === 0) {
+            setErrorMessage("'Email' should not be empty.");
+            return false;
+        }
+        if (userId.trim().length === 0) {
+            setErrorMessage("'Employee Id' should be a non-negative number.");
             return false;
         }
         return true;
@@ -87,7 +95,7 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
 
     const editHandlerModalSaveHandler = async (name: string, userId: string, roleId: number, regionId: number, isRegionHead: boolean, mobileNumber: string, email: string) => {
         setIsLoading(true);
-        if (!isValid(name, userId)) {
+        if (!isValid(name, userId, email, mobileNumber)) {
             setIsLoading(false);
             return;
         }
@@ -158,7 +166,6 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
             setNumberOfElements(prevState => prevState - 1)
             setTotalElements(prevState => prevState - 1);
         } else {
-
             fetchUsers(pageNumber);
         }
         postSuccess("User deleted successfully.");
@@ -172,7 +179,7 @@ const UserContainer = ({regions, roles}: { regions: IRegion[], roles: IRole[] })
 
     const addHandlerModalSaveHandler = async (name: string, userId: string, roleId: number, regionId: number, isRegionHead: boolean, mobileNumber: string, email: string) => {
         setIsLoading(true);
-        if (!isValid(name, userId)) {
+        if (!isValid(name, userId, email, mobileNumber)) {
             setIsLoading(false);
             return;
         }
