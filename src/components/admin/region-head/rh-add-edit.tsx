@@ -22,7 +22,7 @@ const AddRHModal = ({
     cancelClickHandler: () => void;
 }) => {
     const [name, setName] = useState('');
-    const [emplCode, setEmplCode] = useState('');
+    const [empCode, setEmpCode] = useState('');
     const [empMail, setEmpMail] = useState('');
     const [phn, setPhn] = useState('');
     const [designation, setDesignation] = useState('');
@@ -51,7 +51,7 @@ const AddRHModal = ({
     };
 
     const handleSaveClick = () => {
-        if (!name || !selectedRegion || !emplCode || !empMail || !phn || !designation) {
+        if (!name || !selectedRegion || !empCode || !empMail || !phn || !designation) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -59,9 +59,26 @@ const AddRHModal = ({
             });
             return;
         }
-        
-        saveClickHandler(name, emplCode, empMail, phn, designation, selectedRegion);
+    
+        const transformedData = {
+            EmployeeId: empCode,
+            name: name,
+            email: empMail,
+            mobile: phn,
+            designation: designation,
+            region_id: selectedRegion
+        };
+    
+        saveClickHandler(
+            transformedData.EmployeeId,
+            transformedData.name,
+            transformedData.email,
+            transformedData.mobile,
+            transformedData.designation,
+            transformedData.region_id
+        );
     };
+    
 
     const handleCancelClick = () => {
         cancelClickHandler();
@@ -70,7 +87,7 @@ const AddRHModal = ({
 
     const clearFields = () => {
         setName('');
-        setEmplCode('');
+        setEmpCode('');
         setEmpMail('');
         setPhn('');
         setDesignation('');
@@ -118,8 +135,8 @@ const AddRHModal = ({
                                 <input
                                     type="text"
                                     className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                                    value={emplCode}
-                                    onChange={(e) => setEmplCode(e.target.value)}
+                                    value={empCode}
+                                    onChange={(e) => setEmpCode(e.target.value)}
                                 />
                             </div>
                             <div className="flex flex-col mb-4">

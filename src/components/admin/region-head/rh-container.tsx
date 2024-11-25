@@ -21,7 +21,7 @@ const RHContainer = () => {
     const [errorMessage, setErrorMessage] = useState("")
 
     const [selectedRH, setSelectedRH] = useState<IRHData>({ code: "", name: "", mobile: "", email: "", employeeId: "", designation: "" } as unknown as IRHData);
-    const [rhdata, setRHData] = useState<IRHData[]>([]);
+    const [rhData, setRHData] = useState<IRHData[]>([]);
     const [pageNumber, setPageNumber] = useState(1)
     const [numberOfElements, setNumberOfElements] = useState(1)
     const [totalElements, setTotalElements] = useState(1)
@@ -40,6 +40,8 @@ const RHContainer = () => {
         setErrorMessage("");
     }, [selectedRH]);
 
+
+    
 
     const fetchRHData = async (page: number) => {
         const apiResponse: ApiResponse = await fetchRegHeadsAsPage(page);
@@ -208,14 +210,14 @@ const RHContainer = () => {
 
         // when added for the first time, not need to re-fetch from the server.
         if (totalElements < 1) {
-            setRHData([...rhdata, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setRHData([...rhData, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setPageNumber(1);
             setNumberOfElements(1)
             setTotalElements(1);
             setTotalPages(1);
-        } else if (rhdata.length < PAGE_SIZE && pageNumber == totalPages) {
+        } else if (rhData.length < PAGE_SIZE && pageNumber == totalPages) {
             // current page is not filled, and it's the last page, then add here, not needed to re-fetch from the server.
-            setRHData([...rhdata, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
+            setRHData([...rhData, newRole].sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code)));
             setNumberOfElements(numberOfElements + 1);
             setTotalElements(totalElements + 1);
         } else {
@@ -268,7 +270,7 @@ const RHContainer = () => {
                 </thead>
                 <tbody>
                 {
-                    rhdata.map((role, index) => {
+                    rhData.map((role, index) => {
                         return (
                             <Role key={role.id}
                                   role={role}
@@ -301,7 +303,7 @@ const RHContainer = () => {
             </div>
             <div className="flex justify-center p-1">
                 {
-                    rhdata.length && !showAddModal && !showEditModal && !showDeleteModal &&
+                    rhData.length && !showAddModal && !showEditModal && !showDeleteModal &&
                     <Pagination
                         showControls
                         color="success"

@@ -14,7 +14,7 @@ if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
 }
 
-export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number = 8, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number = 6, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
@@ -24,7 +24,7 @@ export async function fetchRegHeadsAsPage(pageNumber: number, pageSize: number =
     }
 
     // page number is zero-based in backend API. So page = pageNumber - 1 (only for PAGINATION UI)
-    let url = `${API_URL}/region-heads/page?page=${pageNumber - 1}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
+    let url = `${API_URL}/app-users/page?page=${pageNumber - 1}&size=${pageSize}&sort=${sortBy},${sortOrder}`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
@@ -40,7 +40,7 @@ export async function saveRH(role: IRHData): Promise<ApiResponse> {
         redirect("/")
     }
 
-    let url = `${API_URL}/region-head/create`;
+    let url = `${API_URL}/app-users/create`;
     const token = idContext.token as string;
 
     // fetch might throw connection refused/timeout
