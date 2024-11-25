@@ -6,12 +6,15 @@ import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
 import DeleteModal from "@/components/admin/modal/delete-modal";
 import {convertToLocalDateTime} from "@/utils/date-util";
-import {deleteRegionHeadById, fetchRegHeadsAsPage, saveRH} from "@/app/admin/rh-user/actions";
+import {
+    deleteRegionHeadById, 
+    fetchRegHeadsAsPage, 
+    saveRH, 
+    uploadCsvFile } from "@/app/admin/rh-user/actions";
+
 import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
 import RegionHead from './rh';
 
-// import {bulkUploadModalUploadHandler} from "@/components/admin/exam-centre-container";
-// import Role from "@/components/admin/role";
 import AddRHContainer from "./rh-add-edit";
 
 const PAGE_SIZE = 8;
@@ -85,6 +88,24 @@ const RHContainer = () => {
         
         return true;
     };
+    const bulkUploadModalUploadHandler = async (formData: FormData) => {
+        setIsLoading(true);
+        // to reflect loading animation.
+        const uploadFileAsync = async (formData: FormData) => {
+            const apiResponse: ApiResponse = await uploadCsvFile(formData);
+            if (!apiResponse.status) {
+                setErrorMessage(apiResponse.message)
+                setIsLoading(false);
+                return;
+            }
+            setPageNumber(1);
+            // fetchExamCentres(1);
+            fetchRHData(1);
+            postSuccess("Exam Centre added successfully.");
+            setShowBulkUploadModal(false);
+        }
+        uploadFileAsync(formData);
+    };
 
     const editHandlerModalSaveHandler = async (name: string, code: string, mobile: number, email: string, employeeId: string) => {
         setIsLoading(true);
@@ -119,7 +140,7 @@ const RHContainer = () => {
     };
 
     const postSuccess = (message: string) => {
-        setIsLoading(false); // de-initialize modal state.
+        setIsLoading(false); 
         toast.success(message);
     }
 
@@ -135,7 +156,7 @@ const RHContainer = () => {
             setIsLoading(false);
             return
         }
-        const filteredRoles = rhdata.filter(role => role.id != id);
+        const filteredRoles = rhData.filter(role => role.id != id);
 
         if ((numberOfElements - 1) == 0 && pageNumber == totalPages) {
             // last page and last element, has prev page
@@ -258,62 +279,22 @@ const RHContainer = () => {
                     </th>
                 </tr>
                 </thead>
-                {/* <tbody>
-                {
-                    rhData.map((role, index) => {
-                        return (
-                            <RegionHead key={role.id}
-                                  role={role}
-                                  index={(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                  changeSelectedRole={setSelectedRH}
-                                  setShowEditModal={setShowEditModal}
-                                  setShowDeleteModal={setShowDeleteModal}
-                            />
-                        );
-                    })
-                }
-                </tbody> */}
-
-<tbody>
-  {rhData.map((role, index) => {
-    const roleName = role.isRegionHead ? 'Region Head' : 'Admin';
-    const regionName = role.region?.name || 'No Region'; // Use region name directly, fallback to 'No Region'
-    const createdDate = role.createdDate ? new Date(role.createdDate).toLocaleDateString() : 'N/A';
-    const modifiedDate = role.modifiedDate ? new Date(role.modifiedDate).toLocaleDateString() : 'N/A';
-
-    return (
-      <tr key={role.id} className="border-b">
-        <td className="px-6 py-4">{(pageNumber - 1) * PAGE_SIZE + index + 1}</td>
-        <td className="px-6 py-4">{role.name || 'N/A'}</td>
-        <td className="px-6 py-4">{role.userId}</td>
-        <td className="px-6 py-4">{roleName}</td>
-        <td className="px-6 py-4">{regionName}</td>
-        <td className="px-6 py-4">{createdDate}</td>
-        <td className="px-6 py-4">{modifiedDate}</td>
-        
-        <td className="px-6 py-4">
-          <button 
-            className="text-blue-600 hover:underline" 
-            onClick={() => { setSelectedRH(role); setShowEditModal(true); }}
-          >
-            Edit
-          </button>
-        </td>
-        <td className="px-6 py-4">
-          <button 
-            className="text-red-600 hover:underline" 
-            onClick={() => { setSelectedRH(role); setShowDeleteModal(true); }}
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    );
-  })}
-</tbody>
-
-
-
+            
+                <tbody>
+                  {rhData.map((role, index) => { 
+                
+                    return (
+                      <RegionHead
+                        key={role.id}
+                        role={role}
+                        index={(pageNumber - 1) * PAGE_SIZE + index + 1}
+                        changeSelectedRole={setSelectedRH}
+                        setShowEditModal={setShowEditModal}
+                        setShowDeleteModal={setShowDeleteModal}
+                      />
+                    );
+                  })}
+                </tbody>
 
             </table>
             <div className="flex justify-center p-3 font-bold gap-4">
@@ -351,7 +332,7 @@ const RHContainer = () => {
 
             {
                 showEditModal && <AddRHContainer key={selectedRH.code + "1"}
-                                                  title="Update Region Head"
+                                                  title="Update User Data"
                                                   isLoading={isLoading}
                                                   initialName={selectedRH.name}
                                                   initialCode={selectedRH.code}
@@ -363,8 +344,8 @@ const RHContainer = () => {
 
             {
                 showDeleteModal && <DeleteModal key={selectedRH.code + "1"}
-                                                title="Delete Region Head"
-                                                type="Region Head"
+                                                title="Delete User Data"
+                                                type=" User"
                                                 isLoading={isLoading}
                                                 idToDelete={selectedRH.id}
                                                 name={selectedRH.name}
@@ -375,7 +356,7 @@ const RHContainer = () => {
                                                 cancelClickHandler={deleteHandlerModalCancelHandler}/>
             }
             {showAddModal && <AddRHContainer key={selectedRH.code + "1"}
-                                              title="Add New Region Head"
+                                              title="Add New User Profile"
                                               isLoading={isLoading}
                                               errorMessage={errorMessage}
                                               errorMessageHandler={setErrorMessage}

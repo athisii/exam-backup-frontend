@@ -23,7 +23,7 @@ const Page = async () => {
     return (
         <>
             <div className='flex bg-[#0056b3] w-full justify-center p-2 text-white rounded-lg'>
-                <h1 className='font-bold'>Region Heads</h1>
+                <h1 className='font-bold'>Users Data</h1>
             </div>
             <RHContainer/>
         </>

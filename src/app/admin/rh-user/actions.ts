@@ -76,3 +76,16 @@ export async function fetchRegions(): Promise<ApiResponse> {
     const token = idContext.token as string;
     return await sendGetRequest(url, token);
 }
+
+export async function uploadCsvFile(formData: FormData): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login");
+    }
+    if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
+        redirect("/");
+    }
+    const url = `${API_URL}/app-users/create-from-csv-file`;
+    const token = idContext.token as string;
+    return await sendPostRequest(url, token, formData, true);
+}

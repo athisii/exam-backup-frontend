@@ -140,7 +140,10 @@ export interface IRegionExamDateSlotArray {
 }
 
 export type SortOrder = "ASC" | "DESC"
+
 export type UploadStatusFilterType = "DEFAULT" | "UPLOADED" | "NOT_UPLOADED"
+
+export type UserRoleType = "Region Head" | "ADMIN" | "USER"
 
 
 export interface IRHData {
@@ -157,5 +160,6 @@ export interface IRHData {
     mobile: number;
     email: string;
     employeeId: string;
+    regionId: number;
 }
 

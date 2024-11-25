@@ -6,6 +6,11 @@ import { fetchRegions } from "@/app/admin/rh-user/actions";
 import { toast } from "sonner";
 import Swal from 'sweetalert2';
 
+import { UserRoleType } from "@/types/types";
+
+const roleOptions: UserRoleType[] = ["Region Head", "ADMIN", "USER"];
+
+
 const AddRHModal = ({
     title,
     isLoading,
@@ -18,13 +23,15 @@ const AddRHModal = ({
     isLoading: boolean;
     errorMessage: string;
     errorMessageHandler: Dispatch<SetStateAction<string>>;
-    saveClickHandler: (name: string, code: string, empMail: string, phn: string, region: string | null) => void;
+    saveClickHandler: (name: string, code: string, empMail: string, phn: string, region: string | null,roleType: string) => void;
+    
     cancelClickHandler: () => void;
 }) => {
     const [name, setName] = useState('');
     const [empCode, setEmpCode] = useState('');
     const [empMail, setEmpMail] = useState('');
     const [phn, setPhn] = useState('');
+    const [roleType, setRoleType] = useState('');
    
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [regionsOptions, setRegionsOptions] = useState<{ id: string, name: string }[]>([]);
@@ -51,7 +58,7 @@ const AddRHModal = ({
     };
 
     const handleSaveClick = () => {
-        if (!name || !selectedRegion || !empCode || !empMail || !phn ) {
+        if (!name || !selectedRegion || !empCode || !empMail || !phn || !roleType) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -65,7 +72,8 @@ const AddRHModal = ({
             name: name,
             email: empMail,
             mobile: phn,          
-            region_id: selectedRegion
+            region_id: selectedRegion,
+            roleType: roleType
         };
     
         saveClickHandler(
@@ -73,7 +81,8 @@ const AddRHModal = ({
             transformedData.name,
             transformedData.email,
             transformedData.mobile,           
-            transformedData.region_id
+            transformedData.region_id,
+            transformedData.roleType
         );
     };
     
@@ -89,7 +98,7 @@ const AddRHModal = ({
         setEmpMail('');
         setPhn('');
         setSelectedRegion(null);
-        errorMessageHandler(""); // Clear any error message
+        errorMessageHandler(""); 
     };
 
     return (
@@ -154,15 +163,22 @@ const AddRHModal = ({
                                     onChange={(e) => setPhn(e.target.value)}
                                 />
                             </div>
-                            {/* <div className="flex flex-col mb-4">
-                                <label className='font-bold text-left'>Designation:</label>
-                                <input
-                                    type="text"
+                            <div className="flex flex-col mb-4">
+                                <label className='font-bold text-left'>Role:</label>
+                                <select
+                                    value={roleType}
+                                    onChange={(e) => setRoleType(e.target.value as UserRoleType)} // Cast to UserRoleType
                                     className="p-2 rounded bg-gray-50 focus:ring-2 focus:outline-none focus:ring-green-500 hover:border-black border"
-                                    value={designation}
-                                    onChange={(e) => setDesignation(e.target.value)}
-                                />
-                            </div> */}
+                                >
+                                    <option value="" disabled>Select Role</option>
+                                    {roleOptions.map((role) => (
+                                        <option key={role} value={role}>
+                                            {role}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                         </div>
                         <div className="flex justify-center gap-4 p-2 mt-8 text-white font-bold">
                             <button
