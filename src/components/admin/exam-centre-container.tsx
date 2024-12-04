@@ -109,7 +109,6 @@ const ExamCentreContainer = ({regionExamDateSlotArray}: { regionExamDateSlotArra
             setErrorMessage("'Code' should be a non-negative number.");
             return false;
         }
-        console.log("Need to add more fields")
         return true;
     };
 

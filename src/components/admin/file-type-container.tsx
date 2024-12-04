@@ -84,7 +84,7 @@ const FileTypeContainer = ({fileExtensions}: FileTypeContainerProps) => {
         const updatedFileType: IFileType = {
             ...selectedFileType,
             code,
-            name,
+            name: name.toUpperCase(),
             fileExtensionId,
             modifiedDate: convertToLocalDateTime(new Date())
         } as IFileType;
@@ -170,7 +170,7 @@ const FileTypeContainer = ({fileExtensions}: FileTypeContainerProps) => {
         const date = new Date();
         const newFileType: IFileType = {
             code,
-            name,
+            name: name.toUpperCase(),
             fileExtensionId,
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),

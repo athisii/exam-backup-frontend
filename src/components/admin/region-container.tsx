@@ -76,7 +76,7 @@ const RegionContainer = () => {
         const updatedRegion: IRegion = {
             ...selectedRegion,
             code,
-            name,
+            name: name.toUpperCase(),
             modifiedDate: convertToLocalDateTime(new Date())
         } as IRegion;
 
@@ -161,7 +161,7 @@ const RegionContainer = () => {
         const date = new Date();
         const newRegion: IRegion = {
             code,
-            name,
+            name: name.toUpperCase(),
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id

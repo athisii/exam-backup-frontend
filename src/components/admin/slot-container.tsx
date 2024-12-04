@@ -90,7 +90,7 @@ const SlotContainer = () => {
         const updatedSlot: ISlot = {
             ...selectedSlot,
             code,
-            name,
+            name: name.toUpperCase(),
             startTime,
             endTime,
             modifiedDate: convertToLocalDateTime(new Date())
@@ -177,7 +177,7 @@ const SlotContainer = () => {
         const date = new Date();
         const newSlot: ISlot = {
             code,
-            name,
+            name: name.toUpperCase(),
             startTime,
             endTime,
             createdDate: convertToLocalDateTime(date),

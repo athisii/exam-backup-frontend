@@ -77,7 +77,7 @@ const RoleContainer = () => {
         const updatedRole: IRole = {
             ...selectedRole,
             code,
-            name,
+            name: name.toUpperCase(),
             modifiedDate: convertToLocalDateTime(new Date())
         } as IRole;
 
@@ -162,7 +162,7 @@ const RoleContainer = () => {
         const date = new Date();
         const newRole: IRole = {
             code,
-            name,
+            name: name.toUpperCase(),
             createdDate: convertToLocalDateTime(date),
             modifiedDate: convertToLocalDateTime(date),
             id: apiResponse.data.id

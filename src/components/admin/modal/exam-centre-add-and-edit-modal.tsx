@@ -54,7 +54,6 @@ const ExamCentreAddAndEditModal = ({
     const handleSaveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         clearErrorMessage();
         // async function
-        console.log("selectedExamDatesSlots(On saved)", selectedExamDatesSlots);
         saveClickHandler(name, code, regionName, mobileNumber, email, selectedExamDatesSlots);
     };
 
