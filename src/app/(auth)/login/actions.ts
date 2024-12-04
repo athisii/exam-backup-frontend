@@ -9,11 +9,16 @@ import {sendPostRequest} from "@/utils/api";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string
+const STAFF_ROLE_CODE = process.env.STAFF_ROLE_CODE as string
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
 if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
+
+}
+if (!STAFF_ROLE_CODE) {
+    throw new Error('STAFF_ROLE_CODE environment variable is not set');
 }
 
 export async function login(state: { message: string }, formData: FormData) {
@@ -74,8 +79,11 @@ export async function login(state: { message: string }, formData: FormData) {
 
     const isAdmin = claims.permissions.includes(ADMIN_ROLE_CODE)
     if (isAdmin) {
-        redirect("/admin"); // throws error internally so cant used in try-catch block
+        redirect("/admin");
     }
-
-    redirect("/"); // throws error internally so cant used in try-catch block
+    const isStaff = claims.permissions.includes(STAFF_ROLE_CODE)
+    if (isStaff) {
+        redirect("/staff");
+    }
+    redirect("/");
 }

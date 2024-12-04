@@ -8,11 +8,15 @@ import UserHeader from "@/components/user-header";
 
 const API_URL = process.env.API_URL as string;
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string;
+const STAFF_ROLE_CODE = process.env.STAFF_ROLE_CODE as string;
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
 if (!ADMIN_ROLE_CODE) {
     throw new Error('ADMIN_ROLE_CODE environment variable is not set');
+}
+if (!STAFF_ROLE_CODE) {
+    throw new Error('STAFF_ROLE_CODE environment variable is not set');
 }
 
 export default async function Page() {
@@ -23,6 +27,10 @@ export default async function Page() {
     // Redirect admin to /admin
     if (idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/admin");
+    }
+    // Redirect admin to /staff
+    if (idContext.tokenClaims?.permissions.includes(STAFF_ROLE_CODE)) {
+        redirect("/staff");
     }
 
     const examCentreCode = idContext.tokenClaims?.sub as string;
