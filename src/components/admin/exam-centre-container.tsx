@@ -4,8 +4,8 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IExamCentre, IExamDateSlot, IRegionExamDateSlotArray} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/admin/modal/delete-modal";
-import {convertToLocalDateTime} from "@/utils/date-util";
+import DeleteModal from "@/components/modal/delete-modal";
+import {convertToLocalDateTime} from "@/lib/date-util";
 
 import {
     deleteExamCentreById,
@@ -14,12 +14,12 @@ import {
     searchExamCentres,
     updateOnlySlot,
     uploadCsvFile
-} from "@/app/admin/exam-centre/actions";
+} from "@/lib/actions/exam-centre-actions";
 import ExamCentre from "@/components/admin/exam-centre";
 import useDebounce from "@/hooks/useDebounce";
-import ExamCentreAddAndEditModal from "@/components/admin/modal/exam-centre-add-and-edit-modal";
-import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
-import ManageExamSlotModal from "@/components/admin/modal/manage-exam-slot-modal";
+import ExamCentreAddAndEditModal from "@/components/modal/exam-centre-add-and-edit-modal";
+import BulkUploadModal from "@/components/modal/bulk-upload-modal";
+import ManageExamSlotModal from "@/components/modal/manage-exam-slot-modal";
 
 
 const PAGE_SIZE = 6;

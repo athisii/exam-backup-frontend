@@ -1,5 +1,5 @@
 import React from 'react';
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import RegionContainer from "@/components/admin/region-container";
 

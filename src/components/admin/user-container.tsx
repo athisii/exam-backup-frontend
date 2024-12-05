@@ -4,12 +4,12 @@ import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IRegion, IRole, IUser} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/admin/modal/delete-modal";
-import {convertToLocalDateTime} from "@/utils/date-util";
-import {deleteUserById, fetchUsersAsPage, saveUser, uploadCsvFile} from "@/app/admin/user/actions";
-import BulkUploadModal from "@/components/admin/modal/bulk-upload-modal";
+import DeleteModal from "@/components/modal/delete-modal";
+import {convertToLocalDateTime} from "@/lib/date-util";
+import {deleteUserById, fetchUsersAsPage, saveUser, uploadCsvFile} from "@/lib/actions/user-actions";
+import BulkUploadModal from "@/components/modal/bulk-upload-modal";
 import User from './user';
-import UserAddEditModal from "./modal/user-add-edit";
+import UserAddEditModal from "@/components/modal/user-add-edit";
 
 const PAGE_SIZE = 8;
 

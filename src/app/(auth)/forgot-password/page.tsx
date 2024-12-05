@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from 'react';
 import Link from "next/link";
-import {confirmForgotPassword, initiateForgotPassword} from "@/app/(auth)/forgot-password/actions";
+import {confirmForgotPassword, initiateForgotPassword} from "@/lib/actions/forgot-password-actions";
 import {ApiResponse} from "@/types/types";
 import {useRouter} from "next/navigation";
 

@@ -4,11 +4,11 @@ import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IRegion} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/admin/modal/delete-modal";
-import {convertToLocalDateTime} from "@/utils/date-util";
-import AddAndEditModal from "@/components/admin/modal/add-and-edit-modal";
+import DeleteModal from "@/components/modal/delete-modal";
+import {convertToLocalDateTime} from "@/lib/date-util";
+import AddAndEditModal from "@/components/modal/add-and-edit-modal";
 import Region from "@/components/admin/region";
-import {deleteRegionById, fetchRegionsAsPage, saveRegion} from "@/app/admin/region/actions";
+import {deleteRegionById, fetchRegionsAsPage, saveRegion} from "@/lib/actions/region-actions";
 
 const PAGE_SIZE = 8;
 

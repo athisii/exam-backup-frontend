@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {useFormState} from 'react-dom';
 import Link from "next/link";
-import {login} from '@/app/(auth)/login/actions'
+import {login} from '@/lib/actions/login-actions'
 
 
 const LoginPage = () => {

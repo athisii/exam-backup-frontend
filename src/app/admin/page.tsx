@@ -1,7 +1,7 @@
 import React from 'react';
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
-import {sendGetRequest} from "@/utils/api";
+import {sendGetRequest} from "@/lib/api";
 import {ApiResponse} from "@/types/types";
 import Dashboard from "@/components/admin/dashboard";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import {logout} from "@/utils/api";
+import {logout} from "@/lib/api";
 
 
 export default function Layout({
@@ -22,7 +22,7 @@ export default function Layout({
                 </div>
             </header>
             <div className="flex h-full justify-center">
-                <div className="flex h-screen w-full flex-col items-center gap-1 bg-gray-50 shadow-lg lg:w-[82vw] py-1">
+                <div className="flex h-screen w-full flex-col items-center gap-1 bg-gray-50 shadow-lg lg:w-[80vw] py-1">
                     {children}
                 </div>
             </div>

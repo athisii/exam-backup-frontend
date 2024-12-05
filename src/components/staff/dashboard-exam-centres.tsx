@@ -6,7 +6,7 @@ import {
     fetchExamCentresByRegion,
     filterExamCentresWithSearchTermAndRegion,
     searchExamCentresWithRegion
-} from "@/app/staff/actions";
+} from "@/lib/actions/staff-actions";
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
@@ -158,22 +158,22 @@ const DashboardExamCentres = ({region}: {
                         examCentres.map((examCentre, index) => (
                             <tr key={examCentre.id} className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                    <Link href={`/staff/exam-centres/${examCentre.id}`}>
                                         {(pageNumber - 1) * PAGE_SIZE + index + 1}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                    <Link href={`/staff/exam-centres/${examCentre.id}`}>
                                         {examCentre.code}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                    <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
                                         {examCentre.name}
                                     </Link>
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                    <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
                                         {
                                             examCentre.totalFileCount > 0 ? (
                                                 <PieChart
@@ -193,7 +193,6 @@ const DashboardExamCentres = ({region}: {
                                         }
                                     </Link>
                                 </td>
-
                             </tr>
                         ))
                     }

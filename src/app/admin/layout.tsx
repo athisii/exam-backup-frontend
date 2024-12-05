@@ -45,7 +45,7 @@ export default function Layout({
                     className={`bg-gray-50 hidden text-black lg:flex flex-col justify-start items-center lg:w-[15vw] lg:h-[100vh] shadow-lg p-4 space-y-4 font-bold1`}>
                     <NavLink/>
                 </div>
-                <div className="flex h-screen w-full flex-col items-center gap-1 bg-gray-50 shadow-lg lg:w-[82vw] py-1">
+                <div className="flex h-screen w-full flex-col items-center gap-1 bg-gray-50 shadow-lg lg:w-[80vw] py-1">
                     {children}
                 </div>
             </div>

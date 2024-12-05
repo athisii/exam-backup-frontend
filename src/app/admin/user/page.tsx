@@ -1,9 +1,9 @@
 import React from 'react';
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import UserContainer from "@/components/admin/user-container";
 import {ApiResponsePage} from "@/types/types";
-import {sendGetRequest} from "@/utils/api";
+import {sendGetRequest} from "@/lib/api";
 
 const API_URL = process.env.API_URL as string
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string

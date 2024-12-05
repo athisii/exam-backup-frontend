@@ -3,7 +3,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {useFormState} from "react-dom";
-import {changePassword} from "@/app/(auth)/change-password/actions";
+import {changePassword} from "@/lib/actions/change-password-actions";
 
 const ChangePasswordPage = () => {
     const [apiResState, action] = useFormState(changePassword, {message: ''});

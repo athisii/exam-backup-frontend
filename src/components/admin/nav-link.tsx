@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import {usePathname} from "next/navigation";
-import {logout} from "@/utils/api";
+import {logout} from "@/lib/api";
 
 export const dashboardRoute = "/admin";
 export const slotRoute = "/admin/slot";

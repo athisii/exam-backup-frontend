@@ -1,8 +1,8 @@
 import React from 'react';
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import ExamCentreContainer from "@/components/admin/exam-centre-container";
-import {sendGetRequest} from "@/utils/api";
+import {sendGetRequest} from "@/lib/api";
 import {ApiResponsePage, IExamDate, IRegion, IRegionExamDateSlotArray, ISlot} from "@/types/types";
 
 const API_URL = process.env.API_URL as string

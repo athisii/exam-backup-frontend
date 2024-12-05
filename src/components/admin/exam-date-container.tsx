@@ -4,11 +4,11 @@ import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IExamDate} from "@/types/types";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import {convertToLocalDateTime} from "@/utils/date-util";
-import {deleteExamDateById, fetchExamDatesAsPage, saveExamDate} from "@/app/admin/exam-date/actions";
-import ExamDateAddAndEditModal from "@/components/admin/modal/exam-date-add-and-edit-modal";
+import {convertToLocalDateTime} from "@/lib/date-util";
+import {deleteExamDateById, fetchExamDatesAsPage, saveExamDate} from "@/lib/actions/exam-date-actions";
+import ExamDateAddAndEditModal from "@/components/modal/exam-date-add-and-edit-modal";
 import ExamDate from "@/components/admin/exam-date";
-import ExamDateDeleteModal from "@/components/admin/modal/exam-date-delete-modal";
+import ExamDateDeleteModal from "@/components/modal/exam-date-delete-modal";
 
 const PAGE_SIZE = 8;
 

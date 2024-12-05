@@ -1,10 +1,11 @@
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import React from "react";
-import {sendGetRequest} from "@/utils/api";
+import {sendGetRequest} from "@/lib/api";
 import {ApiResponsePage, IExamCentre, IExamDate, IFileExtension, IFileType} from "@/types/types";
-import UserMainSection from "@/components/user-main-section";
-import UserHeader from "@/components/user-header";
+import MainSection from "@/components/uploader/main-section";
+import Header from "@/components/uploader/header";
+import Logout from "@/components/uploader/logout";
 
 const API_URL = process.env.API_URL as string;
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string;
@@ -36,7 +37,7 @@ export default async function Page() {
     const examCentreCode = idContext.tokenClaims?.sub as string;
     const token = idContext.token as string;
 
-    const examCentreUrl = `${API_URL}/exam-centres/query?code=${examCentreCode}`;
+    const examCentreUrl = `${API_URL}/exam-centres/upload-details/search?code=${examCentreCode}`;
     const fileTypesUrl = `${API_URL}/file-types/page?page=0&size=100&sort=id`;
     const fileExtensionUrl = `${API_URL}/file-extensions/page?page=0&size=100&sort=id`;
 
@@ -49,7 +50,7 @@ export default async function Page() {
 
     if (!examCentreApiRes.status) {
         console.log(`error: status=${examCentreApiRes.status}, message=${examCentreApiRes.message}`);
-        throw new Error("Error fetching exam centres.");
+        redirect("/login");
     }
     if (!fileTypesApiRes.status || fileTypesApiRes.data.numberOfElements <= 0) {
         console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
@@ -78,17 +79,16 @@ export default async function Page() {
     return (
         <div className="min-h-screen flex flex-col items-center bg-gray-50 ">
             {/* Header */}
-            <header className="w-full bg-[#0056b3] p-4 text-white flex items-center justify-between sticky top-0 ">
-                <div className="flex items-center space-x-4">
-                    <h1 className="text-xl font-bold">EXAM BACKUP</h1>
-                </div>
+            <header className="w-full bg-[#0056b3] p-2 text-white flex items-center justify-between sticky top-0 ">
+                <h1 className="text-xl font-bold">EXAM BACKUP</h1>
+                <Logout/>
             </header>
 
             {/* Content Box */}
-            <div className="flex flex-col w-full bg-white shadow-lg font-bold rounded-lg p-4 mt-4"
+            <div className="flex flex-col w-full bg-white shadow-lg font-bold rounded-lg p-1"
                  style={{width: '80vw', height: '40vw'}}>
 
-                <UserHeader examCentre={examCentre}/>
+                <Header examCentre={examCentre}/>
 
                 {/* Main Content */}
                 {examDates.length === 0 ? (
@@ -97,7 +97,7 @@ export default async function Page() {
                         <h2>Kindly contact the admin to add exam.</h2>
                     </div>
                 ) : (
-                    <UserMainSection
+                    <MainSection
                         examCentre={examCentre}
                         fileTypes={fileTypesApiRes.data.items as IFileType[]}
                         fileExtensions={fileExtensionsApiRes.data.items as IFileExtension[]}

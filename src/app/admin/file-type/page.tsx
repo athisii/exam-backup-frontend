@@ -1,8 +1,8 @@
 import React from 'react';
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import FileTypeContainer from "@/components/admin/file-type-container";
-import {sendGetRequest} from "@/utils/api";
+import {sendGetRequest} from "@/lib/api";
 import {IFileExtension} from "@/types/types";
 
 const API_URL = process.env.API_URL as string

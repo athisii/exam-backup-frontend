@@ -2,11 +2,7 @@
 
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IExamCentre, IRegion, SortOrder, UploadStatusFilterType} from "@/types/types";
-import {
-    fetchExamCentresByRegion,
-    filterExamCentresWithSearchTermAndRegion,
-    searchExamCentresWithRegion
-} from "@/app/admin/actions";
+import {fetchExamCentresByRegion, filterExamCentresWithSearchTermAndRegion} from "@/lib/actions/admin-actions";
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
@@ -27,6 +23,10 @@ const DashboardExamCentres = ({region}: {
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC") // in case selection allowed on UI
     const debouncedSearchTerm = useDebounce(searchTerm);
 
+    console.log("examCentres: ", examCentres);
+    console.log("debouncedSearchTerm: ", debouncedSearchTerm);
+    console.log("searchTerm: ", searchTerm);
+
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
         setSearchTerm("");
@@ -40,7 +40,7 @@ const DashboardExamCentres = ({region}: {
                 fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 1);
                 setPageNumber(1);
             } else {
-                searchExamCentres(1);
+                fetchExamCentres(debouncedSearchTerm, 1);
                 setPageNumber(1);
             }
         }
@@ -55,7 +55,7 @@ const DashboardExamCentres = ({region}: {
                 fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 1);
                 setPageNumber(1);
             } else {
-                fetchExamCentres(1);
+                fetchExamCentres("", 1);
                 setPageNumber(1);
             }
         }
@@ -72,19 +72,8 @@ const DashboardExamCentres = ({region}: {
         setTotalPages(apiResponsePage.totalPages);
     };
 
-    const fetchExamCentres = async (page: number) => {
-        const apiResponse: ApiResponse = await fetchExamCentresByRegion(page, PAGE_SIZE, region.id, sortBy, sortOrder);
-        if (!apiResponse.status) {
-            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching exam centres.");
-        }
-        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setExamCentres(apiResponsePage.items);
-        setTotalPages(apiResponsePage.totalPages);
-    }
-
-    const searchExamCentres = async (page: number) => {
-        const apiResponse: ApiResponse = await searchExamCentresWithRegion(debouncedSearchTerm, page, PAGE_SIZE, region.id, sortBy, sortOrder);
+    const fetchExamCentres = async (query: string, page: number) => {
+        const apiResponse: ApiResponse = await fetchExamCentresByRegion(query, page, PAGE_SIZE, region.id, sortBy, sortOrder);
         if (!apiResponse.status) {
             console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
             throw new Error("Error fetching exam centres.");
@@ -95,7 +84,7 @@ const DashboardExamCentres = ({region}: {
     }
 
     useEffect(() => {
-        fetchExamCentres(1);
+        fetchExamCentres("", 1);
         setPageNumber(1);
     }, [region])
 
@@ -119,8 +108,8 @@ const DashboardExamCentres = ({region}: {
                 />
                 <div className="text--700 p-1 justify-center uppercase text-sm py-4">
                     <h3 className="inline font-bold">Filter: </h3>
-                    <select className="uppercase text-sm rounded h-[35px]" 
-                    onChange={handleFilterChange}>
+                    <select className="uppercase text-sm rounded h-[35px]"
+                            onChange={handleFilterChange}>
                         <option value="DEFAULT">Default</option>
                         <option value="UPLOADED">Uploaded</option>
                         <option value="NOT_UPLOADED">Not Uploaded</option>
@@ -146,46 +135,49 @@ const DashboardExamCentres = ({region}: {
                     </tr>
                     </thead>
                     <tbody>
-                      {
+                    {
                         examCentres.map((examCentre, index) => (
-                          <tr key={examCentre.id} className="bg-white border-b hover:bg-gray-50">
-                            <td className="px-8 py-4 text-center">
-                              <Link href={`/admin/exam-centres/${examCentre.id}`}>
-                                {(pageNumber - 1) * PAGE_SIZE + index + 1}
-                              </Link>
-                            </td>
-                            <td className="px-8 py-4 text-center">
-                              <Link href={`/admin/exam-centres/${examCentre.id}`}>
-                                {examCentre.code}
-                              </Link>
-                            </td>
-                            <td className="px-8 py-4">
-                              <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
-                                {examCentre.name}
-                              </Link>
-                            </td>
-                            <td className="px-8 py-4 text-center">
-                                  <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
-                                    {
-                                      examCentre.totalFileCount > 0 ? (
-                                        <PieChart 
-                                          data={[
-                                            { name: "Not Uploaded", value: examCentre.totalFileCount - examCentre.uploadedFileCount },
-                                            { name: "Uploaded", value: examCentre.uploadedFileCount }
-                                          ]} 
-                                        />
-                                      ) : (
-                                        <div className="text-sm text-gray-500">
-                                          No exams available
-                                        </div>
-                                      )
-                                    }
-                                  </Link>
+                            <tr key={examCentre.id} className="bg-white border-b hover:bg-gray-50">
+                                <td className="px-8 py-4 text-center">
+                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                        {(pageNumber - 1) * PAGE_SIZE + index + 1}
+                                    </Link>
                                 </td>
-                                
-                          </tr>
+                                <td className="px-8 py-4 text-center">
+                                    <Link href={`/admin/exam-centres/${examCentre.id}`}>
+                                        {examCentre.code}
+                                    </Link>
+                                </td>
+                                <td className="px-8 py-4">
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                        {examCentre.name}
+                                    </Link>
+                                </td>
+                                <td className="px-8 py-4 text-center">
+                                    <Link className="w-full" href={`/admin/exam-centres/${examCentre.id}`}>
+                                        {
+                                            examCentre.totalFileCount > 0 ? (
+                                                <PieChart
+                                                    data={[
+                                                        {
+                                                            name: "Not Uploaded",
+                                                            value: examCentre.totalFileCount - examCentre.uploadedFileCount
+                                                        },
+                                                        {name: "Uploaded", value: examCentre.uploadedFileCount}
+                                                    ]}
+                                                />
+                                            ) : (
+                                                <div className="text-sm text-gray-500">
+                                                    No exams available
+                                                </div>
+                                            )
+                                        }
+                                    </Link>
+                                </td>
+
+                            </tr>
                         ))
-                      }
+                    }
                     </tbody>
 
                 </table>
@@ -207,9 +199,9 @@ const DashboardExamCentres = ({region}: {
                                 }
                                 // DEFAULT Filter
                                 if (searchTerm) {
-                                    searchExamCentres(page);
+                                    fetchExamCentres(debouncedSearchTerm, page);
                                 } else {
-                                    fetchExamCentres(page);
+                                    fetchExamCentres("", page);
                                 }
                             }
                             }/>)

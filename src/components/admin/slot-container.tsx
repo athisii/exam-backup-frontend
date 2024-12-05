@@ -3,12 +3,12 @@
 import React, {useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, ISlot} from "@/types/types";
 import Slot from "@/components/admin/slot";
-import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/app/admin/slot/actions";
+import {deleteSlotById, fetchSlotsAsPage, saveSlot} from "@/lib/actions/slot-actions";
 import {Pagination} from "@nextui-org/pagination";
 import {toast, Toaster} from "sonner";
-import DeleteModal from "@/components/admin/modal/delete-modal";
-import {convertToLocalDateTime} from "@/utils/date-util";
-import SlotAddAndEditModal from "@/components/admin/modal/slot-add-edit-modal";
+import DeleteModal from "@/components/modal/delete-modal";
+import {convertToLocalDateTime} from "@/lib/date-util";
+import SlotAddAndEditModal from "@/components/modal/slot-add-edit-modal";
 
 const PAGE_SIZE = 8;
 

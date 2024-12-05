@@ -1,9 +1,9 @@
-import identityContext from "@/utils/session";
+import identityContext from "@/lib/session";
 import {redirect} from "next/navigation";
 import React from "react";
-import {sendGetRequest} from "@/utils/api";
-import ExamCentreUploadDetailsMain from "@/components/admin/exam-centre-upload-details-main";
-import ExamCentreUploadDetailsHeader from "@/components/admin/exam-centre-upload-details-header";
+import {sendGetRequest} from "@/lib/api";
+import ExamCentreUploadDetailsMain from "@/components/exam-centre-upload-details-main";
+import ExamCentreUploadDetailsHeader from "@/components/exam-centre-upload-details-header";
 import {ApiResponsePage, IExamCentre, IExamDate} from "@/types/types";
 
 
@@ -50,17 +50,7 @@ export default async function Page({params}: Props) {
         throw new Error("Error fetching exam centre.");
     }
     if (!examDateApiRes.status) {
-        console.log(`error: status=${examDateApiRes.status}, import React from 'react';
-
-        const ForgotPassword = () => {
-            return (
-                <div>
-                    <h2>Welcome to forgot password page</h2>
-                </div>
-            );
-        };
-        
-        export default ForgotPassword;message=${examDateApiRes.message}`);
+        console.log(`error: status=${fileTypesApiRes.status}, message=${fileTypesApiRes.message}`);
         throw new Error("Error fetching exam dates.");
     }
 
