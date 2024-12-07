@@ -2,7 +2,7 @@
 
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IExamCentre, IRegion, SortOrder, UploadStatusFilterType} from "@/types/types";
-import {filterExamCentresWithSearchTermAndRegion} from "@/lib/actions/admin-actions";
+import {filterExamCentresWithSearchTermAndRegion} from "@/lib/actions/exam-centre-actions";
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
@@ -22,9 +22,6 @@ const DashboardExamCentres = ({region}: {
     const [sortBy, setSortBy] = useState("code") // in case selection allowed on UI
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC") // in case selection allowed on UI
     const debouncedSearchTerm = useDebounce(searchTerm);
-
-    console.log("uploadStatusFilter: ", uploadStatusFilter);
-    console.log("debouncedSearchTerm: ", debouncedSearchTerm);
 
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
