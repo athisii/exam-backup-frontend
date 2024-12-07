@@ -2,7 +2,7 @@
 
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {ApiResponse, ApiResponsePage, IExamCentre, IRegion, SortOrder, UploadStatusFilterType} from "@/types/types";
-import {fetchExamCentresByRegion, filterExamCentresWithSearchTermAndRegion} from "@/lib/actions/admin-actions";
+import {filterExamCentresWithSearchTermAndRegion} from "@/lib/actions/admin-actions";
 import Link from "next/link";
 import {Pagination} from "@nextui-org/pagination";
 import useDebounce from "@/hooks/useDebounce";
@@ -23,37 +23,23 @@ const DashboardExamCentres = ({region}: {
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC") // in case selection allowed on UI
     const debouncedSearchTerm = useDebounce(searchTerm);
 
+    console.log("uploadStatusFilter: ", uploadStatusFilter);
+    console.log("debouncedSearchTerm: ", debouncedSearchTerm);
+
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
         setSearchTerm("");
-        fetchExamCentreFilteredByUploadStatus("", event.target.value as UploadStatusFilterType, 1);
         setPageNumber(1);
+        fetchExamCentreFilteredByUploadStatus("", event.target.value as UploadStatusFilterType, 1);
     };
-
-    useEffect(() => {
-        if (debouncedSearchTerm) {
-            if (uploadStatusFilter !== "DEFAULT") {
-                fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 1);
-                setPageNumber(1);
-            } else {
-                fetchExamCentres(debouncedSearchTerm, 1);
-                setPageNumber(1);
-            }
-        }
-    }, [debouncedSearchTerm]);
 
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value;
         setSearchTerm(value);
-        // empty searchTerm
+        // for empty search term.
         if (!value) {
-            if (uploadStatusFilter !== "DEFAULT") {
-                fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 1);
-                setPageNumber(1);
-            } else {
-                fetchExamCentres("", 1);
-                setPageNumber(1);
-            }
+            setPageNumber(1);
+            fetchExamCentreFilteredByUploadStatus(value, uploadStatusFilter, 1);
         }
     };
 
@@ -68,20 +54,16 @@ const DashboardExamCentres = ({region}: {
         setTotalPages(apiResponsePage.totalPages);
     };
 
-    const fetchExamCentres = async (query: string, page: number) => {
-        const apiResponse: ApiResponse = await fetchExamCentresByRegion(query, page, PAGE_SIZE, region.id, sortBy, sortOrder);
-        if (!apiResponse.status) {
-            console.log(`error: status=${apiResponse.status}, message=${apiResponse.message}`);
-            throw new Error("Error fetching exam centres.");
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            setPageNumber(1);
+            fetchExamCentreFilteredByUploadStatus(debouncedSearchTerm, uploadStatusFilter, 1);
         }
-        const apiResponsePage: ApiResponsePage = apiResponse.data as ApiResponsePage;
-        setExamCentres(apiResponsePage.items);
-        setTotalPages(apiResponsePage.totalPages);
-    }
+    }, [debouncedSearchTerm]);
 
     useEffect(() => {
-        fetchExamCentres("", 1);
         setPageNumber(1);
+        fetchExamCentreFilteredByUploadStatus("", uploadStatusFilter, 1);
     }, [region])
 
     return (
@@ -189,16 +171,7 @@ const DashboardExamCentres = ({region}: {
                             initialPage={1}
                             onChange={page => {
                                 setPageNumber(page);
-                                if (uploadStatusFilter !== "DEFAULT") {
-                                    fetchExamCentreFilteredByUploadStatus(searchTerm, uploadStatusFilter, page);
-                                    return;
-                                }
-                                // DEFAULT Filter
-                                if (searchTerm) {
-                                    fetchExamCentres(debouncedSearchTerm, page);
-                                } else {
-                                    fetchExamCentres("", page);
-                                }
+                                fetchExamCentreFilteredByUploadStatus(searchTerm, uploadStatusFilter, page);
                             }
                             }/>)
                 }
