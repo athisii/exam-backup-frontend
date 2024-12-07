@@ -21,14 +21,15 @@ const Dashboard = ({regions}: {
                 <h2 className='font-bold '>EXAM CENTRES</h2>
                 <div className='flex gap-3.5'>
                     <h2 className='font-bold'>Region:</h2>
-                    <select className='bg-white-500 hover:bg-gray-300 text-black hover:text-blue hover:rounded-md rounded-lg'
-                            onChange={handleRegionChange}
+                    <select
+                        className='bg-white-500 hover:bg-gray-300 text-black hover:text-blue hover:rounded-md rounded-lg'
+                        onChange={handleRegionChange}
                     >
                         {regions.map(region => <option key={region.id}>{region.name}</option>)}
                     </select>
                 </div>
             </div>
-            <DashboardExamCentres key={region.id} region={region}/>
+            <DashboardExamCentres isRegionHead={false} key={region.id} region={region}/>
         </>
     );
 };

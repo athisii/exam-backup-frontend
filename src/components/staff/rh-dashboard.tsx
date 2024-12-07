@@ -12,7 +12,7 @@ const RHDashboard = ({region}: { region: IRegion }) => {
                     <span className="font-semibold">{region.name}</span>
                 </div>
             </div>
-            <DashboardExamCentres region={region}/>
+            <DashboardExamCentres isRegionHead region={region}/>
         </>
     );
 };

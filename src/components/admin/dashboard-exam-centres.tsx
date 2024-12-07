@@ -23,10 +23,6 @@ const DashboardExamCentres = ({region}: {
     const [sortOrder, setSortOrder] = useState<SortOrder>("ASC") // in case selection allowed on UI
     const debouncedSearchTerm = useDebounce(searchTerm);
 
-    console.log("examCentres: ", examCentres);
-    console.log("debouncedSearchTerm: ", debouncedSearchTerm);
-    console.log("searchTerm: ", searchTerm);
-
     const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUploadStatusFilter(event.target.value as UploadStatusFilterType);
         setSearchTerm("");

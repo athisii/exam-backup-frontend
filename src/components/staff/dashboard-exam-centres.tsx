@@ -14,8 +14,28 @@ import PieChart from "@/components/pie-chart";
 
 const PAGE_SIZE = 8;
 
-const DashboardExamCentres = ({region}: {
-    region: IRegion
+
+function displayPieChartOrText(examCentre: IExamCentre) {
+    return examCentre.totalFileCount > 0 ? (
+        <PieChart
+            data={[
+                {
+                    name: "Not Uploaded",
+                    value: examCentre.totalFileCount - examCentre.uploadedFileCount
+                },
+                {name: "Uploaded", value: examCentre.uploadedFileCount}
+            ]}
+        />
+    ) : (
+        <div className="text-sm text-gray-500">
+            No exams available
+        </div>
+    )
+}
+
+const DashboardExamCentres = ({region, isRegionHead}: {
+    region: IRegion,
+    isRegionHead: boolean
 }) => {
 
     const [examCentres, setExamCentres] = useState<IExamCentre[]>([]);
@@ -158,40 +178,47 @@ const DashboardExamCentres = ({region}: {
                         examCentres.map((examCentre, index) => (
                             <tr key={examCentre.id} className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/staff/exam-centres/${examCentre.id}`}>
-                                        {(pageNumber - 1) * PAGE_SIZE + index + 1}
-                                    </Link>
+                                    {
+                                        isRegionHead ?
+                                            <Link href={`/staff/exam-centres/${examCentre.id}`}>
+                                                {(pageNumber - 1) * PAGE_SIZE + index + 1}
+                                            </Link>
+                                            :
+                                            (pageNumber - 1) * PAGE_SIZE + index + 1
+                                    }
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link href={`/staff/exam-centres/${examCentre.id}`}>
-                                        {examCentre.code}
-                                    </Link>
+                                    {
+                                        isRegionHead ?
+                                            <Link href={`/staff/exam-centres/${examCentre.id}`}>
+                                                {examCentre.code}
+                                            </Link>
+                                            :
+                                            examCentre.code
+                                    }
                                 </td>
                                 <td className="px-8 py-4">
-                                    <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
-                                        {examCentre.name}
-                                    </Link>
+                                    {
+                                        isRegionHead ?
+                                            <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
+                                                {examCentre.name}
+                                            </Link>
+                                            :
+                                            examCentre.name
+                                    }
+
                                 </td>
                                 <td className="px-8 py-4 text-center">
-                                    <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
-                                        {
-                                            examCentre.totalFileCount > 0 ? (
-                                                <PieChart
-                                                    data={[
-                                                        {
-                                                            name: "Not Uploaded",
-                                                            value: examCentre.totalFileCount - examCentre.uploadedFileCount
-                                                        },
-                                                        {name: "Uploaded", value: examCentre.uploadedFileCount}
-                                                    ]}
-                                                />
-                                            ) : (
-                                                <div className="text-sm text-gray-500">
-                                                    No exams available
-                                                </div>
-                                            )
-                                        }
-                                    </Link>
+                                    {
+                                        isRegionHead ?
+                                            <Link className="w-full" href={`/staff/exam-centres/${examCentre.id}`}>
+                                                {
+                                                    displayPieChartOrText(examCentre)
+                                                }
+                                            </Link>
+                                            :
+                                            displayPieChartOrText(examCentre)
+                                    }
                                 </td>
                             </tr>
                         ))
