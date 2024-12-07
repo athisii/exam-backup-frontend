@@ -19,6 +19,7 @@ const Page = async () => {
     if (!idContext.authenticated) {
         redirect("/login")
     }
+    // redirects non-admin users
     if (!idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/")
     }

@@ -7,17 +7,24 @@ import RHDashboard from "@/components/staff/rh-dashboard";
 import Dashboard from "@/components/staff/dashboard";
 
 const API_URL = process.env.API_URL as string;
-
+const STAFF_ROLE_CODE = process.env.STAFF_ROLE_CODE as string;
 if (!API_URL) {
     throw new Error('API_URL environment variable is not set');
 }
-
+if (!STAFF_ROLE_CODE) {
+    throw new Error('STAFF_ROLE_CODE environment variable is not set');
+}
 
 const Page = async () => {
     const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login");
     }
+    // redirects non-staff users
+    if (!idContext.tokenClaims?.permissions.includes(STAFF_ROLE_CODE)) {
+        redirect("/");
+    }
+
     const token = idContext.token as string;
     const id = idContext.tokenClaims?.id as number;
 

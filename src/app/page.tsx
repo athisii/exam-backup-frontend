@@ -26,11 +26,11 @@ export default async function Page() {
     if (!idContext.authenticated) {
         redirect("/login");
     }
-    // Redirect admin to /admin
+    // Redirects admin to /admin
     if (idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE)) {
         redirect("/admin");
     }
-    // Redirect admin to /staff
+    // Redirects staff to /staff
     if (idContext.tokenClaims?.permissions.includes(STAFF_ROLE_CODE)) {
         redirect("/staff");
     }
