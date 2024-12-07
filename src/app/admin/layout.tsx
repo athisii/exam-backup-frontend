@@ -2,6 +2,7 @@
 
 import React, {useState} from "react";
 import NavLink from "@/components/admin/nav-link";
+import Link from "next/link";
 
 
 export default function Layout({
@@ -15,8 +16,9 @@ export default function Layout({
         <main className="flex flex-col absolute w-full h-full">
             <header className="w-full bg-blue-500 p-2 text-white">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-bold">EXAM BACKUP</h1>
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white lg:hidden text-2xl mr-4">
+                    <Link href="/">
+                        <h1 className="text-xl font-bold">EXAM BACKUP</h1>
+                    </Link>                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white lg:hidden text-2xl mr-4">
                         {isMenuOpen ?
                             <svg className="h-6 w-6 stroke-white cursor-pointer" xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24"

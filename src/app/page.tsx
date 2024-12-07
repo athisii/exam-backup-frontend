@@ -6,6 +6,7 @@ import {ApiResponsePage, IExamCentre, IExamDate, IFileExtension, IFileType} from
 import MainSection from "@/components/uploader/main-section";
 import Header from "@/components/uploader/header";
 import Logout from "@/components/uploader/logout";
+import Link from "next/link";
 
 const API_URL = process.env.API_URL as string;
 const ADMIN_ROLE_CODE = process.env.ADMIN_ROLE_CODE as string;
@@ -80,7 +81,9 @@ export default async function Page() {
         <div className="min-h-screen flex flex-col items-center bg-gray-50 ">
             {/* Header */}
             <header className="w-full bg-[#0056b3] p-2 text-white flex items-center justify-between sticky top-0 ">
-                <h1 className="text-xl font-bold">EXAM BACKUP</h1>
+                <Link href="/">
+                    <h1 className="text-xl font-bold">EXAM BACKUP</h1>
+                </Link>
                 <Logout/>
             </header>
 
