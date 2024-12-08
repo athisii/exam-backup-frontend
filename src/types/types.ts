@@ -157,3 +157,8 @@ export interface IUser {
     regionId: number | null;
 }
 
+export interface IFile {
+    base64EncodedData: string,
+    filename: string,
+    mimeType: string
+}

@@ -3,7 +3,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ApiResponse, IFileExtension, IFileType} from "@/types/types";
 import Loading from "@/components/loading";
-import {uploadFile} from "@/lib/actions/app-actions";
+import {uploadFile} from "@/lib/actions/exam-file-actions";
 import {toast, Toaster} from "sonner";
 
 interface ExamFileProps {
