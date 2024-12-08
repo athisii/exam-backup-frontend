@@ -11,7 +11,8 @@ import {
     IFileType,
     ISlot
 } from "@/types/types";
-import {fetchExamFiles, fetchSlotsForExam} from "@/lib/actions/app-actions";
+import {fetchExamFiles} from "@/lib/actions/app-actions";
+import {fetchSlotsForExam} from "@/lib/actions/slot-actions";
 import ExamFileUploadContainer from "@/components/uploader/exam-file-upload-container";
 
 

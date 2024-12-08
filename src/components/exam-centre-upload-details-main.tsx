@@ -2,7 +2,8 @@
 
 import React, {Suspense, useEffect, useState} from "react";
 import {ApiResponse, ApiResponsePage, IExamDate, IExamFile, IFileType, ISlot} from "@/types/types";
-import {fetchExamFiles, fetchSlotsForExam} from "@/lib/actions/app-actions";
+import {fetchExamFiles} from "@/lib/actions/app-actions";
+import {fetchSlotsForExam} from "@/lib/actions/slot-actions";
 import ExamFileView from "@/components/exam-file-view";
 
 

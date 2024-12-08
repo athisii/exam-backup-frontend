@@ -62,3 +62,12 @@ export async function deleteSlotById(id: number): Promise<ApiResponse> {
     // fetch might throw connection refused/timeout
     return await sendPostRequest(url, token, {});
 }
+
+export async function fetchSlotsForExam(examCentreId: number, examDateId: number, pageNumber: number = 0, pageSize: number = 10, sortBy: string = "code", sortOrder: SortOrder = "ASC"): Promise<ApiResponse> {
+    const idContext = identityContext();
+    if (!idContext.authenticated) {
+        redirect("/login")
+    }
+    const token = idContext.token as string;
+    return await sendGetRequest(`${API_URL}/slots/query?examCentreId=${examCentreId}&examDateId=${examDateId}&page=${pageNumber}&size=${pageSize}`, token);
+}
