@@ -4,6 +4,7 @@ import {redirect} from "next/navigation";
 import identityContext from "@/lib/session";
 import {sendGetRequest, sendPostRequest} from "@/lib/api";
 import {ApiResponse, IFile} from "@/types/types";
+import {byteArrayToBase64} from "@/lib/base64-util";
 
 const API_URL = process.env.API_URL;
 if (!API_URL) {
@@ -45,7 +46,7 @@ export async function fetchExamFiles(examCentreId: number, examDateId: number, s
 }
 
 export async function downloadExamFile(id: number) {
-    const idContext = await identityContext();
+    const idContext = identityContext();
     if (!idContext.authenticated) {
         redirect("/login")
     }

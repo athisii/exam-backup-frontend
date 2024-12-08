@@ -129,6 +129,7 @@ const ExamCentreUploadDetailsMain: React.FC<MainProps> = ({examCentreId, examDat
                                         if (uploadedExamFile) {
                                             return (
                                                 <ExamFileView key={fileType.id + " " + slot.id + " " + examDate.id}
+                                                              id={uploadedExamFile.id}
                                                               fileTypeName={fileType.name}
                                                               uploaded={true}
                                                               userUploadedFilename={uploadedExamFile.userUploadedFilename}

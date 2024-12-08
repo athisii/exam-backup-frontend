@@ -31,6 +31,7 @@ export interface IdentityContext {
 
 
 export interface IExamFile {
+    id: number,
     fileSize: number,
     userUploadedFilename: string,
     filePath: string
