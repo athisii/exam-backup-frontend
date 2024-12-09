@@ -3,8 +3,7 @@
 import {redirect} from "next/navigation";
 import identityContext from "@/lib/session";
 import {sendGetRequest, sendPostRequest} from "@/lib/api";
-import {ApiResponse, IFile} from "@/types/types";
-import {byteArrayToBase64} from "@/lib/base64-util";
+import {ApiResponse} from "@/types/types";
 
 const API_URL = process.env.API_URL;
 if (!API_URL) {
@@ -43,41 +42,4 @@ export async function fetchExamFiles(examCentreId: number, examDateId: number, s
     }
     const token = idContext.token as string;
     return await sendGetRequest(`${API_URL}/exam-files/query?examCentreId=${examCentreId}&examDateId=${examDateId}&slotId=${slotId}`, token);
-}
-
-export async function downloadExamFile(id: number) {
-    const idContext = identityContext();
-    if (!idContext.authenticated) {
-        redirect("/login")
-    }
-    if (idContext.tokenClaims?.permissions.includes(ADMIN_ROLE_CODE) || idContext.tokenClaims?.permissions.includes(STAFF_ROLE_CODE)) {
-        const token = idContext.token as string;
-        let url = `${API_URL}/exam-files/download/${id}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            cache: "no-store",
-        })
-
-        if (!response.ok) {
-            throw new Error("Error downloading exam file.");
-        }
-        let blob = await response.blob();
-
-        const contentDisposition = response.headers.get('Content-Disposition');
-        let filename;
-        if (contentDisposition && contentDisposition.includes('filename=')) {
-            filename = contentDisposition.split("filename=")[1];
-        }
-        const arrayBuffer = await blob.arrayBuffer();
-        return {
-            base64EncodedData: Buffer.from(arrayBuffer).toString("base64"),
-            filename: filename ? filename : "default",
-            mimeType: blob.type
-        } as IFile;
-    }
-    redirect("/login")
 }
